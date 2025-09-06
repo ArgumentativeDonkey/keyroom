@@ -58,6 +58,8 @@ body {
 
     .rooms {
         display: none;
+        width: 50vw;
+        overflow: scroll;
     }
 
     .sendput {
@@ -70,6 +72,12 @@ body {
         bottom: 30px;
         right: 5px;
     }
+    .showRoomsMobile {
+        display: block;
+        position: absolute;
+        bottom: 60px;
+        right: 5px;
+    }
 }
 
 @media(min-width:500px) {
@@ -80,7 +88,7 @@ body {
         top: 5px;
     }
 
-    .showUsersMobile {
+    .showUsersMobile, .showRoomsMobile {
         display: none;
     }
 

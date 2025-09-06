@@ -298,21 +298,49 @@ document.getElementById("showUsers").addEventListener("click", () => {
         UsersShown = true;
     }
 })
+document.getElementById("showRooms").addEventListener("click", () => {
+    if (UsersShown) {
+        document.getElementById("showRooms").innerHTML = "Show Rooms";
+        document.getElementById("messages").style.display = "block";
+        document.getElementById("rooms").style.display = "none";
+        UsersShown = false;
+    } else if (!UsersShown) {
+        document.getElementById("showRooms").innerHTML = "Hide Rooms";
+        document.getElementById("messages").style.display = "none";
+        document.getElementById("rooms").style.display = "block";
+        UsersShown = true;
+    }
+})
+function clearRoomBorders () {
+    document.getElementById("&random").style.border = "none"
+    document.getElementById("&xkcd").style.border = "none"
+    document.getElementById("&spam").style.border = "none"
+    document.getElementById("&hunch").style.border = "none"
+}
 document.getElementById("&random").addEventListener("click", () => {
     currentRoom = "&random"
     listenToRoom('&random')
-})
+    clearRoomBorders();
+    document.getElementById("&random").style.border = "green solid 1px";
+}) 
 document.getElementById("&hunch").addEventListener("click", () => {
-    currentRoom = "&hunch"
-    listenToRoom('&hunch')
+    currentRoom = "&hunch";
+    listenToRoom('&hunch');
+    clearRoomBorders();
+    document.getElementById("&hunch").style.border = "green solid 1px";
+    
 })
 document.getElementById("&xkcd").addEventListener("click", () => {
-    currentRoom = "&xkcd"
-    listenToRoom('&xkcd')
+    currentRoom = "&xkcd";
+    listenToRoom('&xkcd');
+    clearRoomBorders();
+    document.getElementById("&xkcd").style.border = "green solid 1px";
 })
 document.getElementById("&spam").addEventListener("click", () => {
-    currentRoom = "&spam"
-    listenToRoom('&spam')
+    currentRoom = "&spam";
+    clearRoomBorders();
+    document.getElementById("&spam").style.border = "green solid 1px";
+    listenToRoom('&spam');
 })
-
+document.getElementById("&hunch").style.border = "green solid 1px";
 listenToRoom('&hunch')
