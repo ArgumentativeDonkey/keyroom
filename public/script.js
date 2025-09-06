@@ -125,7 +125,7 @@ onSnapshot(messagesQuery, (snapshot) => {
         const message = doc.data();
         const msg = document.createElement("p");
         const tstamp = parseTimestamp(message.timestamp);
-        msg.innerHTML = `<span style="background-color:${message.color}; color: 'white';padding: 4px;border-radius:2px;">[${message.writer}] ${message.text} (${tstamp})</span>`;
+        msg.innerHTML = `<span style="background-color:${message.color}; color: 'white';padding: 4px;border-radius:2px;">${message.writer}</span><span class="msgText">   ${message.text} <b>(${tstamp})</b></span>`;
         document.getElementById("messages").appendChild(msg);
 
     })

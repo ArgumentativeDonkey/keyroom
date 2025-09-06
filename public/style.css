@@ -11,18 +11,18 @@
 
 .sendput {
     position: absolute;
-    bottom: 30px;
-
 }
 
 .messages {
     height: 80vh;
     overflow: scroll;
     width: 100vw;
+    font-size: 14px;
 }
 
 body {
     background-color: black;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 @media(max-width:500px) {
@@ -32,6 +32,9 @@ body {
         position: absolute;
         left: 30px;
         top: 20vh;
+    }
+    .sendput {
+        bottom: 30px;
     }
 
     .showUsersMobile {
@@ -49,9 +52,18 @@ body {
         right: 5px;
         top: 5px;
     }
+    .showUsersMobile {
+        display: none;
+    }
+    .messages {
+        height: 85vh;
+    }
 }
 
 
 .userP {
     color: white;
+}
+.msgText {
+    color: green;
 }
