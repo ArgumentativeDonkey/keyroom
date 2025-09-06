@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Keyroom</title>
+    <link rel="stylesheet" href="style.css">
+
+    <script type="importmap">
+      {
+        "imports": {
+          "firebase/app": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+          "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js",
+          "firebase/analytics": "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js"
+        }
+      }
+    </script>
+
+  </head>
+  <body>
+    
+    <h1 style = "color: White;">Keyroom</h1>
+    <div class="messages" id="messages"></div>
+    <div class = send></div>
+    <input class="sendput" type="text" id="message-input" placeholder="Wow, what a beautiful box...">
+    <button class="send" id="send-button">Send</button>
+
+    <script type="module" src="script.js"></script>
+  </body>
+</html>

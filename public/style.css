@@ -1,0 +1,13 @@
+
+.sendput {
+    position: absolute;
+}
+
+.messages {
+    height: 80vh;
+    overflow: scroll;
+    width: 100vw;
+}
+body {
+    background-color: black;
+}
