@@ -1,3 +1,13 @@
+:root {
+    --bg: white;
+    --txt: black;
+}
+
+[data-theme='dark'] {
+    --bg: black;
+    --txt: white;
+}
+
 
 .sendput {
     position: absolute;
@@ -8,6 +18,24 @@
     overflow: scroll;
     width: 100vw;
 }
+
 body {
     background-color: black;
+}
+
+@media(max-width:991px) {
+    .desktopDiv {
+        display: none;
+    }
+}
+
+.desktopDiv {
+    color: white;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+}
+
+.userP {
+    color: white;
 }

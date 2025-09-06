@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc} from 'firebase/firestore';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -61,8 +61,33 @@ function parseTimestamp(input) {
 
     return `${time} ${m}/${d}/${yr}`;
 }
+function elapsedSecondsSince(timestamp) {
+    let pastDate;
+
+    if (!timestamp) {
+        return 0;
+    }
+
+    if (timestamp.toDate) {
+        pastDate = timestamp.toDate();
+    } else if (timestamp instanceof Date) {
+        pastDate = timestamp;
+    } else if (typeof timestamp === "string") {
+        pastDate = new Date(timestamp);
+    } else {
+        throw new Error("Invalid timestamp format");
+    }
+
+    if (isNaN(pastDate)) {
+        throw new Error("Invalid date format");
+    }
+
+    const now = new Date();
+    const elapsedMs = now - pastDate;
+    return Math.floor(elapsedMs / 1000); 
+}
+
 function getUserColor(username) {
-    // Special case
     if (username === "Key") return "#9ca060";
 
     const storageKey = `color_${username}`;
@@ -71,10 +96,10 @@ function getUserColor(username) {
 
     const palette = [
         "#e63946", // red
-        "#f4a261", // orange
+        "#f07c1eff", // orange
         "#2a9d8f", // teal
         "#457b9d", // blue
-        "#8d99ae", // slate
+        "#b48c70ff", // slate
         "#e9c46a", // yellow
         "#a29bfe", // purple
         "#06d6a0", // mint
@@ -86,26 +111,13 @@ function getUserColor(username) {
     const assigned = Object.keys(localStorage).filter(k => k.startsWith("color_")).length;
 
     // Pick next color from palette, wrap around if > 10
-    const index = assigned % palette.length;
+    const index = Math.floor(Math.random()*10);
     color = palette[index] || "#ffffff"; // fallback, just in case
 
     localStorage.setItem(storageKey, color);
     return color;
 }
 
-
-async function addUser(username) {
-    const userRef = doc(db, "connectedUsers", username); 
-    await setDoc(userRef, {
-        name: username,
-        joinedAt: serverTimestamp()
-    });
-}
-async function removeUser(username) {
-    const userRef = doc(db, "connectedUsers", username);
-    await deleteDoc(userRef);
-}
-document.addEventListener("before")
 onSnapshot(messagesQuery, (snapshot) => {
     document.getElementById("messages").innerHTML = ""
     snapshot.forEach((doc) => {
@@ -144,8 +156,41 @@ document.getElementById("send-button").addEventListener("click", () => {
 })
 if (!localStorage.getItem("username")) {
     username = prompt("Enter username");
+    if(username == ("" || " ")){
+        alert("Please enter a username!");
+        document.location.reload();
+    }
+
     localStorage.setItem("username", username);
 } else {
     username = localStorage.getItem("username");
 }
 messages.scrollTop = messages.scrollHeight;
+
+const userRef = collection(db, "connectedUsers");
+const usersQuery = query(userRef, orderBy("lastActive", "asc"));
+const userDocRef = doc(db, "connectedUsers", username);
+await setDoc(userDocRef, {
+  name: username,
+  color: getUserColor(username),
+  lastActive: serverTimestamp()
+});
+setInterval(async () => {
+  await setDoc(userDocRef, {
+    name: username,
+    color: getUserColor(username),
+    lastActive: serverTimestamp()
+  }, { merge: true });
+}, 15000);
+onSnapshot(usersQuery, (snapshot) => {
+    document.getElementById("connectedUsers").innerHTML = "<p class='userP'><b>Connected Users</b></p>"
+    snapshot.forEach((doc) => {
+        const user = doc.data();
+        if (elapsedSecondsSince(user.lastActive) <= 16) { 
+            const userP = document.createElement("p");
+            userP.innerHTML = `<span style="background-color:${user.color}; color: 'white';padding: 4px;border-radius:2px;">[${user.name}]</span>`;
+            document.getElementById("connectedUsers").appendChild(userP);
+        }
+    })
+    messages.scrollTop = messages.scrollHeight;
+})
