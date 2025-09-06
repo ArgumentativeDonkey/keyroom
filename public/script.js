@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc} from 'firebase/firestore';
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc } from 'firebase/firestore';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -28,11 +28,12 @@ const firebaseConfig = {
 
 
 // Initialize Firebase
+var currentRoom = "&hunch"
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
-const messagesRef = collection(db, "messages");
-const messagesQuery = query(messagesRef, orderBy("timestamp", "asc"));
+var messagesRef = collection(db, currentRoom);
+var messagesQuery = query(messagesRef, orderBy("timestamp", "asc"));
 var UsersShown = false;
 function parseTimestamp(input) {
     let date;
@@ -85,7 +86,7 @@ function elapsedSecondsSince(timestamp) {
 
     const now = new Date();
     const elapsedMs = now - pastDate;
-    return Math.floor(elapsedMs / 1000); 
+    return Math.floor(elapsedMs / 1000);
 }
 
 function getUserColor(username) {
@@ -96,70 +97,157 @@ function getUserColor(username) {
     if (color) return color;
 
     const palette = [
-        "#e63946", // red
-        "#f07c1eff", // orange
-        "#2a9d8f", // teal
-        "#457b9d", // blue
-        "#b48c70ff", // slate
-        "#e9c46a", // yellow
-        "#a29bfe", // purple
-        "#06d6a0", // mint
-        "#ef476f", // pink
-        "#118ab2"  // deep blue
+        "#e63946",
+        "#f07c1eff",
+        "#2a9d8f",
+        "#457b9d",
+        "#b48c70ff",
+        "#e9c46a",
+        "#a29bfe",
+        "#06d6a0",
+        "#ef476f",
+        "#118ab2"
     ];
-
-    // Count how many colors are already assigned
     const assigned = Object.keys(localStorage).filter(k => k.startsWith("color_")).length;
-
-    // Pick next color from palette, wrap around if > 10
-    const index = Math.floor(Math.random()*10);
-    color = palette[index] || "#ffffff"; // fallback, just in case
+    const index = Math.floor(Math.random() * 10);
+    color = palette[index] || "#ffffff";
 
     localStorage.setItem(storageKey, color);
     return color;
 }
-
-onSnapshot(messagesQuery, (snapshot) => {
-    document.getElementById("messages").innerHTML = ""
-    snapshot.forEach((doc) => {
-        const message = doc.data();
-        const msg = document.createElement("p");
-        const tstamp = parseTimestamp(message.timestamp);
-        msg.innerHTML = `<span style="background-color:${message.color}; color: 'white';padding: 4px;border-radius:2px;">${message.writer}</span><span class="msgText">   ${message.text} <b>(${tstamp})</b></span>`;
-        document.getElementById("messages").appendChild(msg);
-
-    })
-    messages.scrollTop = messages.scrollHeight;
-})
-async function sendMsg(message, writer, color) {
+async function showLatestXkcd(number) {
     try {
-        await addDoc(collection(db, "messages"), {
+        const response = await fetch("https://xkcd.vercel.app/?comic=latest");
+        const data = await response.json();
+        console.log(number);
+        if (Number.isInteger(number) && number <= data.num) {
+            console.log("numver")
+            const response = await fetch(`https://xkcd.vercel.app/?comic=${number}`)
+            const newdata = await response.json()
+            const html = `
+            <a href="https://xkcd.com/${newdata.num}/" target="_blank" rel="noopener noreferrer">
+                <h2>${newdata.title} (#${newdata.num})</h2>
+                <img src="${newdata.img}" alt="${newdata.alt}" style="max-width:100%">
+            </a>`;
+            return html;
+        } else if (Number.isInteger(number)) {
+            return "<p>That xkcd doesn\'t exists yet!</p>"
+        } else {
+            const html = `
+            <a href="https://xkcd.com/${data.num}/" target="_blank" rel="noopener noreferrer">
+                <h2>${data.title} (#${data.num})</h2>
+                <img src="${data.img}" alt="${data.alt}" style="max-width:100%">
+            </a>`;
+            return html;
+        }
+    } catch (err) {
+        console.error("Error fetching xkcd:", err);
+        return null;
+    }
+}
+
+let unsubscribeMessages = null;
+function scrollToBottom(container) {
+    const imgs = container.querySelectorAll("img");
+    if (imgs.length === 0) {
+        container.scrollTop = container.scrollHeight;
+        return;
+    }
+    let loadedCount = 0;
+    imgs.forEach(img => {
+        if (img.complete) {
+            loadedCount++;
+        } else {
+            img.addEventListener("load", () => {
+                loadedCount++;
+                if (loadedCount === imgs.length) {
+                    container.scrollTop = container.scrollHeight;
+                }
+            });
+        }
+    });
+    if (loadedCount === imgs.length) {
+        container.scrollTop = container.scrollHeight;
+    }
+}
+
+function listenToRoom(roomName) {
+    if (unsubscribeMessages) {
+        unsubscribeMessages();
+    }
+
+    currentRoom = roomName;
+    const messagesRef = collection(db, currentRoom);
+    const messagesQuery = query(messagesRef, orderBy("timestamp", "asc"));
+
+    unsubscribeMessages = onSnapshot(messagesQuery, (snapshot) => {
+        const messagesEl = document.getElementById("messages");
+        messagesEl.innerHTML = "";
+        var i = 0
+        snapshot.forEach((doc) => {
+            i += 1
+            const message = doc.data();
+            const tstamp = parseTimestamp(message.timestamp);
+            const raw = message.raw;
+            if (raw) {
+                const msgDiv = document.createElement("div");
+                const msg = document.createElement("p");
+                msg.innerHTML = `<span style="background-color:${message.color}; color:white; padding:4px; border-radius:2px;">${message.writer}</span>`
+                msgDiv.appendChild(msg);
+                msgDiv.innerHTML += message.text;
+                messagesEl.appendChild(msgDiv);
+            } else {
+                const msg = document.createElement("p");
+                msg.innerHTML = `<span style="background-color:${message.color}; color:white; padding:4px; border-radius:2px;">${message.writer}</span><span class="msgText"> ${message.text} <b>(${tstamp})</b></span>`;
+                messagesEl.appendChild(msg);
+            }
+        });
+        scrollToBottom(messagesEl);
+    });
+}
+async function sendMsg(message, writer, color, raw) {
+    try {
+        if (raw !== true) {
+            raw = false
+        }
+        await addDoc(collection(db, currentRoom), {
 
             text: message,
             writer: writer,
             color: color,
-            timestamp: serverTimestamp()
+            timestamp: serverTimestamp(),
+            raw: raw
         });
         console.log("Data sent!")
     } catch (e) {
         console.error("Shit.", e);
     }
 }
+async function sendXkcd(what) {
+    console.log(what)
+    if (what == 'latest') {
+        var msg = await showLatestXkcd();
+        sendMsg(msg, "xkcd", '#516b94', true);
+    } else if (Number.isInteger(Number(what))) {
+        console.log(Number(what))
+        var msg = await showLatestXkcd(parseInt(what));
+        sendMsg(msg, "xkcd", '#516b94', true);
+    }
+}
 document.addEventListener("keydown", (e) => {
     if (e.keyCode == 13) {
         sendMsg(document.getElementById("message-input").value, username, getUserColor(username));
+        if (document.getElementById("message-input").value.split(" ")[0] == "!xkcd" && currentRoom == "&xkcd") {
+            sendXkcd(document.getElementById("message-input").value.split(" ")[1]);
+
+        }
         document.getElementById("message-input").value = "";
     }
 })
 var username
-/*
-document.getElementById("send-button").addEventListener("click", () => {
-    sendMsg(document.getElementById("message-input").value, username, getUserColor(username));
-})
-    */
 if (!localStorage.getItem("username")) {
     username = prompt("Enter username");
-    if(username == ("" || " ")){
+    if (username == ("" || " ")) {
         alert("Please enter a username!");
         document.location.reload();
     }
@@ -174,22 +262,22 @@ const userRef = collection(db, "connectedUsers");
 const usersQuery = query(userRef, orderBy("lastActive", "asc"));
 const userDocRef = doc(db, "connectedUsers", username);
 await setDoc(userDocRef, {
-  name: username,
-  color: getUserColor(username),
-  lastActive: serverTimestamp()
-});
-setInterval(async () => {
-  await setDoc(userDocRef, {
     name: username,
     color: getUserColor(username),
     lastActive: serverTimestamp()
-  }, { merge: true });
+});
+setInterval(async () => {
+    await setDoc(userDocRef, {
+        name: username,
+        color: getUserColor(username),
+        lastActive: serverTimestamp()
+    }, { merge: true });
 }, 15000);
 onSnapshot(usersQuery, (snapshot) => {
     document.getElementById("connectedUsers").innerHTML = "<p class='userP'><b>Connected Users</b></p>"
     snapshot.forEach((doc) => {
         const user = doc.data();
-        if (elapsedSecondsSince(user.lastActive) <= 16) { 
+        if (elapsedSecondsSince(user.lastActive) <= 16) {
             const userP = document.createElement("p");
             userP.innerHTML = `<span style="background-color:${user.color}; color: 'white';padding: 4px;border-radius:2px;">[${user.name}]</span>`;
             document.getElementById("connectedUsers").appendChild(userP);
@@ -210,3 +298,21 @@ document.getElementById("showUsers").addEventListener("click", () => {
         UsersShown = true;
     }
 })
+document.getElementById("&random").addEventListener("click", () => {
+    currentRoom = "&random"
+    listenToRoom('&random')
+})
+document.getElementById("&hunch").addEventListener("click", () => {
+    currentRoom = "&hunch"
+    listenToRoom('&hunch')
+})
+document.getElementById("&xkcd").addEventListener("click", () => {
+    currentRoom = "&xkcd"
+    listenToRoom('&xkcd')
+})
+document.getElementById("&spam").addEventListener("click", () => {
+    currentRoom = "&spam"
+    listenToRoom('&spam')
+})
+
+listenToRoom('&hunch')

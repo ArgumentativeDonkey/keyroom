@@ -21,7 +21,18 @@
 
 <body>
 
-  <h1 style="color: White;">Keyroom</h1>
+  <h1>Keyroom</h1>
+  <div class="rooms" id="rooms">
+    <div class="roomsListDiv">
+      <h4>Rooms</h4>
+      <ul class="roomsList">
+        <li id="&hunch">&hunch</li>
+        <li id="&random">&random</li>
+        <li id="&spam">&spam</li>
+        <li id="&xkcd">&xkcd</li>
+      </ul>
+    </div>
+  </div>
   <div class="messages" id="messages"></div>
   <div class=send></div>
   <input class="sendput" type="text" id="message-input" placeholder="Wow, what a beautiful box...">
@@ -31,4 +42,5 @@
   <script type="module" src="script.js"></script>
   <button class="showUsersMobile" id="showUsers">Show Active users</button>
 </body>
+
 </html>
