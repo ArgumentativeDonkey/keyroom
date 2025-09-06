@@ -92,29 +92,19 @@ function elapsedSecondsSince(timestamp) {
 function getUserColor(username) {
     if (username === "Key") return "#9ca060";
 
-    const storageKey = `color_${username}`;
-    let color = localStorage.getItem(storageKey);
-    if (color) return color;
-
     const palette = [
-        "#e63946",
-        "#f07c1eff",
-        "#2a9d8f",
-        "#457b9d",
-        "#b48c70ff",
-        "#e9c46a",
-        "#a29bfe",
-        "#06d6a0",
-        "#ef476f",
-        "#118ab2"
+        "#e63946", "#f07c1e", "#2a9d8f", "#457b9d", "#b48c70",
+        "#e9c46a", "#a29bfe", "#06d6a0", "#ef476f", "#118ab2"
     ];
-    const assigned = Object.keys(localStorage).filter(k => k.startsWith("color_")).length;
-    const index = Math.floor(Math.random() * 10);
-    color = palette[index] || "#ffffff";
 
-    localStorage.setItem(storageKey, color);
-    return color;
+    let hash = 0;
+    for (let i = 0; i < username.length; i++) {
+        hash = username.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const index = Math.abs(hash) % palette.length;
+    return palette[index];
 }
+
 async function showLatestXkcd(number) {
     try {
         const response = await fetch("https://xkcd.vercel.app/?comic=latest");
