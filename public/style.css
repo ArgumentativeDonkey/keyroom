@@ -9,7 +9,7 @@
 }
 
 h1 {
-    color: green;
+    color: black;
 }
 .sendput {
     position: absolute;
@@ -30,8 +30,8 @@ h1 {
 .rooms {
     height: 85vh;
     width: 8vw;
-    color: green;
-    border: 1px green solid;
+    color: black;
+    border: 1px black solid;
     overflow: hidden;
 }
 
@@ -41,15 +41,17 @@ h1 {
     width: 85vw;
     font-size: 14px;
 }
-.messages p {
-    overflow: auto;
-}
 
 body {
-    background-color: black;
+    background-color: white;
     font-family: Arial, Helvetica, sans-serif;
 }
-
+.usernameBg {
+    color: "white";
+    padding: 4px;
+    border-radius:2px;
+    border: 1px solid black;
+}
 @media(max-width:500px) {
     .desktopDiv {
         display: none;
@@ -109,9 +111,9 @@ body {
 
 
 .userP {
-    color: white;
+    color: black;
 }
 
 .msgText {
-    color: green;
+    color: black;
 }

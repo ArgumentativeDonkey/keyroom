@@ -192,13 +192,13 @@ function listenToRoom(roomName) {
             if (raw) {
                 const msgDiv = document.createElement("div");
                 const msg = document.createElement("p");
-                msg.innerHTML = `<span style="background-color:${message.color}; color:white; padding:4px; border-radius:2px;">${message.writer}</span>`
+                msg.innerHTML = `<span style="background-color:${message.color};" class="usernameBg">${message.writer}</span>`
                 msgDiv.appendChild(msg);
                 msgDiv.innerHTML += message.text;
                 messagesEl.appendChild(msgDiv);
             } else {
                 const msg = document.createElement("p");
-                msg.innerHTML = `<span style="background-color:${message.color}; color:white; padding:4px; border-radius:2px;">${message.writer}</span><span class="msgText"> ${message.text} <b>(${tstamp})</b></span>`;
+                msg.innerHTML = `<span style="background-color:${message.color};" class="usernameBg">${message.writer}</span><span class="msgText"> ${message.text} <b>(${tstamp})</b></span>`;
                 messagesEl.appendChild(msg);
             }
         });
@@ -279,7 +279,7 @@ onSnapshot(usersQuery, (snapshot) => {
         const user = doc.data();
         if (elapsedSecondsSince(user.lastActive) <= 16) {
             const userP = document.createElement("p");
-            userP.innerHTML = `<span style="background-color:${user.color}; color: 'white';padding: 4px;border-radius:2px;">${user.name}</span>`;
+            userP.innerHTML = `<span style="background-color:${user.color};" class="usernameBg">${user.name}</span>`;
             document.getElementById("connectedUsers").appendChild(userP);
         }
     })
@@ -321,26 +321,26 @@ document.getElementById("&random").addEventListener("click", () => {
     currentRoom = "&random"
     listenToRoom('&random')
     clearRoomBorders();
-    document.getElementById("&random").style.border = "green solid 1px";
+    document.getElementById("&random").style.border = "black solid 1px";
 }) 
 document.getElementById("&hunch").addEventListener("click", () => {
     currentRoom = "&hunch";
     listenToRoom('&hunch');
     clearRoomBorders();
-    document.getElementById("&hunch").style.border = "green solid 1px";
+    document.getElementById("&hunch").style.border = "black solid 1px";
     
 })
 document.getElementById("&xkcd").addEventListener("click", () => {
     currentRoom = "&xkcd";
     listenToRoom('&xkcd');
     clearRoomBorders();
-    document.getElementById("&xkcd").style.border = "green solid 1px";
+    document.getElementById("&xkcd").style.border = "black solid 1px";
 })
 document.getElementById("&spam").addEventListener("click", () => {
     currentRoom = "&spam";
     clearRoomBorders();
-    document.getElementById("&spam").style.border = "green solid 1px";
+    document.getElementById("&spam").style.border = "black solid 1px";
     listenToRoom('&spam');
 })
-document.getElementById("&hunch").style.border = "green solid 1px";
+document.getElementById("&hunch").style.border = "black solid 1px";
 listenToRoom('&hunch')
