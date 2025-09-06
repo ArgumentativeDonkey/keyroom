@@ -11,6 +11,8 @@
 
 .sendput {
     position: absolute;
+    bottom: 30px;
+
 }
 
 .messages {
@@ -23,18 +25,32 @@ body {
     background-color: black;
 }
 
-@media(max-width:991px) {
+@media(max-width:500px) {
     .desktopDiv {
         display: none;
+        color: white;
+        position: absolute;
+        left: 30px;
+        top: 20vh;
+    }
+
+    .showUsersMobile {
+        display: block;
+        position: absolute;
+        bottom: 30px;
+        right: 5px;
     }
 }
 
-.desktopDiv {
-    color: white;
-    position: absolute;
-    right: 5px;
-    top: 5px;
+@media(min-width:500px) {
+    .desktopDiv {
+        color: white;
+        position: absolute;
+        right: 5px;
+        top: 5px;
+    }
 }
+
 
 .userP {
     color: white;

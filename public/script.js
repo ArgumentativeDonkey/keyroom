@@ -33,6 +33,7 @@ const analytics = getAnalytics(app);
 const db = getFirestore(app);
 const messagesRef = collection(db, "messages");
 const messagesQuery = query(messagesRef, orderBy("timestamp", "asc"));
+var UsersShown = false;
 function parseTimestamp(input) {
     let date;
 
@@ -151,9 +152,11 @@ document.addEventListener("keydown", (e) => {
     }
 })
 var username
+/*
 document.getElementById("send-button").addEventListener("click", () => {
     sendMsg(document.getElementById("message-input").value, username, getUserColor(username));
 })
+    */
 if (!localStorage.getItem("username")) {
     username = prompt("Enter username");
     if(username == ("" || " ")){
@@ -193,4 +196,17 @@ onSnapshot(usersQuery, (snapshot) => {
         }
     })
     messages.scrollTop = messages.scrollHeight;
+})
+document.getElementById("showUsers").addEventListener("click", () => {
+    if (UsersShown) {
+        document.getElementById("showUsers").innerHTML = "Show Users";
+        document.getElementById("messages").style.display = "block";
+        document.getElementById("connectedUsers").style.display = "none";
+        UsersShown = false;
+    } else if (!UsersShown) {
+        document.getElementById("showUsers").innerHTML = "Hide Users";
+        document.getElementById("messages").style.display = "none";
+        document.getElementById("connectedUsers").style.display = "block";
+        UsersShown = true;
+    }
 })
