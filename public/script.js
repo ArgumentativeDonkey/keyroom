@@ -227,6 +227,10 @@ async function sendMsg(message, writer, color, raw) {
 }
 async function tell(message, writer, reciepient) {
     try {
+        if (reciepient==writer) {
+            sendMsg(`Error: There is no need to message yourself`, "TellBot",'#6437c4');
+            return;
+        }
         await addDoc(collection(db, "tellMsgs"), {
             text: message,
             writer: writer,
