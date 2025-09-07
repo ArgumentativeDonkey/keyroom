@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDocs, deleteDoc} from 'firebase/firestore';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -32,8 +32,10 @@ var currentRoom = "&hunch"
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
-var messagesRef = collection(db, currentRoom);
-var messagesQuery = query(messagesRef, orderBy("timestamp", "asc"));
+const messagesRef = collection(db, currentRoom);
+const messagesQuery = query(messagesRef, orderBy("timestamp", "asc"));
+const tellRef = collection(db, "tellMsgs");
+const tellQuery = query(tellRef, orderBy("timestamp", "asc"));
 var UsersShown = false;
 function parseTimestamp(input) {
     let date;
@@ -209,6 +211,31 @@ async function sendMsg(message, writer, color, raw) {
             raw: raw
         });
         console.log("Data sent!")
+        const snapshot = await getDocs(tellRef);
+        snapshot.forEach(doca => {
+            const data = doca.data();
+            if (data.reciepient == username) {
+                var message = `From ${data.writer}: ${data.text}`;
+                sendMsg(message, "TellBot", '#6437c4');
+                const docRef = doc(db, "tellMsgs", doca.id);
+                deleteDoc(docRef);
+            }
+        });
+    } catch (e) {
+        console.error("Shit.", e);
+    }
+}
+async function tell(message, writer, reciepient) {
+    try {
+        await addDoc(collection(db, "tellMsgs"), {
+            text: message,
+            writer: writer,
+            reciepient: reciepient,
+            color: '#6437c4',
+            timestamp: serverTimestamp(),
+        });
+        console.log("Data sent!")
+        sendMsg(`Will tell ${reciepient}!`, "TellBot",'#6437c4');
     } catch (e) {
         console.error("Shit.", e);
     }
@@ -227,9 +254,17 @@ async function sendXkcd(what) {
 document.addEventListener("keydown", (e) => {
     if (e.keyCode == 13) {
         sendMsg(document.getElementById("message-input").value, username, getUserColor(username));
-        if (document.getElementById("message-input").value.split(" ")[0] == "!xkcd" && currentRoom == "&xkcd") {
-            sendXkcd(document.getElementById("message-input").value.split(" ")[1]);
-
+        var command = document.getElementById("message-input").value.split(" ")[0];
+        var split = document.getElementById("message-input").value.split(" ");
+        if (command == "!xkcd" && currentRoom == "&xkcd") {
+            sendXkcd(split[1]);
+        } else if (command == "!tell") {
+            var messagestring = "";
+            for (var i = 2; i<(split.length); i++) {
+                messagestring += ` ${split[i]}`
+                console.log(messagestring);
+            }
+            tell(messagestring, username, split[1])
         }
         document.getElementById("message-input").value = "";
     }
