@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDocs, deleteDoc} from 'firebase/firestore';
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDocs, deleteDoc } from 'firebase/firestore';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -221,14 +221,15 @@ async function sendMsg(message, writer, color, raw) {
                 deleteDoc(docRef);
             }
         });
+
     } catch (e) {
         console.error("Shit.", e);
     }
 }
 async function tell(message, writer, reciepient) {
     try {
-        if (reciepient==writer) {
-            sendMsg(`Error: There is no need to message yourself`, "TellBot",'#6437c4');
+        if (reciepient == writer) {
+            sendMsg(`Error: There is no need to message yourself`, "TellBot", '#6437c4');
             return;
         }
         await addDoc(collection(db, "tellMsgs"), {
@@ -239,7 +240,7 @@ async function tell(message, writer, reciepient) {
             timestamp: serverTimestamp(),
         });
         console.log("Data sent!")
-        sendMsg(`Will tell ${reciepient}!`, "TellBot",'#6437c4');
+        sendMsg(`Will tell ${reciepient}!`, "TellBot", '#6437c4');
     } catch (e) {
         console.error("Shit.", e);
     }
@@ -255,24 +256,6 @@ async function sendXkcd(what) {
         sendMsg(msg, "xkcd", '#516b94', true);
     }
 }
-document.addEventListener("keydown", (e) => {
-    if (e.keyCode == 13) {
-        sendMsg(document.getElementById("message-input").value, username, getUserColor(username));
-        var command = document.getElementById("message-input").value.split(" ")[0];
-        var split = document.getElementById("message-input").value.split(" ");
-        if (command == "!xkcd" && currentRoom == "&xkcd") {
-            sendXkcd(split[1]);
-        } else if (command == "!tell") {
-            var messagestring = "";
-            for (var i = 2; i<(split.length); i++) {
-                messagestring += ` ${split[i]}`
-                console.log(messagestring);
-            }
-            tell(messagestring, username, split[1])
-        }
-        document.getElementById("message-input").value = "";
-    }
-})
 var username
 if (!localStorage.getItem("username")) {
     username = prompt("Enter username");
@@ -285,11 +268,48 @@ if (!localStorage.getItem("username")) {
 } else {
     username = localStorage.getItem("username");
 }
-messages.scrollTop = messages.scrollHeight;
-
 const userRef = collection(db, "connectedUsers");
 const usersQuery = query(userRef, orderBy("lastActive", "asc"));
 const userDocRef = doc(db, "connectedUsers", username);
+async function getUserLastActive(user) {
+    const snapshot = await getDocs(userRef);
+    var found = false;
+    snapshot.forEach(doca => {
+        const data = doca.data();
+        if (data.name == user) {
+            var message = `User ${user} was last seen on ${parseTimestamp(data.lastActive)}`;
+            sendMsg(message, "LastActive", '#6437c4');
+            found = true;
+        }
+
+    });
+    if (!found) {
+        sendMsg(`User ${user} not found.`, "LastActive", '#6437c4');
+    }
+}
+document.addEventListener("keydown", (e) => {
+    if (e.keyCode == 13) {
+        sendMsg(document.getElementById("message-input").value, username, getUserColor(username));
+        var command = document.getElementById("message-input").value.split(" ")[0];
+        var split = document.getElementById("message-input").value.split(" ");
+        if (command == "!xkcd" && currentRoom == "&xkcd") {
+            sendXkcd(split[1]);
+        } else if (command == "!tell") {
+            var messagestring = "";
+            for (var i = 2; i < (split.length); i++) {
+                messagestring += ` ${split[i]}`
+                console.log(messagestring);
+            }
+            tell(messagestring, username, split[1])
+        } else if (command == "!lastactive") {
+            getUserLastActive(split[1]);
+        }
+        document.getElementById("message-input").value = "";
+    }
+})
+messages.scrollTop = messages.scrollHeight;
+
+
 await setDoc(userDocRef, {
     name: username,
     color: getUserColor(username),
@@ -340,7 +360,7 @@ document.getElementById("showRooms").addEventListener("click", () => {
         UsersShown = true;
     }
 })
-function clearRoomBorders () {
+function clearRoomBorders() {
     document.getElementById("&random").style.border = "none"
     document.getElementById("&xkcd").style.border = "none"
     document.getElementById("&spam").style.border = "none"
@@ -351,13 +371,13 @@ document.getElementById("&random").addEventListener("click", () => {
     listenToRoom('&random')
     clearRoomBorders();
     document.getElementById("&random").style.border = "black solid 1px";
-}) 
+})
 document.getElementById("&hunch").addEventListener("click", () => {
     currentRoom = "&hunch";
     listenToRoom('&hunch');
     clearRoomBorders();
     document.getElementById("&hunch").style.border = "black solid 1px";
-    
+
 })
 document.getElementById("&xkcd").addEventListener("click", () => {
     currentRoom = "&xkcd";
