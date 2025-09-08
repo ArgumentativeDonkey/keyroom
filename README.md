@@ -5,4 +5,5 @@ Chatroom syntax: <br>
 **&Xkcd** - The following commands wil only work in the &xkcd room.<br>
 `!xkcd latest` - displays latest xkcd. <br>
 `!xkcd {number}` - displays xkcd of selected number. <br>
-
+**Misc.** - Random unrelated commands <br>
+`!lastactive {username}` - gets the last recorded time somebody of entered username was on the page, regardless of if they sent any messages. <br>

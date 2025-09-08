@@ -278,13 +278,13 @@ async function getUserLastActive(user) {
         const data = doca.data();
         if (data.name == user) {
             var message = `User ${user} was last seen on ${parseTimestamp(data.lastActive)}`;
-            sendMsg(message, "LastActive", '#6437c4');
+            sendMsg(message, "LastActive", '#cf7e78');
             found = true;
         }
 
     });
     if (!found) {
-        sendMsg(`User ${user} not found.`, "LastActive", '#6437c4');
+        sendMsg(`User ${user} not found.`, "LastActive", '#cf7e78');
     }
 }
 document.addEventListener("keydown", (e) => {
