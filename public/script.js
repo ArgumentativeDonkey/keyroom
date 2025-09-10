@@ -202,6 +202,7 @@ async function sendMsg(message, writer, color, raw) {
         if (raw !== true) {
             raw = false
         }
+       
         await addDoc(collection(db, currentRoom), {
 
             text: message,
@@ -292,6 +293,7 @@ document.addEventListener("keydown", (e) => {
         sendMsg(document.getElementById("message-input").value, username, getUserColor(username));
         var command = document.getElementById("message-input").value.split(" ")[0];
         var split = document.getElementById("message-input").value.split(" ");
+        
         if (command == "!xkcd" && currentRoom == "&xkcd") {
             sendXkcd(split[1]);
         } else if (command == "!tell") {
