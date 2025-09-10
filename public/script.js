@@ -365,6 +365,8 @@ function clearRoomBorders() {
     document.getElementById("&xkcd").style.border = "none"
     document.getElementById("&spam").style.border = "none"
     document.getElementById("&hunch").style.border = "none"
+    document.getElementById("/codeinject").style.border = "none"
+
 }
 document.getElementById("&random").addEventListener("click", () => {
     currentRoom = "&random"
@@ -390,6 +392,12 @@ document.getElementById("&spam").addEventListener("click", () => {
     clearRoomBorders();
     document.getElementById("&spam").style.border = "black solid 1px";
     listenToRoom('&spam');
+})
+document.getElementById("/codeinject").addEventListener("click", () => {
+    currentRoom = "/codeinject";
+    clearRoomBorders();
+    document.getElementById("/codeinject").style.border = "black solid 1px";
+    listenToRoom('/codeinject');
 })
 document.getElementById("&hunch").style.border = "black solid 1px";
 listenToRoom('&hunch')
