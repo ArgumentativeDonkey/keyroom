@@ -199,18 +199,19 @@ function listenToRoom(roomName) {
 }
 async function sendMsg(message, writer, color, raw) {
     try {
-        if (raw !== true) {
-            raw = false
-        }
-        await addDoc(collection(db, currentRoom), {
+        if (raw !== true) raw = false;
+        await resetRoomIfKey(message, writer);
 
+        await addDoc(collection(db, currentRoom), {
             text: message,
             writer: writer,
             color: color,
             timestamp: serverTimestamp(),
             raw: raw
         });
-        console.log("Data sent!")
+
+        console.log("Data sent!");
+    
         const snapshot = await getDocs(tellRef);
         snapshot.forEach(doca => {
             const data = doca.data();
@@ -226,6 +227,7 @@ async function sendMsg(message, writer, color, raw) {
         console.error("Shit.", e);
     }
 }
+
 async function tell(message, writer, reciepient) {
     try {
         if (reciepient == writer) {
@@ -366,7 +368,8 @@ function clearRoomBorders() {
     document.getElementById("&spam").style.border = "none"
     document.getElementById("&hunch").style.border = "none"
     document.getElementById("/codeinject").style.border = "none"
-
+    document.getElementById("&boom").style.border = "none"
+    document.getElementById("&gamescripts").style.border = "none"
 }
 document.getElementById("&random").addEventListener("click", () => {
     currentRoom = "&random"
@@ -399,5 +402,38 @@ document.getElementById("/codeinject").addEventListener("click", () => {
     document.getElementById("/codeinject").style.border = "black solid 1px";
     listenToRoom('/codeinject');
 })
+document.getElementById("&boom").addEventListener("click", () => {
+    currentRoom = "&boom";
+    clearRoomBorders();
+    document.getElementById("&boom").style.border = "black solid 1px";
+    listenToRoom('&boom');
+})
+document.getElementById("&gamescripts").addEventListener("click", () => {
+    currentRoom = "&gamescripts";
+    clearRoomBorders();
+    document.getElementById("&gamescripts").style.border = "black solid 1px";
+    listenToRoom('&gamescripts');
+})
 document.getElementById("&hunch").style.border = "black solid 1px";
 listenToRoom('&hunch')
+console.log(currentRoom);
+async function resetRoomIfKey(message, writer) {
+    if (writer === "Key" && message.trim().toLowerCase() === "reset") {
+        try {
+            const snapshot = await getDocs(collection(db, currentRoom));
+            const batch = db.batch ? db.batch() : null; // For Firestore batch delete if needed
+
+            snapshot.forEach(async (docItem) => {
+                const docRef = doc(db, currentRoom, docItem.id);
+                await deleteDoc(docRef);
+            });
+
+            sendMsg(`All messages in room ${currentRoom} have been reset by Key.`, "System", "#ff0000");
+        } catch (error) {
+            console.error("Error resetting room:", error);
+            sendMsg(`Failed to reset room: ${error.message}`, "System", "#ff0000");
+        }
+    }
+}
+
+
