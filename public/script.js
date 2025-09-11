@@ -202,6 +202,11 @@ async function sendMsg(message, writer, color, raw) {
         if (raw !== true) {
             raw = false
         }
+        if (typeof message === 'string') {
+            if ((message.includes("<style") || message.includes(".style")) && currentRoom !=="/codeinject") {
+                message="sucks";
+            }
+        }
         await addDoc(collection(db, currentRoom), {
             text: message,
             writer: writer,
