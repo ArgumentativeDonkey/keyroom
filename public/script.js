@@ -201,12 +201,15 @@ async function sendMsg(message, writer, color, raw) {
     try {
         if (raw !== true) {
             raw = false
-        }
+        }            
         if (typeof message === 'string') {
-            if ((message.includes("<style") || message.includes(".style")) && currentRoom !=="/codeinject") {
+            if ((message.includes("<style") || message.includes(".style") || message.includes("<img")) && currentRoom !=="/codeinject") {
                 message="sucks";
             }
-        }
+            if (message.split(" ")[0] == "!image") {
+                message = `<img src="${message.split(" ")[1]}" alt="Image" style="max-width:1200px; max-height:200px;">`;
+            }
+        } 
         await addDoc(collection(db, currentRoom), {
             text: message,
             writer: writer,
@@ -433,10 +436,10 @@ async function resetRoomIfKey(message, writer) {
                 await deleteDoc(docRef);
             });
 
-            sendMsg(`All messages in room ${currentRoom} have been reset by Key.`, "System", "#ff0000");
+            sendMsg(`All messages in room ${currentRoom} have been reset by Key.`, "System", "#");
         } catch (error) {
             console.error("Error resetting room:", error);
-            sendMsg(`Failed to reset room: ${error.message}`, "System", "#ff0000");
+            sendMsg(`Failed to reset room: ${error.message}`, "System", "#874c60");
         }
     }
 }
