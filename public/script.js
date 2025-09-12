@@ -209,6 +209,9 @@ async function sendMsg(message, writer, color, raw) {
             if (message.split(" ")[0] == "!image") {
                 message = `<img src="${message.split(" ")[1]}" alt="Image" style="max-width:1200px; max-height:200px;">`;
             }
+            if (message.split("")[0] == "link") {
+                message = `<a href="${message.split(" ")[1]}" target="_blank" rel="noopener noreferrer">${message.split(" ")[1]}</a>`;
+            }
         } 
         await addDoc(collection(db, currentRoom), {
             text: message,
