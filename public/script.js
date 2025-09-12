@@ -210,7 +210,7 @@ function listenToRoom(roomName) {
         scrollToBottom(messagesEl);
     });
 }
-const banned = ["stop spamming", "sry", "damn", "darn it", "shit"];
+const banned = ["<"];
 function checkBannedWords(string, banlist) {
     if (!string) {
         string = "";
@@ -304,7 +304,7 @@ async function sendXkcd(what) {
         sendMsg(msg, "xkcd", '#516b94', true);
     }
 }
-var username
+var username;
 if (!localStorage.getItem("username")) {
     username = prompt("Enter username");
     if (username == "xkcd") {
@@ -392,12 +392,14 @@ onSnapshot(usersQuery, (snapshot) => {
     snapshot.forEach((doc) => {
         const user = doc.data();
         if (elapsedSecondsSince(user.lastActive) <= 16) {
-            const userP = document.createElement("p");
-            userP.setHTMLUnsafe = `<span style="background-color:${user.color};" class="usernameBg">${user.name}</span>`;
+            const userP.innerHTML = document.createElement("p");
+            userP = `<span style="background-color:${user.color};" class="usernameBg">${user.name}</span>`;
             document.getElementById("connectedUsers").appendChild(userP);
         }
     })
-    messages.scrollTop = messages.scrollHeight;
+    const messagesEl = document.getElementById("messages");
+    if (messagesEl) messagesEl.scrollTop = messagesEl.scrollHeight;
+
 })
 document.getElementById("showUsers").addEventListener("click", () => {
     if (UsersShown) {
