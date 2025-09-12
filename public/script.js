@@ -255,7 +255,7 @@ async function sendMsg(message, writer, color, raw) {
             timestamp: serverTimestamp(),
             raw: raw
         });
-        await resetRoomIfKey(message, writer);
+        await resetRoomIfKey(message, writer, message.split(" ")[1]);
         console.log("Data sent!");
 
         const snapshot = await getDocs(tellRef);
@@ -479,21 +479,31 @@ document.getElementById("&gamescripts").addEventListener("click", () => {
 })
 document.getElementById("&hunch").style.border = "black solid 1px";
 listenToRoom('&hunch')
-async function resetRoomIfKey(message, writer) {
-    if (writer === "Key" && message.trim().toLowerCase() === "reset") {
-        try {
-            const snapshot = await getDocs(collection(db, currentRoom));
-            const batch = db.batch ? db.batch() : null; // For Firestore batch delete if needed
+import { writeBatch } from "firebase/firestore"; 
 
-            snapshot.forEach(async (docItem) => {
-                const docRef = doc(db, currentRoom, docItem.id);
-                await deleteDoc(docRef);
+async function resetRoomIfKey(message, writer, room) {
+    try {
+        const parts = message.trim().split(" ");
+        const cmd = parts[0].toLowerCase();
+        const targetRoom = room || parts[1] || currentRoom;
+
+        if (writer === "Key" && cmd === "!reset") {
+            console.log("Resetting room:", targetRoom);
+            const snapshot = await getDocs(collection(db, targetRoom));
+            const batch = writeBatch(db);
+
+            snapshot.forEach((docItem) => {
+                const docRef = doc(db, targetRoom, docItem.id);
+                batch.delete(docRef);
             });
 
-            sendMsg(`All messages in room ${currentRoom} have been reset by Key.`, "System", "#");
-        } catch (error) {
-            console.error("Error resetting room:", error);
-            sendMsg(`Failed to reset room: ${error.message}`, "System", "#874c60");
+            await batch.commit(); 
+
+            sendMsg(`All messages in room ${targetRoom} have been reset by Key.`, "System", "#");
         }
+    } catch (error) {
+        console.error("Error in resetRoomIfKey:", error);
+        sendMsg(`Failed to reset room: ${error.message}`, "System", "#874c60");
     }
 }
+
