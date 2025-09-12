@@ -8,3 +8,4 @@ Chatroom syntax: <br>
 **Misc.** - Random unrelated commands <br>
 `!lastactive {username}` - gets the last recorded time somebody of entered username was on the page, regardless of if they sent any messages. <br>
 `!image {image url}` - creates an image (max size 200x200 px) from the given url.
+`!link {link url}` - creates a link of the given url.
