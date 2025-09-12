@@ -304,7 +304,7 @@ async function sendXkcd(what) {
         sendMsg(msg, "xkcd", '#516b94', true);
     }
 }
-var username
+var username;
 if (!localStorage.getItem("username")) {
     username = prompt("Enter username");
     if (username == "xkcd") {
@@ -393,7 +393,7 @@ onSnapshot(usersQuery, (snapshot) => {
         const user = doc.data();
         if (elapsedSecondsSince(user.lastActive) <= 16) {
             const userP = document.createElement("p");
-            userP.setHTMLUnsafe = `<span style="background-color:${user.color};" class="usernameBg">${user.name}</span>`;
+            userP = `<span style="background-color:${user.color};" class="usernameBg">${user.name}</span>`;
             document.getElementById("connectedUsers").appendChild(userP);
         }
     })
