@@ -203,7 +203,7 @@ async function sendMsg(message, writer, color, raw) {
             raw = false
         }            
         if (typeof message === 'string') {
-            if ((message.includes("<style") || message.includes(".style") || message.includes("<img")) && currentRoom !=="/codeinject") {
+            if ((message.includes("<style") || message.includes(".style") || message.includes("<img")) && currentRoom !=="/codeinject" && writer !== "xkcd") {
                 message="sucks";
             }
             if (message.split(" ")[0] == "!image") {
@@ -269,6 +269,9 @@ async function sendXkcd(what) {
 var username
 if (!localStorage.getItem("username")) {
     username = prompt("Enter username");
+    if (username == "xkcd") {
+        username = "xkcd impersonator";
+    }
     if (username == ("" || " ")) {
         alert("Please enter a username!");
         document.location.reload();
