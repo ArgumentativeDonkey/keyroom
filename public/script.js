@@ -197,14 +197,28 @@ function listenToRoom(roomName) {
         scrollToBottom(messagesEl);
     });
 }
+const banned = ["<style", "<", "onmousedown", ".style", "<img"];
+function checkBannedWords(string = "", banlist = banned) {
+    for(let i = 0; i < banlist.length(); i++){
+        if(message.includes(banlist[i])){
+            return false;
+        }
+    }
+    return true;
+}
+const banphrases = ["sucks", "is a loser", "hates Key", "hates everybody", "likes dying in holes", "likes holes", "likes *******", "hates themself", "hit their head on a door", "likes bagels. Bagels? I love bagels! Bagels are round. The sun is round. The sun is yellow. Bananas are yellow. Bananas have spots. Old people have spots. Old people live long lives. Life? That's my favorite cereal! I once bought a box of life for $10. $10!? That's crazy! I was crazy once. They locked me in a room, and fed me bagels.", "died due to [intentional game design]", "<img src='https://m.media-amazon.com/images/I/414LBqeOktL.jpg' max-width:100>", "loves Trump", "loves Biden", "loves American politics", "was pushed off a cliff by a donkey"];
+function rndList(list = banprases){
+    let random = Math.floor(Math.random * list.length());
+    return list[random];
+}
 async function sendMsg(message, writer, color, raw) {
     try {
         if (raw !== true) {
             raw = false
         }            
         if (typeof message === 'string') {
-            if ((message.includes("<style") || message.includes("<")||  message.includes("onmousedown") || message.includes(".style") || message.includes("<img")) && currentRoom !=="/codeinject" && writer !== "xkcd") {
-                message="sucks";
+            if (checkBannedWords(message) && currentRoom !=="/codeinject" && writer !== "xkcd") {
+                message=rndList();
             }
             if (message.split(" ")[0] == "!image") {
                 message = `<img src="${message.split(" ")[1]}" alt="Image" style="max-width:1200px; max-height:200px;">`;
