@@ -27,6 +27,17 @@ const firebaseConfig = {
 };
 
 
+// Can they send messages?
+let cansendmessages = true;
+const timeout = 1000;
+
+function doDelay(){
+    cansendmessages = false;
+    setTimeout(() => {
+        cansendmessages = true;
+    }, timeout);
+}
+
 // Initialize Firebase
 var currentRoom = "&hunch"
 const app = initializeApp(firebaseConfig);
@@ -197,7 +208,7 @@ function listenToRoom(roomName) {
         scrollToBottom(messagesEl);
     });
 }
-const banned = ["<style", "<", "onmousedown", ".style", "<img"];
+const banned = ["stop spamming", "sry", "damn", "darn it", "shit"];
 function checkBannedWords(string, banlist) {
     if (!string) {
         string = "";
@@ -206,7 +217,7 @@ function checkBannedWords(string, banlist) {
         banlist = banned;
     }
     for (let i = 0; i < banlist.length; i++) {
-        if (string.includes(banlist[i])) {
+        if (string.includes(banlist[i].toLowerCase())) {
             return false;
         }
     }
@@ -221,6 +232,7 @@ function rndList(list) {
     return list[random];
 }
 async function sendMsg(message, writer, color, raw) {
+    doDelay();
     try {
         if (raw !== true) {
             raw = false
@@ -327,21 +339,26 @@ async function getUserLastActive(user) {
 }
 document.addEventListener("keydown", (e) => {
     if (e.keyCode == 13) {
-        sendMsg(document.getElementById("message-input").value, username, getUserColor(username));
-        var command = document.getElementById("message-input").value.split(" ")[0];
-        var split = document.getElementById("message-input").value.split(" ");
+        if(cansendmessages && username !== "Key"){
+            document.getElementById("message-input").placeholder = "Wow, what a big, beautiful box...";
+            sendMsg(document.getElementById("message-input").value, username, getUserColor(username));
+            var command = document.getElementById("message-input").value.split(" ")[0];
+            var split = document.getElementById("message-input").value.split(" ");
 
-        if (command == "!xkcd" && currentRoom == "&xkcd") {
-            sendXkcd(split[1]);
-        } else if (command == "!tell") {
-            var messagestring = "";
-            for (var i = 2; i < (split.length); i++) {
-                messagestring += ` ${split[i]}`
-                console.log(messagestring);
+            if (command == "!xkcd" && currentRoom == "&xkcd") {
+                sendXkcd(split[1]);
+            } else if (command == "!tell") {
+                var messagestring = "";
+                for (var i = 2; i < (split.length); i++) {
+                    messagestring += ` ${split[i]}`
+                    console.log(messagestring);
+                }
+                tell(messagestring, username, split[1])
+            } else if (command == "!lastactive") {
+                getUserLastActive(split[1]);
             }
-            tell(messagestring, username, split[1])
-        } else if (command == "!lastactive") {
-            getUserLastActive(split[1]);
+        }else {
+            document.getElementById("message-input").placeholder = "wait a sec...";
         }
         document.getElementById("message-input").value = "";
     }
