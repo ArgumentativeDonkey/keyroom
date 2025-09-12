@@ -210,7 +210,7 @@ function listenToRoom(roomName) {
         scrollToBottom(messagesEl);
     });
 }
-const banned = ["stop spamming", "sry", "damn", "darn it", "shit"];
+const banned = ["<"];
 function checkBannedWords(string, banlist) {
     if (!string) {
         string = "";
