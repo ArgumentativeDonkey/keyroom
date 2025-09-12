@@ -104,6 +104,7 @@ function elapsedSecondsSince(timestamp) {
 
 function getUserColor(username) {
     if (username === "Key") return "#9ca060";
+    if (username === "Leif") return "transparent; background-image: repeating-linear-gradient( 45deg, #63e3bf, #7383eb, #63e3bf var(--stripe-width) ); animation: stripes 6s linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
 
     const palette = [
         "#e63946", "#f07c1e", "#2a9d8f", "#457b9d", "#b48c70",
@@ -317,6 +318,10 @@ if (!localStorage.getItem("username")) {
     localStorage.setItem("username", username);
 } else {
     username = localStorage.getItem("username");
+    if(username == ("" || " ")) {
+        alert("Something is really wrong. Clear your cookies and try again.");
+        document.location.reload();
+    }
 }
 const userRef = collection(db, "connectedUsers");
 const usersQuery = query(userRef, orderBy("lastActive", "asc"));
