@@ -392,12 +392,14 @@ onSnapshot(usersQuery, (snapshot) => {
     snapshot.forEach((doc) => {
         const user = doc.data();
         if (elapsedSecondsSince(user.lastActive) <= 16) {
-            const userP = document.createElement("p");
+            const userP.innerHTML = document.createElement("p");
             userP = `<span style="background-color:${user.color};" class="usernameBg">${user.name}</span>`;
             document.getElementById("connectedUsers").appendChild(userP);
         }
     })
-    messages.scrollTop = messages.scrollHeight;
+    const messagesEl = document.getElementById("messages");
+    if (messagesEl) messagesEl.scrollTop = messagesEl.scrollHeight;
+
 })
 document.getElementById("showUsers").addEventListener("click", () => {
     if (UsersShown) {
