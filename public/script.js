@@ -32,7 +32,7 @@ let cansendmessages = true;
 const timeout = 1000;
 
 function doDelay(){
-    cansendmessages = true;
+    cansendmessages = false;
     setTimeout(() => {
         cansendmessages = true;
         document.getElementById("message-input").placeholder = "Type a message...";
@@ -342,11 +342,11 @@ async function getUserLastActive(user) {
         sendMsg(`User ${user} not found.`, "LastActive", '#cf7e78');
     }
 }
-document.addEventListener("keydown", processKeydown)
+document.addEventListener("keydown", (e) => {processKeydown(e)});
 
 function processKeydown(e) {
     if (e.keyCode == 13) {
-        if(cansendmessages && username !== "Key"){
+        if(cansendmessages || username === "Key"){
             document.getElementById("message-input").placeholder = "Wow, what a big, beautiful box...";
             sendMsg(document.getElementById("message-input").value, username, getUserColor(username));
             var command = document.getElementById("message-input").value.split(" ")[0];
