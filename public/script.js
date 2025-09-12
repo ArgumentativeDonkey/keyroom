@@ -32,9 +32,10 @@ let cansendmessages = true;
 const timeout = 1000;
 
 function doDelay(){
-    cansendmessages = false;
+    cansendmessages = true;
     setTimeout(() => {
         cansendmessages = true;
+        document.getElementById("message-input").placeholder = "Type a message...";
     }, timeout);
 }
 
@@ -233,7 +234,6 @@ function rndList(list) {
     return list[random];
 }
 async function sendMsg(message, writer, color, raw) {
-    doDelay();
     try {
         if (raw !== true) {
             raw = false
@@ -342,7 +342,9 @@ async function getUserLastActive(user) {
         sendMsg(`User ${user} not found.`, "LastActive", '#cf7e78');
     }
 }
-document.addEventListener("keydown", (e) => {
+document.addEventListener("keydown", processKeydown)
+
+function processKeydown(e) {
     if (e.keyCode == 13) {
         if(cansendmessages && username !== "Key"){
             document.getElementById("message-input").placeholder = "Wow, what a big, beautiful box...";
@@ -362,12 +364,14 @@ document.addEventListener("keydown", (e) => {
             } else if (command == "!lastactive") {
                 getUserLastActive(split[1]);
             }
+            doDelay();
         }else {
             document.getElementById("message-input").placeholder = "wait a sec...";
         }
         document.getElementById("message-input").value = "";
     }
-})
+}
+
 messages.scrollTop = messages.scrollHeight;
 
 
