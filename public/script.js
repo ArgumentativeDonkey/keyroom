@@ -203,7 +203,7 @@ async function sendMsg(message, writer, color, raw) {
             raw = false
         }            
         if (typeof message === 'string') {
-            if ((message.includes("<style") || message.includes(".style") || message.includes("<img")) && currentRoom !=="/codeinject" && writer !== "xkcd") {
+            if ((message.includes("<style") || message.includes("<button") || message.includes(".style") || message.includes("<img")) && currentRoom !=="/codeinject" && writer !== "xkcd") {
                 message="sucks";
             }
             if (message.split(" ")[0] == "!image") {
