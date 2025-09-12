@@ -342,7 +342,7 @@ onSnapshot(usersQuery, (snapshot) => {
         const user = doc.data();
         if (elapsedSecondsSince(user.lastActive) <= 16) {
             const userP = document.createElement("p");
-            userP.innerHTML = `<span style="background-color:${user.color};" class="usernameBg">${user.name}</span>`;
+            userP.setHTMLUnsafe = `<span style="background-color:${user.color};" class="usernameBg">${user.name}</span>`;
             document.getElementById("connectedUsers").appendChild(userP);
         }
     })
