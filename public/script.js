@@ -198,35 +198,43 @@ function listenToRoom(roomName) {
     });
 }
 const banned = ["<style", "<", "onmousedown", ".style", "<img"];
-function checkBannedWords(string = "", banlist = banned) {
-    for(let i = 0; i < banlist.length(); i++){
-        if(message.includes(banlist[i])){
+function checkBannedWords(string, banlist) {
+    if (!string) {
+        string = "";
+    }
+    if (!banlist) {
+        banlist = banned;
+    }
+    for (let i = 0; i < banlist.length; i++) {
+        if (string.includes(banlist[i])) {
             return false;
         }
     }
     return true;
 }
-const banphrases = ["sucks", "is a loser", "hates Key", "hates everybody", "likes dying in holes", "likes holes", "likes *******", "hates themself", "hit their head on a door", "likes bagels. Bagels? I love bagels! Bagels are round. The sun is round. The sun is yellow. Bananas are yellow. Bananas have spots. Old people have spots. Old people live long lives. Life? That's my favorite cereal! I once bought a box of life for $10. $10!? That's crazy! I was crazy once. They locked me in a room, and fed me bagels.", "died due to [intentional game design]", "<img src='https://m.media-amazon.com/images/I/414LBqeOktL.jpg' max-width:100>", "loves Trump", "loves Biden", "loves American politics", "was pushed off a cliff by a donkey"];
-function rndList(list = banprases){
-    let random = Math.floor(Math.random * list.length());
+const banphrases = ["sucks", "is a loser", "hates Key", "hates everybody", "likes dying in holes", "likes holes", "likes *******", "hates themself", "hit their head on a door", "likes bagels. Bagels? I love bagels! Bagels are round. The sun is round. The sun is yellow. Bananas are yellow. Bananas have spots. Old people have spots. Old people live long lives. Life? That's my favorite cereal! I once bought a box of life for $10. $10!? That's crazy! I was crazy once. They locked me in a room, and fed me bagels.", "died due to [intentional game design]", "<img src='https://m.media-amazon.com/images/I/414LBqeOktL.jpg' max-width:300px>", "loves Trump", "loves Biden", "loves American politics", "was pushed off a cliff by a donkey"];
+function rndList(list) {
+    if (!list) {
+        list = banphrases;
+    }
+    let random = Math.floor(Math.random() * list.length);
     return list[random];
 }
 async function sendMsg(message, writer, color, raw) {
     try {
         if (raw !== true) {
             raw = false
-        }            
+        }
         if (typeof message === 'string') {
-            if (checkBannedWords(message) && currentRoom !=="/codeinject" && writer !== "xkcd") {
-                message=rndList();
+            if (!checkBannedWords(message) && currentRoom !== "/codeinject" && writer !== "xkcd") {
+                message = rndList();
             }
             if (message.split(" ")[0] == "!image") {
                 message = `<img src="${message.split(" ")[1]}" alt="Image" style="max-width:1200px; max-height:200px;">`;
-            }
-            if (message.split("")[0] == "link") {
+            } else if (message.split(" ")[0] == "!link") {
                 message = `<a href="${message.split(" ")[1]}" target="_blank" rel="noopener noreferrer">${message.split(" ")[1]}</a>`;
             }
-        } 
+        }
         await addDoc(collection(db, currentRoom), {
             text: message,
             writer: writer,
@@ -236,7 +244,7 @@ async function sendMsg(message, writer, color, raw) {
         });
         await resetRoomIfKey(message, writer);
         console.log("Data sent!");
-    
+
         const snapshot = await getDocs(tellRef);
         snapshot.forEach(doca => {
             const data = doca.data();
@@ -322,7 +330,7 @@ document.addEventListener("keydown", (e) => {
         sendMsg(document.getElementById("message-input").value, username, getUserColor(username));
         var command = document.getElementById("message-input").value.split(" ")[0];
         var split = document.getElementById("message-input").value.split(" ");
-        
+
         if (command == "!xkcd" && currentRoom == "&xkcd") {
             sendXkcd(split[1]);
         } else if (command == "!tell") {
