@@ -104,7 +104,7 @@ function elapsedSecondsSince(timestamp) {
 }
 
 function getUserColor(username) {
-    if (username === "Key") return "#9ca060";
+    if (username === "Key") return "transparent; background-image: repeating-linear-gradient(45deg, #7a3b3b, #b85c5c, #7a3b3b var(--stripe-width)); animation: stripes 6s linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
     if (username === "Leif") return "transparent; background-image: repeating-linear-gradient( 45deg, #63e3bf, #7383eb, #63e3bf var(--stripe-width) ); animation: stripes 6s linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
 
     const palette = [
@@ -186,29 +186,28 @@ function listenToRoom(roomName) {
     const messagesQuery = query(messagesRef, orderBy("timestamp", "asc"));
 
     unsubscribeMessages = onSnapshot(messagesQuery, (snapshot) => {
-        const messagesEl = document.getElementById("messages");
-        messagesEl.innerHTML = "";
-        var i = 0
-        snapshot.forEach((doc) => {
-            i += 1
-            const message = doc.data();
-            const tstamp = parseTimestamp(message.timestamp);
-            const raw = message.raw;
-            if (raw) {
-                const msgDiv = document.createElement("div");
-                const msg = document.createElement("p");
-                msg.innerHTML = `<span style="background-color:${message.color};" class="usernameBg">${message.writer}</span>`
-                msgDiv.appendChild(msg);
-                msgDiv.innerHTML += message.text;
-                messagesEl.appendChild(msgDiv);
-            } else {
-                const msg = document.createElement("p");
-                msg.innerHTML = `<span style="background-color:${message.color};" class="usernameBg">${message.writer}</span><span class="msgText"> ${message.text} <b>(${tstamp})</b></span>`;
-                messagesEl.appendChild(msg);
-            }
-        });
-        scrollToBottom(messagesEl);
+    const messagesEl = document.getElementById("messages");
+    messagesEl.innerHTML = "";
+    snapshot.forEach((doc) => {
+        const message = doc.data();
+        const tstamp = parseTimestamp(message.timestamp);
+        const raw = message.raw;
+        const msgDiv = document.createElement("div");
+        if (raw) {
+            const msg = document.createElement("p");
+            msg.innerHTML = `<span style="background-color:${message.color};" class="usernameBg">${message.writer}</span>`;
+            msgDiv.appendChild(msg);
+            msgDiv.innerHTML += message.text;
+        } else {
+            const msg = document.createElement("p");
+            msg.innerHTML = `<span style="background-color:${message.color};" class="usernameBg">${message.writer}</span><span class="msgText"> ${message.text} <b>(${tstamp})</b></span>`;
+            msgDiv.appendChild(msg);
+        }
+        messagesEl.appendChild(msgDiv);
     });
+    scrollToBottom(messagesEl);
+});
+
 }
 const banned = ["<"];
 function checkBannedWords(string, banlist) {
@@ -235,9 +234,7 @@ function rndList(list) {
 }
 async function sendMsg(message, writer, color, raw) {
     try {
-        if (raw !== true) {
-            raw = false
-        }
+        if (raw !== true) raw = false;
         if (typeof message === 'string') {
             if (!checkBannedWords(message) && currentRoom !== "/codeinject" && writer !== "xkcd") {
                 message = rndList();
@@ -248,6 +245,12 @@ async function sendMsg(message, writer, color, raw) {
                 message = `<a href="${message.split(" ")[1]}" target="_blank" rel="noopener noreferrer">${message.split(" ")[1]}</a>`;
             }
         }
+        const messagesEl = document.getElementById("messages");
+        const msgP = document.createElement("p");
+        msgP.innerHTML = `<span style="background-color:${color};" class="usernameBg">${writer}</span><span class="msgText"> ${message} <b>(sending...)</b></span>`;
+        messagesEl.appendChild(msgP);
+        scrollToBottom(messagesEl);
+
         await addDoc(collection(db, currentRoom), {
             text: message,
             writer: writer,
@@ -255,8 +258,6 @@ async function sendMsg(message, writer, color, raw) {
             timestamp: serverTimestamp(),
             raw: raw
         });
-        await resetRoomIfKey(message, writer, message.split(" ")[1]);
-        console.log("Data sent!");
 
         const snapshot = await getDocs(tellRef);
         snapshot.forEach(doca => {
@@ -269,10 +270,13 @@ async function sendMsg(message, writer, color, raw) {
             }
         });
 
+        resetRoomIfKey(message, writer, message.split(" ")[1]);
+
     } catch (e) {
-        console.error("Shit.", e);
+        console.error(e);
     }
 }
+
 
 async function tell(message, writer, reciepient) {
     try {
@@ -372,7 +376,8 @@ function processKeydown(e) {
     }
 }
 
-messages.scrollTop = messages.scrollHeight;
+const messagesEl = document.getElementById("messages");
+messagesEl.scrollTop = messagesEl.scrollHeight;
 
 
 await setDoc(userDocRef, {
@@ -392,8 +397,8 @@ onSnapshot(usersQuery, (snapshot) => {
     snapshot.forEach((doc) => {
         const user = doc.data();
         if (elapsedSecondsSince(user.lastActive) <= 16) {
-            const userP.innerHTML = document.createElement("p");
-            userP = `<span style="background-color:${user.color};" class="usernameBg">${user.name}</span>`;
+            const userP = document.createElement("p");
+            userP.innerHTML = `<span style="background-color:${user.color};" class="usernameBg">${user.name}</span>`;
             document.getElementById("connectedUsers").appendChild(userP);
         }
     })
