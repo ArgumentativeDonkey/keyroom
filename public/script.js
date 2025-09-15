@@ -340,17 +340,20 @@ async function setUsername(){
         if (username == "xkcd") {
             username = "xkcd impersonator";
         }
-        if (username == ("" || " ")) {
+        if (username == ("" || " " || null)) {
             alert("Please enter a username!");
             setUsername();
+            return;
         }
 
         localStorage.setItem("username", username);
     } else {
         username = localStorage.getItem("username");
-        if(username == ("" || " ")) {
+        if(username == ("" || " " || null)) {
             alert("Something is really wrong. Clear your cookies and try again.");
             setUsername();
+            localStorage.removeItem('username');
+            return;
         }
     }
 }
