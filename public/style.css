@@ -35,6 +35,7 @@ h1 {
 }
 .roomsList li {
     cursor: pointer;
+    width: fit-content;
 }
 .roomsList li:hover {
     text-decoration: underline;
