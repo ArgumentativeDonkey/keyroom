@@ -26,6 +26,7 @@ const firebaseConfig = {
 
 };
 
+import { hasher } from "./hashutil.js";
 
 // Can they send messages?
 let cansendmessages = true;
@@ -341,7 +342,7 @@ async function validatePassword(username){
     if(data.hasOwnProperty(username)){
         console.log("password found, asking for verification.")
         let input = prompt("Enter password");
-        return data[username] === input;
+        return data[username] === hasher(input);
     } else {
         console.log("no password found, authenticating.")
         return true;
