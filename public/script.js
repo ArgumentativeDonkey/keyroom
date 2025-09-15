@@ -201,7 +201,7 @@ function listenToRoom(roomName) {
                 msgDiv.innerHTML += message.text;
             } else {
                 const msg = document.createElement("p");
-                msg.innerHTML = `<span style="background-color:${message.color};" class="usernameBg">${message.writer}</span><span class="msgText"> ${message.text} <b>(${tstamp})</b></span>`;
+                msg.innerHTML = `<span style="background-color:${message.color};" class="usernameBg">${message.writer}</span><span class="msgText"> ${message.text} <b>(${tstamp})</b></span><span class="iden">${message.iden}</span>`;
                 msgDiv.appendChild(msg);
             }
             messagesEl.appendChild(msgDiv);
@@ -277,31 +277,61 @@ export async function sendMsg(message, writer, color, raw) {
                     sendMsg("Error: No message found to edit.", "System", "#");
                 }
                 return;
-            } else if (message.split(" ")[0] === "!delete") {
-                const targetId = message.split(" ")[1];
+            } else if (message.split(" ")[0] === "!editId") {
+                const newText = message.split(" ")[2] + " <i>(edited)</i>";
                 const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
-                let docFound = null;
+                let found = false;
 
                 for (const doca of snapshot.docs) {
-                    if (doca.text === targetId) {
+                    const data = doca.data();
+                    if (data.iden === message.split(" ")[1]) {
+                        const docRef = doc(db, currentRoom, doca.id);
+                        await setDoc(docRef, {
+                            text: newText,
+                            writer,
+                            color,
+                            timestamp: serverTimestamp(),
+                            raw
+                        }, { merge: true });
+                        found = true;
+                        break;
+                    }
+
+
+                    if (docFound) {
+                        found = true;
+                    } else {
+                        sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#874c60");
+                        return;
+                    }
+                }
+
+                if (!found) {
+                    sendMsg("Error: No message found to edit.", "System", "#");
+                }
+                return;
+            } else if (message.split(" ")[0] === "!delete") {
+                const targetId = message.split(" ")[1].trim();
+                const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
+                let docFound = null;
+            
+                for (const doca of snapshot.docs) {
+                    if (doca.data().iden === targetId) {
                         docFound = doca;
                         break;
                     }
                 }
-
+            
                 if (docFound) {
                     const docRef = doc(db, currentRoom, docFound.id);
                     await deleteDoc(docRef);
+                    return;
                 } else {
                     sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#874c60");
-                    return;
                 }
+            
             } else if (message.split(" ")[0] === "!showIden") {
-                const elements = document.getElementsByClassName('iden');
-                for (let i = 0; i < elements.length; i++) {
-                    elements[i].classList.add("shownIden");
-                    elements[i].classList.remove("iden");
-                }
+                document.getElementById("messages").dataset.show = "true";
             }
 
         }
