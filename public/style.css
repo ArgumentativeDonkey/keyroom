@@ -33,6 +33,9 @@ h1 {
     margin-left: 0;
 
 }
+.roomsList li {
+    cursor: pointer;
+}
 .roomsList li:hover {
     text-decoration: underline;
 }
