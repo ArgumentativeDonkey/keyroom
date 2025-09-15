@@ -12,6 +12,7 @@
     --txt: black;
     --stripe-width: 8em;
     --stripe-calc: calc(var(--stripe-width) * 1.41421356237);
+    --anim-time: 8s;
 }
 
 

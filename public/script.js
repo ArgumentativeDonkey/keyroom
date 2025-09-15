@@ -104,8 +104,8 @@ function elapsedSecondsSince(timestamp) {
 }
 
 function getUserColor(username) {
-    if (username === "Key") return "transparent; background-image: repeating-linear-gradient(45deg, #7a3b3b, #b85c5c, #7a3b3b var(--stripe-width)); animation: stripes 6s linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
-    if (username === "Leif") return "transparent; background-image: repeating-linear-gradient( 45deg, #63e3bf, #7383eb, #63e3bf var(--stripe-width) ); animation: stripes 6s linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
+    if (username === "Key") return "transparent; background-image: repeating-linear-gradient(45deg, #7a3b3b, #b85c5c, #7a3b3b var(--stripe-width)); animation: stripes var(--anim-time) linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
+    if (username === "Leif") return "transparent; background-image: repeating-linear-gradient( 45deg, #63e3bf, #7383eb, #63e3bf var(--stripe-width) ); animation: stripes var(--anim-time) linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
 
     const palette = [
         "#e63946", "#f07c1e", "#2a9d8f", "#457b9d", "#b48c70",
