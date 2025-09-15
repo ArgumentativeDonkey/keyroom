@@ -243,7 +243,32 @@ async function sendMsg(message, writer, color, raw) {
                 message = `<img src="${message.split(" ")[1]}" alt="Image" style="max-width:1200px; max-height:200px;">`;
             } else if (message.split(" ")[0] == "!link") {
                 message = `<a href="${message.split(" ")[1]}" target="_blank" rel="noopener noreferrer">${message.split(" ")[1]}</a>`;
-            }
+            } else if (message.split(" ")[0] === "!edit") {
+                const newText = message.replace("!edit ", "")+" <i>(edited)</i>";
+                const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
+                let found = false;
+            
+                for (const doca of snapshot.docs) {
+                    const data = doca.data();
+                    if (data.writer === writer) {
+                        const docRef = doc(db, currentRoom, doca.id);
+                        await setDoc(docRef, {
+                            text: newText,
+                            writer,
+                            color,
+                            timestamp: serverTimestamp(),
+                            raw
+                        }, { merge: true });
+                        found = true;
+                        break;
+                    }
+                }
+            
+                if (!found) {
+                    sendMsg("Error: No message found to edit.", "System", "#"); 
+                }
+                return;
+            }            
         }
         const messagesEl = document.getElementById("messages");
         const msgP = document.createElement("p");
@@ -367,7 +392,7 @@ function processKeydown(e) {
                 tell(messagestring, username, split[1])
             } else if (command == "!lastactive") {
                 getUserLastActive(split[1]);
-            }
+            } 
             doDelay();
         }else {
             document.getElementById("message-input").placeholder = "wait a sec...";
