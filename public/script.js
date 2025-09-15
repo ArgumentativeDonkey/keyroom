@@ -347,6 +347,7 @@ async function setUsername(){
         }
 
         localStorage.setItem("username", username);
+        scrollToBottom(document.getElementById("messages"));
     } else {
         username = localStorage.getItem("username");
         if(username == "" || username == " " || username == null) {
