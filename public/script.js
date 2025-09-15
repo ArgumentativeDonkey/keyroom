@@ -340,7 +340,7 @@ async function setUsername(){
         if (username == "xkcd") {
             username = "xkcd impersonator";
         }
-        if (username == ("" || " " || null)) {
+        if (username == "" || username == " " || username == null) {
             alert("Please enter a username!");
             setUsername();
             return;
@@ -349,10 +349,10 @@ async function setUsername(){
         localStorage.setItem("username", username);
     } else {
         username = localStorage.getItem("username");
-        if(username == ("" || " " || null)) {
+        if(username == "" || username == " " || username == null) {
             alert("Something is really wrong. Clear your cookies and try again.");
-            setUsername();
             localStorage.removeItem('username');
+            setUsername();
             return;
         }
     }
@@ -525,7 +525,7 @@ async function resetRoomIfKey(message, writer, room) {
         const cmd = parts[0].toLowerCase();
         const targetRoom = room || parts[1] || currentRoom;
 
-        if (writer === ("Key" || "Leif") && cmd === "!reset") {
+        if ((writer === "Key" || writer === "Leif") && cmd === "!reset") {
             console.log("Resetting room:", targetRoom);
             const snapshot = await getDocs(collection(db, targetRoom));
             const batch = writeBatch(db);
