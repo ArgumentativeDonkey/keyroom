@@ -10,3 +10,7 @@ Chatroom syntax: <br>
 `!image {image url}` - creates an image (max size 200x200 px) from the given url.
 `!link {link url}` - creates a link of the given url.
 `!edit {text}` - changes your last sent message's text to the inputted text. Leaves an *(edited)* tag after the edited message.
+`!showIden` - shows all message ids.
+`!hideIden` - hides shown message ids.
+`!delete {iden} - deletes message of inputed id.
+

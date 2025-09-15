@@ -316,7 +316,7 @@ export async function sendMsg(message, writer, color, raw) {
                 let docFound = null;
             
                 for (const doca of snapshot.docs) {
-                    if (doca.data().iden === targetId) {
+                    if (doca.data().iden === targetId && doca.data().writer === writer) {
                         docFound = doca;
                         break;
                     }
@@ -332,6 +332,8 @@ export async function sendMsg(message, writer, color, raw) {
             
             } else if (message.split(" ")[0] === "!showIden") {
                 document.getElementById("messages").dataset.show = "true";
+            } else if (message.split(" ")[0] === "!hideIden") {
+                document.getElementById("messages").dataset.show = "false";
             }
 
         }
