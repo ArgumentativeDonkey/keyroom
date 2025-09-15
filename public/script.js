@@ -232,7 +232,7 @@ function rndList(list) {
     let random = Math.floor(Math.random() * list.length);
     return list[random];
 }
-async function sendMsg(message, writer, color, raw) {
+export async function sendMsg(message, writer, color, raw) {
     try {
         if (raw !== true) raw = false;
         if (typeof message === 'string') {
@@ -309,24 +309,27 @@ async function sendXkcd(what) {
     }
 }
 var username;
-if (!localStorage.getItem("username")) {
-    username = prompt("Enter username");
-    if (username == "xkcd") {
-        username = "xkcd impersonator";
-    }
-    if (username == ("" || " ")) {
-        alert("Please enter a username!");
-        document.location.reload();
-    }
+async function setUsername(){
+    if (!localStorage.getItem("username")) {
+        username = prompt("Enter username");
+        if (username == "xkcd") {
+            username = "xkcd impersonator";
+        }
+        if (username == ("" || " ")) {
+            alert("Please enter a username!");
+            setUsername();
+        }
 
-    localStorage.setItem("username", username);
-} else {
-    username = localStorage.getItem("username");
-    if(username == ("" || " ")) {
-        alert("Something is really wrong. Clear your cookies and try again.");
-        document.location.reload();
+        localStorage.setItem("username", username);
+    } else {
+        username = localStorage.getItem("username");
+        if(username == ("" || " ")) {
+            alert("Something is really wrong. Clear your cookies and try again.");
+            setUsername();
+        }
     }
 }
+setUsername();
 const userRef = collection(db, "connectedUsers");
 const usersQuery = query(userRef, orderBy("lastActive", "asc"));
 const userDocRef = doc(db, "connectedUsers", username);
@@ -494,7 +497,7 @@ async function resetRoomIfKey(message, writer, room) {
         const cmd = parts[0].toLowerCase();
         const targetRoom = room || parts[1] || currentRoom;
 
-        if (writer === "Key" && cmd === "!reset") {
+        if (writer === ("Key" || "Leif") && cmd === "!reset") {
             console.log("Resetting room:", targetRoom);
             const snapshot = await getDocs(collection(db, targetRoom));
             const batch = writeBatch(db);
