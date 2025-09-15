@@ -337,10 +337,13 @@ async function sendXkcd(what) {
 async function validatePassword(username){
     const res = await fetch("./passwords.json");
     const data = await res.json();
+    console.log("validating password")
     if(data.hasOwnProperty(username)){
+        console.log("password found, asking for verification.")
         let input = prompt("Enter password");
         return data[username] === input;
     } else {
+        console.log("no password found, authenticating.")
         return true;
     }
 }
