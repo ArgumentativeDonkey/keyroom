@@ -136,3 +136,9 @@ body {
 .msgText {
     color: black;
 }
+.shownIden {
+    display: block;
+}
+.iden {
+    display: none;
+}

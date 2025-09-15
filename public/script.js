@@ -31,7 +31,7 @@ const firebaseConfig = {
 let cansendmessages = true;
 const timeout = 1000;
 
-function doDelay(){
+function doDelay() {
     cansendmessages = false;
     setTimeout(() => {
         cansendmessages = true;
@@ -186,27 +186,27 @@ function listenToRoom(roomName) {
     const messagesQuery = query(messagesRef, orderBy("timestamp", "asc"));
 
     unsubscribeMessages = onSnapshot(messagesQuery, (snapshot) => {
-    const messagesEl = document.getElementById("messages");
-    messagesEl.innerHTML = "";
-    snapshot.forEach((doc) => {
-        const message = doc.data();
-        const tstamp = parseTimestamp(message.timestamp);
-        const raw = message.raw;
-        const msgDiv = document.createElement("div");
-        if (raw) {
-            const msg = document.createElement("p");
-            msg.innerHTML = `<span style="background-color:${message.color};" class="usernameBg">${message.writer}</span>`;
-            msgDiv.appendChild(msg);
-            msgDiv.innerHTML += message.text;
-        } else {
-            const msg = document.createElement("p");
-            msg.innerHTML = `<span style="background-color:${message.color};" class="usernameBg">${message.writer}</span><span class="msgText"> ${message.text} <b>(${tstamp})</b></span>`;
-            msgDiv.appendChild(msg);
-        }
-        messagesEl.appendChild(msgDiv);
+        const messagesEl = document.getElementById("messages");
+        messagesEl.innerHTML = "";
+        snapshot.forEach((doc) => {
+            const message = doc.data();
+            const tstamp = parseTimestamp(message.timestamp);
+            const raw = message.raw;
+            const msgDiv = document.createElement("div");
+            if (raw) {
+                const msg = document.createElement("p");
+                msg.innerHTML = `<span style="background-color:${message.color};" class="usernameBg">${message.writer}</span>`;
+                msgDiv.appendChild(msg);
+                msgDiv.innerHTML += message.text;
+            } else {
+                const msg = document.createElement("p");
+                msg.innerHTML = `<span style="background-color:${message.color};" class="usernameBg">${message.writer}</span><span class="msgText"> ${message.text} <b>(${tstamp})</b></span>`;
+                msgDiv.appendChild(msg);
+            }
+            messagesEl.appendChild(msgDiv);
+        });
+        scrollToBottom(messagesEl);
     });
-    scrollToBottom(messagesEl);
-});
 
 }
 const banned = ["<"];
@@ -244,10 +244,10 @@ export async function sendMsg(message, writer, color, raw) {
             } else if (message.split(" ")[0] == "!link") {
                 message = `<a href="${message.split(" ")[1]}" target="_blank" rel="noopener noreferrer">${message.split(" ")[1]}</a>`;
             } else if (message.split(" ")[0] === "!edit") {
-                const newText = message.replace("!edit ", "")+" <i>(edited)</i>";
+                const newText = message.replace("!edit ", "") + " <i>(edited)</i>";
                 const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
                 let found = false;
-            
+
                 for (const doca of snapshot.docs) {
                     const data = doca.data();
                     if (data.writer === writer) {
@@ -262,17 +262,53 @@ export async function sendMsg(message, writer, color, raw) {
                         found = true;
                         break;
                     }
+
+
+                    if (docFound) {
+                        found = true;
+                    } else {
+                        sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#874c60");
+                        return;
+                    }
                 }
-            
+
                 if (!found) {
-                    sendMsg("Error: No message found to edit.", "System", "#"); 
+                    sendMsg("Error: No message found to edit.", "System", "#");
                 }
                 return;
-            }            
+            } else if (message.split(" ")[0] === "!delete") {
+                const targetId = message.split(" ")[1];
+                const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
+                let docFound = null;
+
+                for (const doca of snapshot.docs) {
+                    if (doca.text === targetId) {
+                        docFound = doca;
+                        break;
+                    }
+                }
+
+                if (docFound) {
+                    const docRef = doc(db, currentRoom, docFound.id);
+                    await deleteDoc(docRef);
+                } else {
+                    sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#874c60");
+                    return;
+                }
+            } else if (message.split(" ")[0] === "!showIden") {
+                const elements = document.getElementsByClassName('iden');
+                for (let i = 0; i < elements.length; i++) {
+                    elements[i].classList.add("shownIden");
+                    elements[i].classList.remove("iden");
+                }
+            }
+
         }
         const messagesEl = document.getElementById("messages");
         const msgP = document.createElement("p");
-        msgP.innerHTML = `<span style="background-color:${color};" class="usernameBg">${writer}</span><span class="msgText"> ${message} <b>(sending...)</b></span>`;
+        const iden = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        console.log("iden:", iden);
+        msgP.innerHTML = `<span style="background-color:${color};" class="usernameBg">${writer}</span><span class="msgText"> ${message} <b>(sending...)</b></span><span class="iden">${iden}</span>`;
         messagesEl.appendChild(msgP);
         scrollToBottom(messagesEl);
 
@@ -281,7 +317,8 @@ export async function sendMsg(message, writer, color, raw) {
             writer: writer,
             color: color,
             timestamp: serverTimestamp(),
-            raw: raw
+            raw: raw,
+            iden: iden
         });
 
         const snapshot = await getDocs(tellRef);
@@ -334,11 +371,11 @@ async function sendXkcd(what) {
     }
 }
 
-async function validatePassword(username){
+async function validatePassword(username) {
     const res = await fetch("./passwords.json");
     const data = await res.json();
     console.log("validating password")
-    if(data.hasOwnProperty(username)){
+    if (data.hasOwnProperty(username)) {
         console.log("password found, asking for verification.")
         let input = prompt("Enter password");
         return data[username] === input;
@@ -349,7 +386,7 @@ async function validatePassword(username){
 }
 
 var username;
-async function setUsername(){
+async function setUsername() {
     if (!localStorage.getItem("username")) {
         username = prompt("Enter username");
         if (username == "xkcd") {
@@ -361,7 +398,7 @@ async function setUsername(){
             return;
         }
         const ok = await validatePassword(username);
-        if(!ok){
+        if (!ok) {
             alert("Password incorrect, please try again.");
             setUsername();
             return;
@@ -371,7 +408,7 @@ async function setUsername(){
         scrollToBottom(document.getElementById("messages"));
     } else {
         username = localStorage.getItem("username");
-        if(username == "" || username == " " || username == null) {
+        if (username == "" || username == " " || username == null) {
             alert("Something is really wrong. Clear your cookies and try again.");
             localStorage.removeItem('username');
             setUsername();
@@ -399,11 +436,11 @@ async function getUserLastActive(user) {
         sendMsg(`User ${user} not found.`, "LastActive", '#cf7e78');
     }
 }
-document.addEventListener("keydown", (e) => {processKeydown(e)});
+document.addEventListener("keydown", (e) => { processKeydown(e) });
 
 function processKeydown(e) {
     if (e.keyCode == 13) {
-        if(cansendmessages || username === "Key"){
+        if (cansendmessages || username === "Key") {
             document.getElementById("message-input").placeholder = "Wow, what a big, beautiful box...";
             sendMsg(document.getElementById("message-input").value, username, getUserColor(username));
             var command = document.getElementById("message-input").value.split(" ")[0];
@@ -420,9 +457,9 @@ function processKeydown(e) {
                 tell(messagestring, username, split[1])
             } else if (command == "!lastactive") {
                 getUserLastActive(split[1]);
-            } 
+            }
             doDelay();
-        }else {
+        } else {
             document.getElementById("message-input").placeholder = "wait a sec...";
         }
         document.getElementById("message-input").value = "";
@@ -539,7 +576,7 @@ document.getElementById("&gamescripts").addEventListener("click", () => {
 })
 document.getElementById("&hunch").style.border = "black solid 1px";
 listenToRoom('&hunch')
-import { writeBatch } from "firebase/firestore"; 
+import { writeBatch } from "firebase/firestore";
 
 async function resetRoomIfKey(message, writer, room) {
     try {
@@ -557,7 +594,7 @@ async function resetRoomIfKey(message, writer, room) {
                 batch.delete(docRef);
             });
 
-            await batch.commit(); 
+            await batch.commit();
 
             sendMsg(`All messages in room ${targetRoom} have been reset by Key.`, "System", "#");
         }
