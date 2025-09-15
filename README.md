@@ -12,5 +12,5 @@ Chatroom syntax: <br>
 `!edit {text}` - changes your last sent message's text to the inputted text. Leaves an *(edited)* tag after the edited message. <br>
 `!showIden` - shows all message ids. <br>
 `!hideIden` - hides shown message ids. <br>
-`!delete {iden} - deletes message of inputed id. <br>
+`!delete {iden}` - deletes message of inputed id. <br>
 
