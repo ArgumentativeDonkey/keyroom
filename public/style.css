@@ -140,5 +140,7 @@ body {
     display: none;
 }
 #messages[data-show=true] div p .iden {
-    display: block;
+    display: inherit;
+    text-decoration: underline;
+    font-size: 0.5em;
 }

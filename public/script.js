@@ -636,4 +636,3 @@ async function resetRoomIfKey(message, writer, room) {
         sendMsg(`Failed to reset room: ${error.message}`, "System", "#874c60");
     }
 }
-
