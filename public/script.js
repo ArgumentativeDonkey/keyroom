@@ -333,6 +333,18 @@ async function sendXkcd(what) {
         sendMsg(msg, "xkcd", '#516b94', true);
     }
 }
+
+async function validatePassword(username){
+    const res = await fetch("./passwords.json");
+    const data = await res.json();
+    if(data.hasOwnProperty(username)){
+        let input = prompt("Enter password");
+        return data[username] === input;
+    } else {
+        return true;
+    }
+}
+
 var username;
 async function setUsername(){
     if (!localStorage.getItem("username")) {
@@ -342,6 +354,12 @@ async function setUsername(){
         }
         if (username == "" || username == " " || username == null) {
             alert("Please enter a username!");
+            setUsername();
+            return;
+        }
+        const ok = await validatePassword(username);
+        if(!ok){
+            alert("Password incorrect, please try again.");
             setUsername();
             return;
         }
