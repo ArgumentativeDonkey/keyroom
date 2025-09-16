@@ -354,7 +354,15 @@ export async function sendMsg(message, writer, color, raw) {
                 message = `<span style="display:inline-block; animation: spin 2s linear infinite;">${message.split(" ").splice(1).join(" ")}</span>`;
             } else if (message.split(" ")[0] === "!code") {
                 message = `<code>${message.split(" ").splice(1).join(" ")}</code>`;
-            }
+            } else if (message.split(" ")[0] === "!bold") {
+                message = `<b>${message.split(" ").splice(1).join(" ")}</b>`;
+            } else if (message.split(" ")[0] === "!italic") {
+                message = `<i>${message.split(" ").splice(1).join(" ")}</i>`;
+            } else if (message.split(" ")[0] === "!underline") {
+                message = `<u>${message.split(" ").splice(1).join(" ")}</u>`;
+            } else if (message.split(" ")[0] === "!strikethrough") {
+                message = `<s>${message.split(" ").splice(1).join(" ")}</s>`;
+            } 
 
         }
         const messagesEl = document.getElementById("messages");
