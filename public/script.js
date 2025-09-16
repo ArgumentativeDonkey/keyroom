@@ -314,14 +314,14 @@ export async function sendMsg(message, writer, color, raw) {
                 const targetId = message.split(" ")[1].trim();
                 const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
                 let docFound = null;
-            
+
                 for (const doca of snapshot.docs) {
                     if (doca.data().iden === targetId && doca.data().writer === writer) {
                         docFound = doca;
                         break;
                     }
                 }
-            
+
                 if (docFound) {
                     const docRef = doc(db, currentRoom, docFound.id);
                     await deleteDoc(docRef);
@@ -329,7 +329,7 @@ export async function sendMsg(message, writer, color, raw) {
                 } else {
                     sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#874c60");
                 }
-            
+
             } else if (message.split(" ")[0] === "!showIden") {
                 document.getElementById("messages").dataset.show = "true";
             } else if (message.split(" ")[0] === "!hideIden") {
@@ -348,7 +348,7 @@ export async function sendMsg(message, writer, color, raw) {
                 message = `<span>${message.split(" ").splice(1).join(" ")}</span>`;
             } else if (message.split(" ")[0] === "!shrink") {
                 message = `<span style="font-size:0.5em;">${message.split(" ").splice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!grow") {    
+            } else if (message.split(" ")[0] === "!grow") {
                 message = `<span style="font-size:2em;">${message.split(" ").splice(1).join(" ")}</span>`;
             } else if (message.split(" ")[0] === "!spin" && currentRoom == "/codeinject") {
                 message = `<span style="display:inline-block; animation: spin 2s linear infinite;">${message.split(" ").splice(1).join(" ")}</span>`;
@@ -431,15 +431,15 @@ export async function sendMsg(message, writer, color, raw) {
                 message = `<span style="background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet); -webkit-background-clip: text; color: transparent;">${text}</span>`;
             } else if (message.split(" ")[0] === "!capsalt") {
                 let text = message.split(" ").slice(1).join(" ");
-                text = text.split("").map((c,i)=> i%2 ? c.toLowerCase() : c.toUpperCase()).join("");
+                text = text.split("").map((c, i) => i % 2 ? c.toLowerCase() : c.toUpperCase()).join("");
                 message = `<span>${text}</span>`;
             } else if (message.split(" ")[0] === "!binary") {
                 let text = message.split(" ").slice(1).join(" ");
-                text = text.split("").map(c=>c.charCodeAt(0).toString(2)).join(" ");
+                text = text.split("").map(c => c.charCodeAt(0).toString(2)).join(" ");
                 message = `<span>${text}</span>`;
             } else if (message.split(" ")[0] === "!leet") {
                 let text = message.split(" ").slice(1).join(" ");
-                text = text.replace(/a/gi,"4").replace(/e/gi,"3").replace(/i/gi,"1").replace(/o/gi,"0").replace(/s/gi,"5").replace(/t/gi,"7");
+                text = text.replace(/a/gi, "4").replace(/e/gi, "3").replace(/i/gi, "1").replace(/o/gi, "0").replace(/s/gi, "5").replace(/t/gi, "7");
                 message = `<span>${text}</span>`;
             } else if (message.split(" ")[0] === "!reversewords") {
                 let text = message.split(" ").slice(1).reverse().join(" ");
@@ -482,10 +482,79 @@ export async function sendMsg(message, writer, color, raw) {
                 message = `<div style="border:2px dashed black; padding:5px; display:inline-block;">${message.split(" ").slice(1).join(" ")}</div>`;
             } else if (message.split(" ")[0] === "!rainbowshadow") {
                 message = `<span style="text-shadow:2px 2px red, 4px 4px orange, 6px 6px yellow, 8px 8px green, 10px 10px blue, 12px 12px indigo, 14px 14px violet;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!shadow") {
+                message = `<span style="text-shadow:2px 2px 4px rgba(0,0,0,0.5);">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!neon") {
+                message = `<span style="color:#39ff14; text-shadow:0 0 5px #39ff14, 0 0 10px #39ff14, 0 0 20px #39ff14;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!zebra") {
+                let text = message.split(" ").slice(1).join(" ");
+                message = `<span>${text.split("").map((c, i) => `<span style="background:${i % 2 ? "#000" : "#fff"};color:${i % 2 ? "#fff" : "#000"};">${c}</span>`).join("")}</span>`;
+            } else if (message.split(" ")[0] === "!double") {
+                message = `<span style="text-decoration:underline double;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!wavey") {
+                message = `<span style="text-decoration:underline wavy red;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!caps") {
+                message = `<span style="text-transform:uppercase;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!smallcaps") {
+                message = `<span style="font-variant:small-caps;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!mono") {
+                message = `<span style="font-family:monospace;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!serif") {
+                message = `<span style="font-family:serif;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!sans") {
+                message = `<span style="font-family:sans-serif;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!stretch") {
+                message = `<span style="letter-spacing:5px;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!tight") {
+                message = `<span style="letter-spacing:-1px;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!uppercaseborder") {
+                message = `<span style="text-transform:uppercase; border:1px solid black; padding:2px;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!mirrorfade") {
+                message = `<span style="display:inline-block; transform:scaleX(-1); opacity:0.6;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!shadowbox") {
+                message = `<div style="box-shadow:4px 4px 10px rgba(0,0,0,0.5); padding:5px; display:inline-block;">${message.split(" ").slice(1).join(" ")}</div>`;
+            } else if (message.split(" ")[0] === "!glossy") {
+                message = `<span style="background:linear-gradient(to top, rgba(255,255,255,0.6), rgba(255,255,255,0)); padding:2px;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!paper") {
+                message = `<span style="background:#fdf6e3; border:1px solid #ccc; padding:3px;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!terminal") {
+                message = `<span style="background:black; color:#33ff33; font-family:monospace; padding:2px 4px;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!sticker") {
+                message = `<span style="background:yellow; border:1px solid black; transform:rotate(-3deg); display:inline-block; padding:4px;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!comic") {
+                message = `<span style="font-family:'Comic Sans MS', cursive; font-weight:bold; color:#ff00ff;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!stamp") {
+                message = `<span style="border:3px dashed red; padding:3px; text-transform:uppercase; font-weight:bold;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!marker") {
+                message = `<span style="background:lime; color:black; padding:0 2px;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!ghost") {
+                message = `<span style="opacity:0.4;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!pop") {
+                message = `<span style="font-size:150%; font-weight:bold; color:#e60073;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!hollow") {
+                message = `<span style="color:transparent; -webkit-text-stroke:1px black;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!engrave") {
+                message = `<span style="color:#555; text-shadow:1px 1px 0 #fff, -1px -1px 0 #000;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!poster") {
+                message = `<span style="background:#000; color:#fff; letter-spacing:3px; padding:2px 6px; text-transform:uppercase;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!tag") {
+                message = `<span style="background:#eee; border-radius:4px; padding:2px 6px; border:1px solid #aaa;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!block") {
+                message = `<div style="background:#333; color:#fff; padding:10px; display:inline-block;">${message.split(" ").slice(1).join(" ")}</div>`;
+            } else if (message.split(" ")[0] === "!button") {
+                message = `<button style="background:#008cba; color:white; border:none; padding:5px 10px; border-radius:4px;">${message.split(" ").slice(1).join(" ")}</button>`;
+            } else if (message.split(" ")[0] === "!underlinebg") {
+                message = `<span style="background:linear-gradient(to top, yellow 40%, transparent 40%);">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!laser") {
+                message = `<span style="color:red; text-shadow:0 0 5px red,0 0 10px red,0 0 20px red;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!frost") {
+                message = `<span style="color:#cce; text-shadow:0 0 3px white, 0 0 6px #99f;">${message.split(" ").slice(1).join(" ")}</span>`;
             }
 
 
-            
+
+
+
 
         }
         const messagesEl = document.getElementById("messages");
