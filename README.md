@@ -13,4 +13,8 @@ Chatroom syntax: <br>
 `!showIden` - shows all message ids. <br>
 `!hideIden` - hides shown message ids. <br>
 `!delete {iden}` - deletes message of inputed id. <br>
+`!flip` - flips the chatroom and rotates by 1 degree. <br>
+`!unflip` - undoes !flip. <br>
+`!rainbow {message}` - send the message with a rainbow badge. <br>
+`!rotate {deg} {message}` - sends the message rotated a certain amount of degrees. 
 
