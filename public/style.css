@@ -149,3 +149,164 @@ body {
     to { transform: rotate(360deg); }
   }
   
+  @keyframes wave {
+    0%   { transform: rotate(0deg) translateY(0px); }
+    25%  { transform: rotate(5deg) translateY(-2px); }
+    50%  { transform: rotate(0deg) translateY(0px); }
+    75%  { transform: rotate(-5deg) translateY(2px); }
+    100% { transform: rotate(0deg) translateY(0px); }
+  }
+  
+  @keyframes glitch {
+    0% { text-shadow: 2px 0 red, -2px 0 blue; }
+    20% { text-shadow: -2px 0 red, 2px 0 blue; }
+    40% { text-shadow: 2px 0 red, -2px 0 blue; }
+    60% { text-shadow: -2px 0 red, 2px 0 blue; }
+    80% { text-shadow: 2px 0 red, -2px 0 blue; }
+    100% { text-shadow: none; }
+  }
+  
+  .glitch {
+    position: relative;
+    animation: glitch 1s infinite;
+  }
+  
+  /* Spoiler reveal effect */
+  .spoiler {
+    background: black;
+    color: black;
+    cursor: pointer;
+  }
+  .spoiler:hover {
+    color: white;
+  }
+  
+  /* Sparkle wrapper for !sparkle */
+  .sparkle {
+    animation: sparkleAnim 1s infinite alternate;
+  }
+  
+  @keyframes sparkleAnim {
+    from { text-shadow: 0 0 2px gold, 0 0 5px orange; }
+    to   { text-shadow: 0 0 5px yellow, 0 0 10px red; }
+  }
+  
+  /* Optional: make marquee text smoother for !rain */
+  marquee {
+    font-style: italic;
+    color: #3498db;
+  }
+/* Shake */
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  50% { transform: translateX(3px); }
+  75% { transform: translateX(-3px); }
+}
+.shake { display:inline-block; animation: shake 0.5s infinite; }
+
+/* Bounce */
+@keyframes bounce {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.bounce { display:inline-block; animation: bounce 0.8s infinite; }
+
+/* Fade in/out */
+@keyframes fade {
+  0%,100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+.fade { animation: fade 2s infinite; }
+
+/* Rainbow gradient text */
+.rainbowtext {
+  background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbowShift 3s linear infinite;
+}
+@keyframes rainbowShift {
+  to { background-position: 200% center; }
+}
+
+/* Typing effect */
+.type {
+  border-right: 2px solid black;
+  white-space: nowrap;
+  overflow: hidden;
+  animation: typing 3s steps(30, end), blink 0.7s infinite;
+}
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+@keyframes blink {
+  0%,100% { border-color: transparent; }
+  50% { border-color: black; }
+}
+
+/* Fire effect */
+@keyframes fire {
+  0% { text-shadow: 0 0 5px red, 0 0 10px orange; }
+  50% { text-shadow: 0 0 15px yellow, 0 0 30px red; }
+  100% { text-shadow: 0 0 5px red, 0 0 10px orange; }
+}
+.fire { color: orange; animation: fire 1s infinite; }
+
+/* Neon glow */
+.neon {
+  color: #39ff14;
+  text-shadow: 0 0 5px #39ff14, 0 0 10px #39ff14, 0 0 20px #39ff14;
+}
+
+/* Soft glow */
+@keyframes glow {
+  from { text-shadow: 0 0 5px #ff66cc; }
+  to { text-shadow: 0 0 20px #ff66cc; }
+}
+.glow { animation: glow 1.5s infinite alternate; }
+
+/* Zoom */
+@keyframes zoom {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.5); }
+}
+.zoom { display:inline-block; animation: zoom 1s infinite; }
+
+/* Rotate 360 */
+@keyframes rotate360 {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.rotate360 { display:inline-block; animation: rotate360 2s linear infinite; }
+
+/* Pulse */
+@keyframes pulse {
+  0%,100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.7; }
+}
+.pulse { display:inline-block; animation: pulse 1.5s infinite; }
+
+/* Highlight */
+.highlight {
+  background: yellow;
+  padding: 0 3px;
+}
+
+/* Matrix rain look */
+@keyframes matrix {
+  0% { color: #0f0; text-shadow: 0 0 5px #0f0; }
+  50% { color: #0a0; text-shadow: 0 0 20px #0f0; }
+  100% { color: #0f0; text-shadow: 0 0 5px #0f0; }
+}
+.matrix { animation: matrix 1s infinite alternate; font-family: monospace; }
+
+/* Snow sparkle */
+@keyframes snow {
+  0% { text-shadow: 0 0 2px white, 0 0 5px lightblue; }
+  50% { text-shadow: 0 0 10px white, 0 0 15px lightblue; }
+  100% { text-shadow: 0 0 2px white, 0 0 5px lightblue; }
+}
+.snow { color: white; animation: snow 2s infinite; }
+  

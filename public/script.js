@@ -362,7 +362,40 @@ export async function sendMsg(message, writer, color, raw) {
                 message = `<u>${message.split(" ").splice(1).join(" ")}</u>`;
             } else if (message.split(" ")[0] === "!strikethrough") {
                 message = `<s>${message.split(" ").splice(1).join(" ")}</s>`;
+            } else if (message.split(" ")[0] === "!reverse") {
+                const text = message.split(" ").slice(1).join(" ");
+                message = `<span>${text.split("").reverse().join("")}</span>`;
+            } else if (message.split(" ")[0] === "!upper") {
+                message = `<span>${message.split(" ").slice(1).join(" ").toUpperCase()}</span>`;
+            } else if (message.split(" ")[0] === "!lower") {
+                message = `<span>${message.split(" ").slice(1).join(" ").toLowerCase()}</span>`;
+            } else if (message.split(" ")[0] === "!wave") {
+                const text = message.split(" ").slice(1).join(" ");
+                message = `<span style="display:inline-block; animation: wave 2s infinite;">${text}</span>`;
+            } else if (message.split(" ")[0] === "!mirror") {
+                message = `<span style="display:inline-block; transform: scaleX(-1);">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!rain") {
+                message = `<marquee behavior="scroll" direction="down" scrollamount="2">${message.split(" ").slice(1).join(" ")}</marquee>`;
+            } else if (message.split(" ")[0] === "!glitch") {
+                const text = message.split(" ").slice(1).join(" ");
+                message = `<span class="glitch" data-text="${text}">${text}</span>`;
+            } else if (message.split(" ")[0] === "!shrug") {
+                message = `<span>${message.split(" ").slice(1).join(" ")} ¯\\_(ツ)_/¯</span>`;
+            } else if (message.split(" ")[0] === "!clap") {
+                const words = message.split(" ").slice(1).join(" 👏 ");
+                message = `<span>${words}</span>`;
+            } else if (message.split(" ")[0] === "!owo") {
+                let text = message.split(" ").slice(1).join(" ");
+                text = text.replace(/r/g, "w").replace(/l/g, "w");
+                message = `<span>${text} owo</span>`;
+            } else if (message.split(" ")[0] === "!sparkle") {
+                message = `✨ ${message.split(" ").slice(1).join(" ")} ✨`;
+            } else if (message.split(" ")[0] === "!box") {
+                message = `<div style="border:2px solid black; padding:5px; display:inline-block;">${message.split(" ").slice(1).join(" ")}</div>`;
+            } else if (message.split(" ")[0] === "!spoiler") {
+                message = `<span style="background:black; color:black;" onmouseover="this.style.color='white'">${message.split(" ").slice(1).join(" ")}</span>`;
             } 
+            
 
         }
         const messagesEl = document.getElementById("messages");
