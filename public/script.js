@@ -346,6 +346,14 @@ export async function sendMsg(message, writer, color, raw) {
             } else if (message.split(" ")[0] === "!unrainbow") {
                 color = "white";
                 message = `<span>${message.split(" ").splice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!shrink") {
+                message = `<span style="font-size:0.5em;">${message.split(" ").splice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!grow") {    
+                message = `<span style="font-size:2em;">${message.split(" ").splice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!spin" && currentRoom == "/codeinject") {
+                message = `<span style="display:inline-block; animation: spin 2s linear infinite;">${message.split(" ").splice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!code") {
+                message = `<code>${message.split(" ").splice(1).join(" ")}</code>`;
             }
 
         }
