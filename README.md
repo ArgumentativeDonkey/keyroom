@@ -16,5 +16,6 @@ Chatroom syntax: <br>
 `!flip` - flips the chatroom and rotates by 1 degree. <br>
 `!unflip` - undoes !flip. <br>
 `!rainbow {message}` - send the message with a rainbow badge. <br>
+`!unrainbow {message}` - send the message with an unrainbowed badge. <br>
 `!rotate {deg} {message}` - sends the message rotated a certain amount of degrees. 
 

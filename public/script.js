@@ -339,9 +339,13 @@ export async function sendMsg(message, writer, color, raw) {
             } else if (message.split(" ")[0] === "!unflip") {
                 document.getElementById("messages").style.transform = "scaleY(1) rotate(0deg)";
             } else if (message.split(" ")[0] === "!rainbow") {
-                color = "transparent; background-image: repeating-linear-gradient( 45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000 ); animation: stripes 3s linear infinite; background-position: 0 0; background-size: 400% 400%";
+                color = "transparent; background-image: repeating-linear-gradient( 45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000 var(--stripe-width)); animation: stripes var(--anim-time) linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
+                message = `<span>${message.split(" ").splice(1).join(" ")}</span>`;
             } else if (message.split(" ")[0] === "!rotate") {
                 message = `<span style="display:inline-block; transform:rotate(${message.split(" ")[1]}deg);">${message.split(" ").slice(2).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!unrainbow") {
+                color = "white";
+                message = `<span>${message.split(" ").splice(1).join(" ")}</span>`;
             }
 
         }
