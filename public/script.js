@@ -372,53 +372,21 @@ export async function sendMsg(message, writer, color, raw) {
             } else if (message.split(" ")[0] === "!wave") {
                 const text = message.split(" ").slice(1).join(" ");
                 message = `<span style="display:inline-block; animation: wave 2s infinite;">${text}</span>`;
-            } else if (message.split(" ")[0] === "!mirror") {
-                message = `<span style="display:inline-block; transform: scaleX(-1);">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!rain") {
-                message = `<marquee behavior="scroll" direction="down" scrollamount="2">${message.split(" ").slice(1).join(" ")}</marquee>`;
             } else if (message.split(" ")[0] === "!glitch") {
                 const text = message.split(" ").slice(1).join(" ");
                 message = `<span class="glitch" data-text="${text}">${text}</span>`;
             } else if (message.split(" ")[0] === "!shrug") {
                 message = `<span>${message.split(" ").slice(1).join(" ")} ¯\\_(ツ)_/¯</span>`;
-            } else if (message.split(" ")[0] === "!clap") {
-                const words = message.split(" ").slice(1).join(" 👏 ");
-                message = `<span>${words}</span>`;
-            } else if (message.split(" ")[0] === "!owo") {
-                let text = message.split(" ").slice(1).join(" ");
-                text = text.replace(/r/g, "w").replace(/l/g, "w");
-                message = `<span>${text} owo</span>`;
-            } else if (message.split(" ")[0] === "!sparkle") {
-                message = `✨ ${message.split(" ").slice(1).join(" ")} ✨`;
-            } else if (message.split(" ")[0] === "!box") {
-                message = `<div style="border:2px solid black; padding:5px; display:inline-block;">${message.split(" ").slice(1).join(" ")}</div>`;
             } else if (message.split(" ")[0] === "!spoiler") {
                 message = `<span style="background:black; color:black;" onmouseover="this.style.color='white'">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!highlight") {
-                message = `<mark>${message.split(" ").slice(1).join(" ")}</mark>`;
-            } else if (message.split(" ")[0] === "!shadow") {
-                message = `<span style="text-shadow:2px 2px 4px gray;">${message.split(" ").slice(1).join(" ")}</span>`;
             } else if (message.split(" ")[0] === "!blink") {
                 message = `<span style="animation: blink 1s steps(2, start) infinite;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!bigred") {
-                message = `<span style="color:red; font-size:3em;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!smallblue") {
-                message = `<span style="color:blue; font-size:0.7em;">${message.split(" ").slice(1).join(" ")}</span>`;
             } else if (message.split(" ")[0] === "!monospace") {
                 message = `<span style="font-family:monospace;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!type") {
-                message = `<span class="typewriter">${message.split(" ").slice(1).join(" ")}</span>`;
             } else if (message.split(" ")[0] === "!shake") {
                 message = `<span style="display:inline-block; animation: shake 0.5s infinite;">${message.split(" ").slice(1).join(" ")}</span>`;
             } else if (message.split(" ")[0] === "!fade") {
                 message = `<span style="animation: fadeIn 2s;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!italicbold") {
-                message = `<b><i>${message.split(" ").slice(1).join(" ")}</i></b>`;
-            } else if (message.split(" ")[0] === "!underlinebold") {
-                message = `<u><b>${message.split(" ").slice(1).join(" ")}</b></u>`;
-            } else if (message.split(" ")[0] === "!double") {
-                const text = message.split(" ").slice(1).join(" ");
-                message = `<span>${text} ${text}</span>`;
             } else if (message.split(" ")[0] === "!count") {
                 const text = message.split(" ").slice(1).join(" ");
                 message = `<span>${text} (${text.length} chars)</span>`;
@@ -429,10 +397,6 @@ export async function sendMsg(message, writer, color, raw) {
             } else if (message.split(" ")[0] === "!rainbowtext") {
                 const text = message.split(" ").slice(1).join(" ");
                 message = `<span style="background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet); -webkit-background-clip: text; color: transparent;">${text}</span>`;
-            } else if (message.split(" ")[0] === "!capsalt") {
-                let text = message.split(" ").slice(1).join(" ");
-                text = text.split("").map((c, i) => i % 2 ? c.toLowerCase() : c.toUpperCase()).join("");
-                message = `<span>${text}</span>`;
             } else if (message.split(" ")[0] === "!binary") {
                 let text = message.split(" ").slice(1).join(" ");
                 text = text.split("").map(c => c.charCodeAt(0).toString(2)).join(" ");
@@ -446,110 +410,20 @@ export async function sendMsg(message, writer, color, raw) {
                 message = `<span>${text}</span>`;
             } else if (message.split(" ")[0] === "!outline") {
                 message = `<span style="color:black; -webkit-text-stroke:1px red;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!rainbowbg") {
-                message = `<span style="background:linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet); color:white; padding:2px;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!invert") {
-                message = `<span style="filter:invert(1);">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!blur") {
-                message = `<span style="filter:blur(2px);">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!sepia") {
-                message = `<span style="filter:sepia(1);">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!rotate3d") {
-                message = `<span style="display:inline-block; transform:rotate3d(1,1,0,45deg);">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!skew") {
-                message = `<span style="display:inline-block; transform:skew(20deg, 10deg);">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!bounce") {
-                message = `<span style="display:inline-block; animation:bounce 1s infinite;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!flipx") {
-                message = `<span style="display:inline-block; transform:scaleX(-1);">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!flipy") {
-                message = `<span style="display:inline-block; transform:scaleY(-1);">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!rainbowborder") {
-                message = `<div style="border:4px solid; border-image:linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet) 1; display:inline-block; padding:4px;">${message.split(" ").slice(1).join(" ")}</div>`;
             } else if (message.split(" ")[0] === "!glow") {
                 message = `<span style="color:#fff; text-shadow:0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!fire") {
-                message = `<span style="color:orange; text-shadow:0 0 5px red, 0 0 10px orange, 0 0 20px yellow;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!ice") {
-                message = `<span style="color:lightblue; text-shadow:0 0 5px cyan, 0 0 10px blue, 0 0 20px white;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!gold") {
-                message = `<span style="background:linear-gradient(to right, #ffd700, #ffb700); -webkit-background-clip:text; color:transparent;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!matrix") {
-                message = `<span style="color:#0f0; font-family:monospace;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!pixel") {
-                message = `<span style="font-family:monospace; font-size:16px; image-rendering:pixelated;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!outlinebox") {
-                message = `<div style="border:2px dashed black; padding:5px; display:inline-block;">${message.split(" ").slice(1).join(" ")}</div>`;
-            } else if (message.split(" ")[0] === "!rainbowshadow") {
-                message = `<span style="text-shadow:2px 2px red, 4px 4px orange, 6px 6px yellow, 8px 8px green, 10px 10px blue, 12px 12px indigo, 14px 14px violet;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!shadow") {
-                message = `<span style="text-shadow:2px 2px 4px rgba(0,0,0,0.5);">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!neon") {
-                message = `<span style="color:#39ff14; text-shadow:0 0 5px #39ff14, 0 0 10px #39ff14, 0 0 20px #39ff14;">${message.split(" ").slice(1).join(" ")}</span>`;
             } else if (message.split(" ")[0] === "!zebra") {
                 let text = message.split(" ").slice(1).join(" ");
                 message = `<span>${text.split("").map((c, i) => `<span style="background:${i % 2 ? "#000" : "#fff"};color:${i % 2 ? "#fff" : "#000"};">${c}</span>`).join("")}</span>`;
-            } else if (message.split(" ")[0] === "!double") {
-                message = `<span style="text-decoration:underline double;">${message.split(" ").slice(1).join(" ")}</span>`;
             } else if (message.split(" ")[0] === "!wavey") {
                 message = `<span style="text-decoration:underline wavy red;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!caps") {
-                message = `<span style="text-transform:uppercase;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!smallcaps") {
-                message = `<span style="font-variant:small-caps;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!mono") {
-                message = `<span style="font-family:monospace;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!serif") {
-                message = `<span style="font-family:serif;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!sans") {
-                message = `<span style="font-family:sans-serif;">${message.split(" ").slice(1).join(" ")}</span>`;
             } else if (message.split(" ")[0] === "!stretch") {
                 message = `<span style="letter-spacing:5px;">${message.split(" ").slice(1).join(" ")}</span>`;
             } else if (message.split(" ")[0] === "!tight") {
                 message = `<span style="letter-spacing:-1px;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!uppercaseborder") {
-                message = `<span style="text-transform:uppercase; border:1px solid black; padding:2px;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!mirrorfade") {
-                message = `<span style="display:inline-block; transform:scaleX(-1); opacity:0.6;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!shadowbox") {
-                message = `<div style="box-shadow:4px 4px 10px rgba(0,0,0,0.5); padding:5px; display:inline-block;">${message.split(" ").slice(1).join(" ")}</div>`;
-            } else if (message.split(" ")[0] === "!glossy") {
-                message = `<span style="background:linear-gradient(to top, rgba(255,255,255,0.6), rgba(255,255,255,0)); padding:2px;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!paper") {
-                message = `<span style="background:#fdf6e3; border:1px solid #ccc; padding:3px;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!terminal") {
-                message = `<span style="background:black; color:#33ff33; font-family:monospace; padding:2px 4px;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!sticker") {
-                message = `<span style="background:yellow; border:1px solid black; transform:rotate(-3deg); display:inline-block; padding:4px;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!comic") {
-                message = `<span style="font-family:'Comic Sans MS', cursive; font-weight:bold; color:#ff00ff;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!stamp") {
-                message = `<span style="border:3px dashed red; padding:3px; text-transform:uppercase; font-weight:bold;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!marker") {
-                message = `<span style="background:lime; color:black; padding:0 2px;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!ghost") {
-                message = `<span style="opacity:0.4;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!pop") {
-                message = `<span style="font-size:150%; font-weight:bold; color:#e60073;">${message.split(" ").slice(1).join(" ")}</span>`;
             } else if (message.split(" ")[0] === "!hollow") {
                 message = `<span style="color:transparent; -webkit-text-stroke:1px black;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!engrave") {
-                message = `<span style="color:#555; text-shadow:1px 1px 0 #fff, -1px -1px 0 #000;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!poster") {
-                message = `<span style="background:#000; color:#fff; letter-spacing:3px; padding:2px 6px; text-transform:uppercase;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!tag") {
-                message = `<span style="background:#eee; border-radius:4px; padding:2px 6px; border:1px solid #aaa;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!block") {
-                message = `<div style="background:#333; color:#fff; padding:10px; display:inline-block;">${message.split(" ").slice(1).join(" ")}</div>`;
-            } else if (message.split(" ")[0] === "!button") {
-                message = `<button style="background:#008cba; color:white; border:none; padding:5px 10px; border-radius:4px;">${message.split(" ").slice(1).join(" ")}</button>`;
-            } else if (message.split(" ")[0] === "!underlinebg") {
-                message = `<span style="background:linear-gradient(to top, yellow 40%, transparent 40%);">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!laser") {
-                message = `<span style="color:red; text-shadow:0 0 5px red,0 0 10px red,0 0 20px red;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!frost") {
-                message = `<span style="color:#cce; text-shadow:0 0 3px white, 0 0 6px #99f;">${message.split(" ").slice(1).join(" ")}</span>`;
-            }
+            } 
 
 
 
