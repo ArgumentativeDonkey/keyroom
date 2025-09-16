@@ -444,7 +444,46 @@ export async function sendMsg(message, writer, color, raw) {
             } else if (message.split(" ")[0] === "!reversewords") {
                 let text = message.split(" ").slice(1).reverse().join(" ");
                 message = `<span>${text}</span>`;
+            } else if (message.split(" ")[0] === "!outline") {
+                message = `<span style="color:black; -webkit-text-stroke:1px red;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!rainbowbg") {
+                message = `<span style="background:linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet); color:white; padding:2px;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!invert") {
+                message = `<span style="filter:invert(1);">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!blur") {
+                message = `<span style="filter:blur(2px);">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!sepia") {
+                message = `<span style="filter:sepia(1);">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!rotate3d") {
+                message = `<span style="display:inline-block; transform:rotate3d(1,1,0,45deg);">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!skew") {
+                message = `<span style="display:inline-block; transform:skew(20deg, 10deg);">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!bounce") {
+                message = `<span style="display:inline-block; animation:bounce 1s infinite;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!flipx") {
+                message = `<span style="display:inline-block; transform:scaleX(-1);">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!flipy") {
+                message = `<span style="display:inline-block; transform:scaleY(-1);">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!rainbowborder") {
+                message = `<div style="border:4px solid; border-image:linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet) 1; display:inline-block; padding:4px;">${message.split(" ").slice(1).join(" ")}</div>`;
+            } else if (message.split(" ")[0] === "!glow") {
+                message = `<span style="color:#fff; text-shadow:0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!fire") {
+                message = `<span style="color:orange; text-shadow:0 0 5px red, 0 0 10px orange, 0 0 20px yellow;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!ice") {
+                message = `<span style="color:lightblue; text-shadow:0 0 5px cyan, 0 0 10px blue, 0 0 20px white;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!gold") {
+                message = `<span style="background:linear-gradient(to right, #ffd700, #ffb700); -webkit-background-clip:text; color:transparent;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!matrix") {
+                message = `<span style="color:#0f0; font-family:monospace;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!pixel") {
+                message = `<span style="font-family:monospace; font-size:16px; image-rendering:pixelated;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!outlinebox") {
+                message = `<div style="border:2px dashed black; padding:5px; display:inline-block;">${message.split(" ").slice(1).join(" ")}</div>`;
+            } else if (message.split(" ")[0] === "!rainbowshadow") {
+                message = `<span style="text-shadow:2px 2px red, 4px 4px orange, 6px 6px yellow, 8px 8px green, 10px 10px blue, 12px 12px indigo, 14px 14px violet;">${message.split(" ").slice(1).join(" ")}</span>`;
             }
+
 
             
 
