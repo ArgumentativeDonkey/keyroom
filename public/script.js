@@ -394,7 +394,58 @@ export async function sendMsg(message, writer, color, raw) {
                 message = `<div style="border:2px solid black; padding:5px; display:inline-block;">${message.split(" ").slice(1).join(" ")}</div>`;
             } else if (message.split(" ")[0] === "!spoiler") {
                 message = `<span style="background:black; color:black;" onmouseover="this.style.color='white'">${message.split(" ").slice(1).join(" ")}</span>`;
-            } 
+            } else if (message.split(" ")[0] === "!highlight") {
+                message = `<mark>${message.split(" ").slice(1).join(" ")}</mark>`;
+            } else if (message.split(" ")[0] === "!shadow") {
+                message = `<span style="text-shadow:2px 2px 4px gray;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!blink") {
+                message = `<span style="animation: blink 1s steps(2, start) infinite;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!bigred") {
+                message = `<span style="color:red; font-size:3em;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!smallblue") {
+                message = `<span style="color:blue; font-size:0.7em;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!monospace") {
+                message = `<span style="font-family:monospace;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!type") {
+                message = `<span class="typewriter">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!shake") {
+                message = `<span style="display:inline-block; animation: shake 0.5s infinite;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!fade") {
+                message = `<span style="animation: fadeIn 2s;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!italicbold") {
+                message = `<b><i>${message.split(" ").slice(1).join(" ")}</i></b>`;
+            } else if (message.split(" ")[0] === "!underlinebold") {
+                message = `<u><b>${message.split(" ").slice(1).join(" ")}</b></u>`;
+            } else if (message.split(" ")[0] === "!double") {
+                const text = message.split(" ").slice(1).join(" ");
+                message = `<span>${text} ${text}</span>`;
+            } else if (message.split(" ")[0] === "!count") {
+                const text = message.split(" ").slice(1).join(" ");
+                message = `<span>${text} (${text.length} chars)</span>`;
+            } else if (message.split(" ")[0] === "!time") {
+                message = `<span>${new Date().toLocaleTimeString()}</span>`;
+            } else if (message.split(" ")[0] === "!date") {
+                message = `<span>${new Date().toLocaleDateString()}</span>`;
+            } else if (message.split(" ")[0] === "!rainbowtext") {
+                const text = message.split(" ").slice(1).join(" ");
+                message = `<span style="background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet); -webkit-background-clip: text; color: transparent;">${text}</span>`;
+            } else if (message.split(" ")[0] === "!capsalt") {
+                let text = message.split(" ").slice(1).join(" ");
+                text = text.split("").map((c,i)=> i%2 ? c.toLowerCase() : c.toUpperCase()).join("");
+                message = `<span>${text}</span>`;
+            } else if (message.split(" ")[0] === "!binary") {
+                let text = message.split(" ").slice(1).join(" ");
+                text = text.split("").map(c=>c.charCodeAt(0).toString(2)).join(" ");
+                message = `<span>${text}</span>`;
+            } else if (message.split(" ")[0] === "!leet") {
+                let text = message.split(" ").slice(1).join(" ");
+                text = text.replace(/a/gi,"4").replace(/e/gi,"3").replace(/i/gi,"1").replace(/o/gi,"0").replace(/s/gi,"5").replace(/t/gi,"7");
+                message = `<span>${text}</span>`;
+            } else if (message.split(" ")[0] === "!reversewords") {
+                let text = message.split(" ").slice(1).reverse().join(" ");
+                message = `<span>${text}</span>`;
+            }
+
             
 
         }
