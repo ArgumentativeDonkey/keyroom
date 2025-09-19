@@ -1,10 +1,6 @@
 @keyframes stripes {
-    from {
-        background-position: 0 0;
-    }
-    to {
-        background-position: var(--stripe-calc) 0;
-    }
+    from { background-position: 0 0; }
+    to { background-position: var(--stripe-calc) 0; }
 }
 
 :root {
@@ -15,46 +11,42 @@
     --anim-time: 8s;
 }
 
-
 [data-theme='dark'] {
     --bg: black;
     --txt: white;
 }
 
-h1 {
-    color: black;
-}
+h1 { color: black; }
+
 .sendput {
     position: absolute;
     bottom: 5px;
+    left: calc(15vw + 50px);
 }
 
 .roomsList {
     list-style: none;
     padding-left: 0;
     margin-left: 0;
+}
 
-}
-.roomsTitle {
-    margin-left: 10px;
-}
+.roomsTitle { margin-left: 10px; }
+
 .roomsList li {
     cursor: pointer;
-    width: calc(100% - 10px);   
-    margin-right: 3px;         
+    width: calc(100% - 10px);
+    margin-right: 3px;
     box-sizing: border-box;
     height: 30px;
     display: flex;
     align-items: center;
     padding-left: 10px;
 }
-.roomsList li:hover {
-    text-decoration: underline;
-}
-.roomsListDiv {
-    margin-left: 1vw;
-    
-}
+
+.roomsList li:hover { text-decoration: underline; }
+
+.roomsListDiv { margin-left: 1vw; }
+
 .room {
     border-radius: 7px;
     padding: 0.5px;
@@ -76,8 +68,8 @@ h1 {
     background-color: #1d1d1e;
     font-size: 17px;
     color: white;
-
 }
+
 .rooms {
     top: 0px;
     height: 100vh;
@@ -93,7 +85,7 @@ h1 {
 
 .messages {
     height: 80vh;
-    overflow: scroll;
+    overflow-y: scroll;
     overflow-x: hidden;
     overflow-wrap: break-word;
     width: 85vw;
@@ -104,12 +96,14 @@ body {
     background-color: #1a1a1e;
     font-family: Arial, Helvetica, sans-serif;
 }
+
 .usernameBg {
     color: black;
     padding: 4px;
-    border-radius:2px;
+    border-radius: 2px;
     border: 1px solid black;
 }
+
 @media(max-width:500px) {
     .desktopDiv {
         display: none;
@@ -125,22 +119,16 @@ body {
         overflow: scroll;
     }
 
-    .sendput {
-        bottom: 30px;
+    .sendput { bottom: 30px; }
+
+    .showUsersMobile, .showRoomsMobile {
+        display: block;
+        position: absolute;
+        right: 5px;
     }
 
-    .showUsersMobile {
-        display: block;
-        position: absolute;
-        bottom: 30px;
-        right: 5px;
-    }
-    .showRoomsMobile {
-        display: block;
-        position: absolute;
-        bottom: 60px;
-        right: 5px;
-    }
+    .showUsersMobile { bottom: 30px; }
+    .showRoomsMobile { bottom: 60px; }
 }
 
 @media(min-width:500px) {
@@ -151,9 +139,7 @@ body {
         top: 5px;
     }
 
-    .showUsersMobile, .showRoomsMobile {
-        display: none;
-    }
+    .showUsersMobile, .showRoomsMobile { display: none; }
 
     .messages {
         height: 85vh;
@@ -162,63 +148,81 @@ body {
         top: 80px;
     }
 
-    .sendput {
-        left: 15vw;
-    }
+    .sendput { left: calc(15vw + 50px); }
 }
 
-
-.userP {
-    color: #808080;
+.messages div {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
 }
 
-.msgText {
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.msgContent {
+    display: flex;
+    flex-direction: column;
+    background-color: #2a2a2e;
+    padding: 5px 10px;
+    border-radius: 5px;
+    max-width: 80%;
+    word-wrap: break-word;
+}
+
+.usernameBg {
     color: white;
+    font-weight: bold;
+    margin-bottom: 2px;
 }
-.iden{
-    display: none;
+
+.msgText { color: white; }
+
+.messages::-webkit-scrollbar { width: 8px; }
+.messages::-webkit-scrollbar-thumb {
+    background-color: #555;
+    border-radius: 4px;
 }
+.messages::-webkit-scrollbar-track { background: transparent; }
+
+.messages div p { line-height: 1.6; }
+
+.userP { color: #808080; }
+
+.iden { display: none; }
 #messages[data-show=true] div p .iden {
     display: inline;
     text-decoration: underline;
     font-size: 0.8em;
 }
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  
-  @keyframes wave {
-    0%   { transform: rotate(0deg) translateY(0px); }
-    25%  { transform: rotate(5deg) translateY(-2px); }
-    50%  { transform: rotate(0deg) translateY(0px); }
-    75%  { transform: rotate(-5deg) translateY(2px); }
+
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+@keyframes wave {
+    0% { transform: rotate(0deg) translateY(0px); }
+    25% { transform: rotate(5deg) translateY(-2px); }
+    50% { transform: rotate(0deg) translateY(0px); }
+    75% { transform: rotate(-5deg) translateY(2px); }
     100% { transform: rotate(0deg) translateY(0px); }
-  }
-  
-  @keyframes glitch {
+}
+
+@keyframes glitch {
     0% { text-shadow: 2px 0 red, -2px 0 blue; }
     20% { text-shadow: -2px 0 red, 2px 0 blue; }
     40% { text-shadow: 2px 0 red, -2px 0 blue; }
     60% { text-shadow: -2px 0 red, 2px 0 blue; }
     80% { text-shadow: 2px 0 red, -2px 0 blue; }
     100% { text-shadow: none; }
-  }
-  
-  .glitch {
-    position: relative;
-    animation: glitch 1s infinite;
-  }
-  
-  .spoiler {
-    background: black;
-    color: black;
-    cursor: pointer;
-  }
-  .spoiler:hover {
-    color: white;
-  }
-  
+}
+.glitch { position: relative; animation: glitch 1s infinite; }
+
+.spoiler { background: black; color: black; cursor: pointer; }
+.spoiler:hover { color: white; }
 
 @keyframes shake {
   0%,100% { transform: translateX(0); }
@@ -247,23 +251,10 @@ body {
   -webkit-text-fill-color: transparent;
   animation: rainbowShift 3s linear infinite;
 }
-@keyframes rainbowShift {
-  to { background-position: 200% center; }
-}
-@keyframes glow {
-  from { text-shadow: 0 0 5px #ff66cc; }
-  to { text-shadow: 0 0 20px #ff66cc; }
-}
+@keyframes rainbowShift { to { background-position: 200% center; } }
+
+@keyframes glow { from { text-shadow: 0 0 5px #ff66cc; } to { text-shadow: 0 0 20px #ff66cc; } }
 .glow { animation: glow 1.5s infinite alternate; }
 
-@keyframes zoom {
-  0%,100% { transform: scale(1); }
-  50% { transform: scale(1.5); }
-}
+@keyframes zoom { 0%,100% { transform: scale(1); } 50% { transform: scale(1.5); } }
 .zoom { display:inline-block; animation: zoom 1s infinite; }
-
-
-
-
-
-

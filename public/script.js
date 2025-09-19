@@ -192,24 +192,34 @@ function listenToRoom(roomName) {
         snapshot.forEach((doc) => {
             const message = doc.data();
             const tstamp = parseTimestamp(message.timestamp);
-            const raw = message.raw;
+
             const msgDiv = document.createElement("div");
-            if (raw) {
-                const msg = document.createElement("p");
-                msg.innerHTML = `<span style="background-color:${message.color};" class="usernameBg">${message.writer}</span>`;
-                msgDiv.appendChild(msg);
-                msgDiv.innerHTML += message.text;
+            msgDiv.className = "message";
+
+            const avatar = document.createElement("img");
+            avatar.className = "avatar";
+            avatar.src = `https://ui-avatars.com/api/?name=${message.writer}&background=random&rounded=true`;
+            avatar.alt = message.writer;
+
+            const content = document.createElement("div");
+            content.className = "msgContent";
+
+            if (message.raw) {
+                content.innerHTML = `<span class="usernameBg" style="background-color:${message.color};">${message.writer}</span>${message.text}`;
             } else {
-                const msg = document.createElement("p");
-                msg.innerHTML = `<span style="background-color:${message.color};" class="usernameBg">${message.writer}</span><span class="msgText"> ${message.text} <b>(${tstamp})</b></span><span class="iden">${message.iden}</span>`;
-                msgDiv.appendChild(msg);
+                content.innerHTML = `<span class="usernameBg" style="background-color:${message.color};">${message.writer}</span>
+                                     <span class="msgText"><b>${tstamp}</b><br>${message.text}</span>
+                                     <span class="iden">${message.iden}</span>`;
             }
+
+            msgDiv.appendChild(avatar);
+            msgDiv.appendChild(content);
             messagesEl.appendChild(msgDiv);
         });
         scrollToBottom(messagesEl);
     });
-
 }
+
 const banned = ["<"];
 function checkBannedWords(string, banlist) {
     if (!string) {
@@ -268,13 +278,13 @@ export async function sendMsg(message, writer, color, raw) {
                     if (docFound) {
                         found = true;
                     } else {
-                        sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#ffffff");
+                        sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#4c5b8c");
                         return;
                     }
                 }
 
                 if (!found) {
-                    sendMsg("Error: No message found to edit.", "System", "#");
+                    sendMsg("Error: No message found to edit.", "System", "4c5b8c");
                 }
                 return;
             } else if (message.split(" ")[0] === "!editId") {
@@ -301,13 +311,13 @@ export async function sendMsg(message, writer, color, raw) {
                     if (docFound) {
                         found = true;
                     } else {
-                        sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#874c60");
+                        sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#4c5b8c");
                         return;
                     }
                 }
 
                 if (!found) {
-                    sendMsg("Error: No message found to edit.", "System", "#ffffff");
+                    sendMsg("Error: No message found to edit.", "System", "#4c5b8c");
                 }
                 return;
             } else if (message.split(" ")[0] === "!delete") {
@@ -327,7 +337,7 @@ export async function sendMsg(message, writer, color, raw) {
                     await deleteDoc(docRef);
                     return;
                 } else {
-                    sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#ffffff");
+                    sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#4c5b8c");
                 }
 
             } else if (message.split(" ")[0] === "!showIden") {
@@ -341,7 +351,7 @@ export async function sendMsg(message, writer, color, raw) {
             } else if (message.split(" ")[0] === "!rainbow") {
                 color = "transparent; background-image: repeating-linear-gradient( 45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000 var(--stripe-width)); animation: stripes var(--anim-time) linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
                 message = `<span>${message.split(" ").splice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!rotate") {
+            } else if (message.split(" ")[0] === "!rotate" && currentRoom=="/codeinject") {
                 message = `<span style="display:inline-block; transform:rotate(${message.split(" ")[1]}deg);">${message.split(" ").slice(2).join(" ")}</span>`;
             } else if (message.split(" ")[0] === "!unrainbow") {
                 color = "white";
@@ -435,7 +445,9 @@ export async function sendMsg(message, writer, color, raw) {
         const msgP = document.createElement("p");
         const iden = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         console.log("iden:", iden);
-        msgP.innerHTML = `<span style="background-color:${color};" class="usernameBg">${writer}</span><span class="msgText"> ${message} <b>(sending...)</b></span><span class="iden">${iden}</span>`;
+        msgP.innerHTML = `<span style="background-color:${color};" class="usernameBg">${writer}</span>
+                          <span class="msgText"> ${message} <b>(sending...)</b></span>
+                          <span class="iden">${iden}</span>`;
         messagesEl.appendChild(msgP);
         scrollToBottom(messagesEl);
 
@@ -747,10 +759,10 @@ async function resetRoomIfKey(message, writer, room) {
 
             await batch.commit();
 
-            sendMsg(`All messages in room ${targetRoom} have been reset by Key.`, "System", "#ffffff");
+            sendMsg(`All messages in room ${targetRoom} have been reset by Key.`, "System", "#4c5b8c");
         }
     } catch (error) {
         console.error("Error in resetRoomIfKey:", error);
-        sendMsg(`Failed to reset room: ${error.message}`, "System", "#ffffff");
+        sendMsg(`Failed to reset room: ${error.message}`, "System", "#4c5b8c");
     }
 }
