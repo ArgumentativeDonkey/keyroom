@@ -554,12 +554,17 @@ async function setUsername() {
         scrollToBottom(document.getElementById("messages"));
     } else {
         username = localStorage.getItem("username");
-        validatePassword(username);
         if (username == "" || username == " " || username == null) {
             alert("Something is really wrong. Clear your cookies and try again.");
             localStorage.removeItem('username');
             setUsername();
             return;
+        } else {
+            const ok = await validatePassword(username);
+            if(!ok){
+                alert("Password incorrect.");
+                setUsername();
+            }
         }
     }
 }
