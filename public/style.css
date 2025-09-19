@@ -12,6 +12,7 @@
     --txt: black;
     --stripe-width: 8em;
     --stripe-calc: calc(var(--stripe-width) * 1.41421356237);
+    --anim-time: 8s;
 }
 
 
@@ -33,6 +34,10 @@ h1 {
     padding-left: 0;
     margin-left: 0;
 
+}
+.roomsList li {
+    cursor: pointer;
+    width: fit-content;
 }
 .roomsList li:hover {
     text-decoration: underline;
@@ -67,6 +72,8 @@ h1 {
 .messages {
     height: 80vh;
     overflow: scroll;
+    overflow-x: hidden;
+    overflow-wrap: break-word;
     width: 85vw;
     font-size: 14px;
 }
@@ -146,3 +153,95 @@ body {
 .msgText {
     color: black;
 }
+.iden{
+    display: none;
+}
+#messages[data-show=true] div p .iden {
+    display: inline;
+    text-decoration: underline;
+    font-size: 0.8em;
+}
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  @keyframes wave {
+    0%   { transform: rotate(0deg) translateY(0px); }
+    25%  { transform: rotate(5deg) translateY(-2px); }
+    50%  { transform: rotate(0deg) translateY(0px); }
+    75%  { transform: rotate(-5deg) translateY(2px); }
+    100% { transform: rotate(0deg) translateY(0px); }
+  }
+  
+  @keyframes glitch {
+    0% { text-shadow: 2px 0 red, -2px 0 blue; }
+    20% { text-shadow: -2px 0 red, 2px 0 blue; }
+    40% { text-shadow: 2px 0 red, -2px 0 blue; }
+    60% { text-shadow: -2px 0 red, 2px 0 blue; }
+    80% { text-shadow: 2px 0 red, -2px 0 blue; }
+    100% { text-shadow: none; }
+  }
+  
+  .glitch {
+    position: relative;
+    animation: glitch 1s infinite;
+  }
+  
+  .spoiler {
+    background: black;
+    color: black;
+    cursor: pointer;
+  }
+  .spoiler:hover {
+    color: white;
+  }
+  
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  50% { transform: translateX(3px); }
+  75% { transform: translateX(-3px); }
+}
+.shake { display:inline-block; animation: shake 0.5s infinite; }
+
+@keyframes bounce {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.bounce { display:inline-block; animation: bounce 0.8s infinite; }
+
+@keyframes fade {
+  0%,100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+.fade { animation: fade 2s infinite; }
+
+.rainbowtext {
+  background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbowShift 3s linear infinite;
+}
+@keyframes rainbowShift {
+  to { background-position: 200% center; }
+}
+@keyframes glow {
+  from { text-shadow: 0 0 5px #ff66cc; }
+  to { text-shadow: 0 0 20px #ff66cc; }
+}
+.glow { animation: glow 1.5s infinite alternate; }
+
+@keyframes zoom {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.5); }
+}
+.zoom { display:inline-block; animation: zoom 1s infinite; }
+
+
+
+
+
+

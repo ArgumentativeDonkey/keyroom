@@ -26,12 +26,13 @@ const firebaseConfig = {
 
 };
 
+import { hasher } from "./hashutil.js";
 
 // Can they send messages?
 let cansendmessages = true;
 const timeout = 1000;
 
-function doDelay(){
+function doDelay() {
     cansendmessages = false;
     setTimeout(() => {
         cansendmessages = true;
@@ -104,8 +105,8 @@ function elapsedSecondsSince(timestamp) {
 }
 
 function getUserColor(username) {
-    if (username === "Key") return "transparent; background-image: repeating-linear-gradient(45deg, #7a3b3b, #b85c5c, #7a3b3b var(--stripe-width)); animation: stripes 6s linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
-    if (username === "Leif") return "transparent; background-image: repeating-linear-gradient( 45deg, #63e3bf, #7383eb, #63e3bf var(--stripe-width) ); animation: stripes 6s linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
+    if (username === "Key") return "transparent; background-image: repeating-linear-gradient(45deg, #7a3b3b, #b85c5c, #7a3b3b var(--stripe-width)); animation: stripes var(--anim-time) linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
+    if (username === "Leif") return "transparent; background-image: repeating-linear-gradient( 45deg, #63e3bf, #7383eb, #63e3bf var(--stripe-width) ); animation: stripes var(--anim-time) linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
 
     const palette = [
         "#e63946", "#f07c1e", "#2a9d8f", "#457b9d", "#b48c70",
@@ -186,27 +187,27 @@ function listenToRoom(roomName) {
     const messagesQuery = query(messagesRef, orderBy("timestamp", "asc"));
 
     unsubscribeMessages = onSnapshot(messagesQuery, (snapshot) => {
-    const messagesEl = document.getElementById("messages");
-    messagesEl.innerHTML = "";
-    snapshot.forEach((doc) => {
-        const message = doc.data();
-        const tstamp = parseTimestamp(message.timestamp);
-        const raw = message.raw;
-        const msgDiv = document.createElement("div");
-        if (raw) {
-            const msg = document.createElement("p");
-            msg.innerHTML = `<span style="background-color:${message.color};" class="usernameBg">${message.writer}</span>`;
-            msgDiv.appendChild(msg);
-            msgDiv.innerHTML += message.text;
-        } else {
-            const msg = document.createElement("p");
-            msg.innerHTML = `<span style="background-color:${message.color};" class="usernameBg">${message.writer}</span><span class="msgText"> ${message.text} <b>(${tstamp})</b></span>`;
-            msgDiv.appendChild(msg);
-        }
-        messagesEl.appendChild(msgDiv);
+        const messagesEl = document.getElementById("messages");
+        messagesEl.innerHTML = "";
+        snapshot.forEach((doc) => {
+            const message = doc.data();
+            const tstamp = parseTimestamp(message.timestamp);
+            const raw = message.raw;
+            const msgDiv = document.createElement("div");
+            if (raw) {
+                const msg = document.createElement("p");
+                msg.innerHTML = `<span style="background-color:${message.color};" class="usernameBg">${message.writer}</span>`;
+                msgDiv.appendChild(msg);
+                msgDiv.innerHTML += message.text;
+            } else {
+                const msg = document.createElement("p");
+                msg.innerHTML = `<span style="background-color:${message.color};" class="usernameBg">${message.writer}</span><span class="msgText"> ${message.text} <b>(${tstamp})</b></span><span class="iden">${message.iden}</span>`;
+                msgDiv.appendChild(msg);
+            }
+            messagesEl.appendChild(msgDiv);
+        });
+        scrollToBottom(messagesEl);
     });
-    scrollToBottom(messagesEl);
-});
 
 }
 const banned = ["<"];
@@ -232,7 +233,7 @@ function rndList(list) {
     let random = Math.floor(Math.random() * list.length);
     return list[random];
 }
-async function sendMsg(message, writer, color, raw) {
+export async function sendMsg(message, writer, color, raw) {
     try {
         if (raw !== true) raw = false;
         if (typeof message === 'string') {
@@ -243,11 +244,198 @@ async function sendMsg(message, writer, color, raw) {
                 message = `<img src="${message.split(" ")[1]}" alt="Image" style="max-width:1200px; max-height:200px;">`;
             } else if (message.split(" ")[0] == "!link") {
                 message = `<a href="${message.split(" ")[1]}" target="_blank" rel="noopener noreferrer">${message.split(" ")[1]}</a>`;
-            }
+            } else if (message.split(" ")[0] === "!edit") {
+                const newText = message.replace("!edit ", "") + " <i>(edited)</i>";
+                const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
+                let found = false;
+
+                for (const doca of snapshot.docs) {
+                    const data = doca.data();
+                    if (data.writer === writer) {
+                        const docRef = doc(db, currentRoom, doca.id);
+                        await setDoc(docRef, {
+                            text: newText,
+                            writer,
+                            color,
+                            timestamp: serverTimestamp(),
+                            raw
+                        }, { merge: true });
+                        found = true;
+                        break;
+                    }
+
+
+                    if (docFound) {
+                        found = true;
+                    } else {
+                        sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#874c60");
+                        return;
+                    }
+                }
+
+                if (!found) {
+                    sendMsg("Error: No message found to edit.", "System", "#");
+                }
+                return;
+            } else if (message.split(" ")[0] === "!editId") {
+                const newText = message.split(" ")[2] + " <i>(edited)</i>";
+                const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
+                let found = false;
+
+                for (const doca of snapshot.docs) {
+                    const data = doca.data();
+                    if (data.iden === message.split(" ")[1]) {
+                        const docRef = doc(db, currentRoom, doca.id);
+                        await setDoc(docRef, {
+                            text: newText,
+                            writer,
+                            color,
+                            timestamp: serverTimestamp(),
+                            raw
+                        }, { merge: true });
+                        found = true;
+                        break;
+                    }
+
+
+                    if (docFound) {
+                        found = true;
+                    } else {
+                        sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#874c60");
+                        return;
+                    }
+                }
+
+                if (!found) {
+                    sendMsg("Error: No message found to edit.", "System", "#");
+                }
+                return;
+            } else if (message.split(" ")[0] === "!delete") {
+                const targetId = message.split(" ")[1].trim();
+                const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
+                let docFound = null;
+
+                for (const doca of snapshot.docs) {
+                    if (doca.data().iden === targetId && doca.data().writer === writer) {
+                        docFound = doca;
+                        break;
+                    }
+                }
+
+                if (docFound) {
+                    const docRef = doc(db, currentRoom, docFound.id);
+                    await deleteDoc(docRef);
+                    return;
+                } else {
+                    sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#874c60");
+                }
+
+            } else if (message.split(" ")[0] === "!showIden") {
+                document.getElementById("messages").dataset.show = "true";
+            } else if (message.split(" ")[0] === "!hideIden") {
+                document.getElementById("messages").dataset.show = "false";
+            } else if (message.split(" ")[0] === "!flip") {
+                document.getElementById("messages").style.transform = "scaleY(-1) rotate(1deg)";
+            } else if (message.split(" ")[0] === "!unflip") {
+                document.getElementById("messages").style.transform = "scaleY(1) rotate(0deg)";
+            } else if (message.split(" ")[0] === "!rainbow") {
+                color = "transparent; background-image: repeating-linear-gradient( 45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000 var(--stripe-width)); animation: stripes var(--anim-time) linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
+                message = `<span>${message.split(" ").splice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!rotate") {
+                message = `<span style="display:inline-block; transform:rotate(${message.split(" ")[1]}deg);">${message.split(" ").slice(2).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!unrainbow") {
+                color = "white";
+                message = `<span>${message.split(" ").splice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!shrink") {
+                message = `<span style="font-size:0.5em;">${message.split(" ").splice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!grow") {
+                message = `<span style="font-size:2em;">${message.split(" ").splice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!spin" && currentRoom == "/codeinject") {
+                message = `<span style="display:inline-block; animation: spin 2s linear infinite;">${message.split(" ").splice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!code") {
+                message = `<code>${message.split(" ").splice(1).join(" ")}</code>`;
+            } else if (message.split(" ")[0] === "!bold") {
+                message = `<b>${message.split(" ").splice(1).join(" ")}</b>`;
+            } else if (message.split(" ")[0] === "!italic") {
+                message = `<i>${message.split(" ").splice(1).join(" ")}</i>`;
+            } else if (message.split(" ")[0] === "!underline") {
+                message = `<u>${message.split(" ").splice(1).join(" ")}</u>`;
+            } else if (message.split(" ")[0] === "!strikethrough") {
+                message = `<s>${message.split(" ").splice(1).join(" ")}</s>`;
+            } else if (message.split(" ")[0] === "!reverse") {
+                const text = message.split(" ").slice(1).join(" ");
+                message = `<span>${text.split("").reverse().join("")}</span>`;
+            } else if (message.split(" ")[0] === "!upper") {
+                message = `<span>${message.split(" ").slice(1).join(" ").toUpperCase()}</span>`;
+            } else if (message.split(" ")[0] === "!lower") {
+                message = `<span>${message.split(" ").slice(1).join(" ").toLowerCase()}</span>`;
+            } else if (message.split(" ")[0] === "!wave") {
+                const text = message.split(" ").slice(1).join(" ");
+                message = `<span style="display:inline-block; animation: wave 2s infinite;">${text}</span>`;
+            } else if (message.split(" ")[0] === "!glitch") {
+                const text = message.split(" ").slice(1).join(" ");
+                message = `<span class="glitch" data-text="${text}">${text}</span>`;
+            } else if (message.split(" ")[0] === "!shrug") {
+                message = `<span>${message.split(" ").slice(1).join(" ")} ¯\\_(ツ)_/¯</span>`;
+            } else if (message.split(" ")[0] === "!spoiler") {
+                message = `<span style="background:black; color:black;" onmouseover="this.style.color='white'">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!blink") {
+                message = `<span style="animation: blink 1s steps(2, start) infinite;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!monospace") {
+                message = `<span style="font-family:monospace;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!shake") {
+                message = `<span style="display:inline-block; animation: shake 0.5s infinite;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!fade") {
+                message = `<span style="animation: fadeIn 2s;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!count") {
+                const text = message.split(" ").slice(1).join(" ");
+                message = `<span>${text} (${text.length} chars)</span>`;
+            } else if (message.split(" ")[0] === "!time") {
+                message = `<span>${new Date().toLocaleTimeString()}</span>`;
+            } else if (message.split(" ")[0] === "!date") {
+                message = `<span>${new Date().toLocaleDateString()}</span>`;
+            } else if (message.split(" ")[0] === "!rainbowtext") {
+                const text = message.split(" ").slice(1).join(" ");
+                message = `<span style="background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet); -webkit-background-clip: text; color: transparent;">${text}</span>`;
+            } else if (message.split(" ")[0] === "!binary") {
+                let text = message.split(" ").slice(1).join(" ");
+                text = text.split("").map(c => c.charCodeAt(0).toString(2)).join(" ");
+                message = `<span>${text}</span>`;
+            } else if (message.split(" ")[0] === "!leet") {
+                let text = message.split(" ").slice(1).join(" ");
+                text = text.replace(/a/gi, "4").replace(/e/gi, "3").replace(/i/gi, "1").replace(/o/gi, "0").replace(/s/gi, "5").replace(/t/gi, "7");
+                message = `<span>${text}</span>`;
+            } else if (message.split(" ")[0] === "!reversewords") {
+                let text = message.split(" ").slice(1).reverse().join(" ");
+                message = `<span>${text}</span>`;
+            } else if (message.split(" ")[0] === "!outline") {
+                message = `<span style="color:black; -webkit-text-stroke:1px red;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!glow") {
+                message = `<span style="color:#fff; text-shadow:0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!zebra") {
+                let text = message.split(" ").slice(1).join(" ");
+                message = `<span>${text.split("").map((c, i) => `<span style="background:${i % 2 ? "#000" : "#fff"};color:${i % 2 ? "#fff" : "#000"};">${c}</span>`).join("")}</span>`;
+            } else if (message.split(" ")[0] === "!wavey") {
+                message = `<span style="text-decoration:underline wavy red;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!stretch") {
+                message = `<span style="letter-spacing:5px;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!tight") {
+                message = `<span style="letter-spacing:-1px;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } else if (message.split(" ")[0] === "!hollow") {
+                message = `<span style="color:transparent; -webkit-text-stroke:1px black;">${message.split(" ").slice(1).join(" ")}</span>`;
+            } 
+
+
+
+
+
+
         }
         const messagesEl = document.getElementById("messages");
         const msgP = document.createElement("p");
-        msgP.innerHTML = `<span style="background-color:${color};" class="usernameBg">${writer}</span><span class="msgText"> ${message} <b>(sending...)</b></span>`;
+        const iden = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        console.log("iden:", iden);
+        msgP.innerHTML = `<span style="background-color:${color};" class="usernameBg">${writer}</span><span class="msgText"> ${message} <b>(sending...)</b></span><span class="iden">${iden}</span>`;
         messagesEl.appendChild(msgP);
         scrollToBottom(messagesEl);
 
@@ -256,7 +444,8 @@ async function sendMsg(message, writer, color, raw) {
             writer: writer,
             color: color,
             timestamp: serverTimestamp(),
-            raw: raw
+            raw: raw,
+            iden: iden
         });
 
         const snapshot = await getDocs(tellRef);
@@ -308,25 +497,53 @@ async function sendXkcd(what) {
         sendMsg(msg, "xkcd", '#516b94', true);
     }
 }
-var username;
-if (!localStorage.getItem("username")) {
-    username = prompt("Enter username");
-    if (username == "xkcd") {
-        username = "xkcd impersonator";
-    }
-    if (username == ("" || " ")) {
-        alert("Please enter a username!");
-        document.location.reload();
-    }
 
-    localStorage.setItem("username", username);
-} else {
-    username = localStorage.getItem("username");
-    if(username == ("" || " ")) {
-        alert("Something is really wrong. Clear your cookies and try again.");
-        document.location.reload();
+async function validatePassword(username) {
+    const res = await fetch("./passwords.json");
+    const data = await res.json();
+    console.log("validating password")
+    if (data.hasOwnProperty(username)) {
+        console.log("password found, asking for verification.")
+        let input = prompt("Enter password");
+        return Number(data[username]) == Number(hasher(input));
+    } else {
+        console.log("no password found, authenticating.")
+        return true;
     }
 }
+
+var username;
+async function setUsername() {
+    if (!localStorage.getItem("username")) {
+        username = prompt("Enter username");
+        if (username == "xkcd") {
+            username = "xkcd impersonator";
+        }
+        if (username == "" || username == " " || username == null) {
+            alert("Please enter a username!");
+            setUsername();
+            return;
+        }
+        const ok = await validatePassword(username);
+        if (!ok) {
+            alert("Password incorrect, please try again.");
+            setUsername();
+            return;
+        }
+
+        localStorage.setItem("username", username);
+        scrollToBottom(document.getElementById("messages"));
+    } else {
+        username = localStorage.getItem("username");
+        if (username == "" || username == " " || username == null) {
+            alert("Something is really wrong. Clear your cookies and try again.");
+            localStorage.removeItem('username');
+            setUsername();
+            return;
+        }
+    }
+}
+setUsername();
 const userRef = collection(db, "connectedUsers");
 const usersQuery = query(userRef, orderBy("lastActive", "asc"));
 const userDocRef = doc(db, "connectedUsers", username);
@@ -346,11 +563,11 @@ async function getUserLastActive(user) {
         sendMsg(`User ${user} not found.`, "LastActive", '#cf7e78');
     }
 }
-document.addEventListener("keydown", (e) => {processKeydown(e)});
+document.addEventListener("keydown", (e) => { processKeydown(e) });
 
 function processKeydown(e) {
     if (e.keyCode == 13) {
-        if(cansendmessages || username === "Key"){
+        if (cansendmessages || username === "Key") {
             document.getElementById("message-input").placeholder = "Wow, what a big, beautiful box...";
             sendMsg(document.getElementById("message-input").value, username, getUserColor(username));
             var command = document.getElementById("message-input").value.split(" ")[0];
@@ -369,7 +586,7 @@ function processKeydown(e) {
                 getUserLastActive(split[1]);
             }
             doDelay();
-        }else {
+        } else {
             document.getElementById("message-input").placeholder = "wait a sec...";
         }
         document.getElementById("message-input").value = "";
@@ -486,7 +703,7 @@ document.getElementById("&gamescripts").addEventListener("click", () => {
 })
 document.getElementById("&hunch").style.border = "black solid 1px";
 listenToRoom('&hunch')
-import { writeBatch } from "firebase/firestore"; 
+import { writeBatch } from "firebase/firestore";
 
 async function resetRoomIfKey(message, writer, room) {
     try {
@@ -494,7 +711,7 @@ async function resetRoomIfKey(message, writer, room) {
         const cmd = parts[0].toLowerCase();
         const targetRoom = room || parts[1] || currentRoom;
 
-        if (writer === "Key" && cmd === "!reset") {
+        if ((writer === "Key" || writer === "Leif") && cmd === "!reset") {
             console.log("Resetting room:", targetRoom);
             const snapshot = await getDocs(collection(db, targetRoom));
             const batch = writeBatch(db);
@@ -504,7 +721,7 @@ async function resetRoomIfKey(message, writer, room) {
                 batch.delete(docRef);
             });
 
-            await batch.commit(); 
+            await batch.commit();
 
             sendMsg(`All messages in room ${targetRoom} have been reset by Key.`, "System", "#");
         }
@@ -513,4 +730,3 @@ async function resetRoomIfKey(message, writer, room) {
         sendMsg(`Failed to reset room: ${error.message}`, "System", "#874c60");
     }
 }
-
