@@ -341,17 +341,18 @@ export async function sendMsg(message, writer, color, raw) {
                 }
 
             } else if (message.split(" ")[0] === "!showIden") {
-                document.getElementById("messages").dataset.show = "true";
+                document.getElementById("messages").classList.add("showIden");
             } else if (message.split(" ")[0] === "!hideIden") {
-                document.getElementById("messages").dataset.show = "false";
-            } else if (message.split(" ")[0] === "!flip") {
+                document.getElementById("messages").classList.remove("showIden");
+            }
+            else if (message.split(" ")[0] === "!flip") {
                 document.getElementById("messages").style.transform = "scaleY(-1) rotate(1deg)";
             } else if (message.split(" ")[0] === "!unflip") {
                 document.getElementById("messages").style.transform = "scaleY(1) rotate(0deg)";
             } else if (message.split(" ")[0] === "!rainbow") {
                 color = "transparent; background-image: repeating-linear-gradient( 45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000 var(--stripe-width)); animation: stripes var(--anim-time) linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
                 message = `<span>${message.split(" ").splice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!rotate" && currentRoom=="/codeinject") {
+            } else if (message.split(" ")[0] === "!rotate" && currentRoom == "/codeinject") {
                 message = `<span style="display:inline-block; transform:rotate(${message.split(" ")[1]}deg);">${message.split(" ").slice(2).join(" ")}</span>`;
             } else if (message.split(" ")[0] === "!unrainbow") {
                 color = "white";
@@ -433,7 +434,7 @@ export async function sendMsg(message, writer, color, raw) {
                 message = `<span style="letter-spacing:-1px;">${message.split(" ").slice(1).join(" ")}</span>`;
             } else if (message.split(" ")[0] === "!hollow") {
                 message = `<span style="color:transparent; -webkit-text-stroke:1px black;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } 
+            }
 
 
 
@@ -553,6 +554,7 @@ async function setUsername() {
         scrollToBottom(document.getElementById("messages"));
     } else {
         username = localStorage.getItem("username");
+        validatePassword(username);
         if (username == "" || username == " " || username == null) {
             alert("Something is really wrong. Clear your cookies and try again.");
             localStorage.removeItem('username');

@@ -195,6 +195,8 @@ body {
 .userP { color: #808080; }
 
 .iden { display: none; }
+#messages.showIden .iden { display: inline; }
+
 #messages[data-show=true] div p .iden {
     display: inline;
     text-decoration: underline;
