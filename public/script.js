@@ -514,22 +514,24 @@ async function sendXkcd(what) {
 async function validatePassword(username) {
     const res = await fetch("./passwords.json");
     const data = await res.json();
-    console.log("validating password")
-    if (data.hasOwnProperty(username)) {
-        if(hasher(localStorage.getItem("password")) === hasher(data[username])) {
-            return true
+    console.log("validating password");
+    if(data.hasOwnProperty(username)) {
+        let storedPassword = localStorage.getItem("password");
+        if(storedPassword && hasher(storedPassword) === data[username]) {
+            return true;
         }
-        console.log("password found, asking for verification.")
         let input = prompt("Enter password");
-        if(Number(data[username]) == Number(hasher(input))){
+        if(input && hasher(input) === data[username]){
             localStorage.setItem("password", input);
             return true;
         }
+        return false;
     } else {
-        console.log("no password found, authenticating.")
+        console.log("no password found, authenticating.");
         return true;
     }
 }
+
 
 var username;
 async function setUsername() {
@@ -540,13 +542,13 @@ async function setUsername() {
         }
         if (username == "" || username == " " || username == null) {
             alert("Please enter a username!");
-            setUsername();
+            await setUsername();
             return;
         }
         const ok = await validatePassword(username);
         if (!ok) {
             alert("Password incorrect, please try again.");
-            setUsername();
+            await setUsername();
             return;
         }
 
@@ -557,13 +559,14 @@ async function setUsername() {
         if (username == "" || username == " " || username == null) {
             alert("Something is really wrong. Clear your cookies and try again.");
             localStorage.removeItem('username');
-            setUsername();
+            await setUsername();
             return;
         } else {
             const ok = await validatePassword(username);
             if(!ok){
                 alert("Password incorrect.");
-                setUsername();
+                await setUsername();
+                return;
             }
         }
     }
