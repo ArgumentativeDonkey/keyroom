@@ -515,9 +515,15 @@ async function validatePassword(username) {
     const data = await res.json();
     console.log("validating password")
     if (data.hasOwnProperty(username)) {
+        if(hasher(localStorage.getItem("password")) === hasher(data[username])) {
+            return true
+        }
         console.log("password found, asking for verification.")
         let input = prompt("Enter password");
-        return Number(data[username]) == Number(hasher(input));
+        if(Number(data[username]) == Number(hasher(input))){
+            localStorage.setItem("password", input);
+            return true;
+        }
     } else {
         console.log("no password found, authenticating.")
         return true;
