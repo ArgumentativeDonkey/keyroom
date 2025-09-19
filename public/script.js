@@ -268,7 +268,7 @@ export async function sendMsg(message, writer, color, raw) {
                     if (docFound) {
                         found = true;
                     } else {
-                        sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#874c60");
+                        sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#ffffff");
                         return;
                     }
                 }
@@ -307,7 +307,7 @@ export async function sendMsg(message, writer, color, raw) {
                 }
 
                 if (!found) {
-                    sendMsg("Error: No message found to edit.", "System", "#");
+                    sendMsg("Error: No message found to edit.", "System", "#ffffff");
                 }
                 return;
             } else if (message.split(" ")[0] === "!delete") {
@@ -327,7 +327,7 @@ export async function sendMsg(message, writer, color, raw) {
                     await deleteDoc(docRef);
                     return;
                 } else {
-                    sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#874c60");
+                    sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#ffffff");
                 }
 
             } else if (message.split(" ")[0] === "!showIden") {
@@ -650,58 +650,82 @@ document.getElementById("showRooms").addEventListener("click", () => {
     }
 })
 function clearRoomBorders() {
-    document.getElementById("&random").style.border = "none"
-    document.getElementById("&xkcd").style.border = "none"
-    document.getElementById("&spam").style.border = "none"
-    document.getElementById("&hunch").style.border = "none"
-    document.getElementById("/codeinject").style.border = "none"
-    document.getElementById("&boom").style.border = "none"
-    document.getElementById("&gamescripts").style.border = "none"
+    document.getElementById("&random").classList.remove('roomActive');
+    document.getElementById("&xkcd").classList.remove('roomActive');
+    document.getElementById("&spam").classList.remove('roomActive');
+    document.getElementById("&hunch").classList.remove('roomActive');
+    document.getElementById("/codeinject").classList.remove('roomActive');
+    document.getElementById("&boom").classList.remove('roomActive');
+    document.getElementById("&gamescripts").classList.remove('roomActive');
+    document.getElementById("&").classList.remove('roomActive');
+    document.getElementById("&random").classList.add('room');
+    document.getElementById("&xkcd").classList.add('room');
+    document.getElementById("&spam").classList.add('room');
+    document.getElementById("&hunch").classList.add('room');
+    document.getElementById("/codeinject").classList.add('room');
+    document.getElementById("&boom").classList.add('room');
+    document.getElementById("&gamescripts").classList.add('room');
+    document.getElementById("&").classList.add('room');
 }
 document.getElementById("&random").addEventListener("click", () => {
     currentRoom = "&random"
     listenToRoom('&random')
     clearRoomBorders();
-    document.getElementById("&random").style.border = "black solid 1px";
+    document.getElementById("&random").classList.add('roomActive');
+    document.getElementById("&random").classList.remove('room');
 })
 document.getElementById("&hunch").addEventListener("click", () => {
     currentRoom = "&hunch";
     listenToRoom('&hunch');
     clearRoomBorders();
-    document.getElementById("&hunch").style.border = "black solid 1px";
+    document.getElementById("&hunch").classList.add('roomActive');
+    document.getElementById("&hunch").classList.remove('room');
 
 })
 document.getElementById("&xkcd").addEventListener("click", () => {
     currentRoom = "&xkcd";
     listenToRoom('&xkcd');
     clearRoomBorders();
-    document.getElementById("&xkcd").style.border = "black solid 1px";
+    document.getElementById("&xkcd").classList.add('roomActive');
+    document.getElementById("&xkcd").classList.remove('room');
 })
 document.getElementById("&spam").addEventListener("click", () => {
     currentRoom = "&spam";
     clearRoomBorders();
-    document.getElementById("&spam").style.border = "black solid 1px";
+    document.getElementById("&spam").classList.add('roomActive');
+    document.getElementById("&spam").classList.remove('room');
     listenToRoom('&spam');
 })
 document.getElementById("/codeinject").addEventListener("click", () => {
     currentRoom = "/codeinject";
     clearRoomBorders();
-    document.getElementById("/codeinject").style.border = "black solid 1px";
+    document.getElementById("/codeinject").classList.add('roomActive');
+    document.getElementById("/codeinject").classList.remove('room');
     listenToRoom('/codeinject');
 })
 document.getElementById("&boom").addEventListener("click", () => {
     currentRoom = "&boom";
     clearRoomBorders();
-    document.getElementById("&boom").style.border = "black solid 1px";
+    document.getElementById("&boom").classList.add('roomActive');
+    document.getElementById("&boom").classList.remove('room');
     listenToRoom('&boom');
 })
 document.getElementById("&gamescripts").addEventListener("click", () => {
     currentRoom = "&gamescripts";
     clearRoomBorders();
-    document.getElementById("&gamescripts").style.border = "black solid 1px";
+    document.getElementById("&gamescripts").classList.add('roomActive');
+    document.getElementById("&gamescripts").classList.remove('room');
     listenToRoom('&gamescripts');
 })
-document.getElementById("&hunch").style.border = "black solid 1px";
+document.getElementById("&").addEventListener("click", () => {
+    currentRoom = `&${username}`;
+    clearRoomBorders();
+    document.getElementById("&").classList.add('roomActive');
+    document.getElementById("&").classList.remove('room');
+    listenToRoom(`${username}`);
+})
+document.getElementById("&hunch").classList.add('roomActive');
+document.getElementById("&hunch").classList.remove('room');
 listenToRoom('&hunch')
 import { writeBatch } from "firebase/firestore";
 
@@ -723,10 +747,10 @@ async function resetRoomIfKey(message, writer, room) {
 
             await batch.commit();
 
-            sendMsg(`All messages in room ${targetRoom} have been reset by Key.`, "System", "#");
+            sendMsg(`All messages in room ${targetRoom} have been reset by Key.`, "System", "#ffffff");
         }
     } catch (error) {
         console.error("Error in resetRoomIfKey:", error);
-        sendMsg(`Failed to reset room: ${error.message}`, "System", "#874c60");
+        sendMsg(`Failed to reset room: ${error.message}`, "System", "#ffffff");
     }
 }

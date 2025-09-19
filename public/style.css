@@ -35,9 +35,18 @@ h1 {
     margin-left: 0;
 
 }
+.roomsTitle {
+    margin-left: 10px;
+}
 .roomsList li {
     cursor: pointer;
-    width: fit-content;
+    width: calc(100% - 10px);   
+    margin-right: 3px;         
+    box-sizing: border-box;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
 }
 .roomsList li:hover {
     text-decoration: underline;
@@ -47,22 +56,35 @@ h1 {
     
 }
 .room {
-    border: grey 1px solid;
-    border-radius: 3px;
-    background-color: #1d1d1e;
+    border-radius: 7px;
     padding: 0.5px;
     margin-top: 2px;
     padding-top: 1px;
     padding-bottom: 1px;
+    font-size: 17px;
+    bottom: 4px;
+}
+
+.roomActive {
+    display: block;
+    width: 100%;
+    border-radius: 7px;
+    padding: 0.5px;
+    margin-top: 2px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    background-color: #1d1d1e;
+    font-size: 17px;
+    color: white;
+
 }
 .rooms {
     top: 0px;
     height: 100vh;
-    width: 8vw;
+    width: 13vw;
     color: grey;
     border: 1px 121214 solid;
     overflow: hidden;
-    border-radius: 15px;
     background-color: #121214;
     margin: 0px;
     position: absolute;
@@ -79,7 +101,7 @@ h1 {
 }
 
 body {
-    background-color: white;
+    background-color: #1a1a1e;
     font-family: Arial, Helvetica, sans-serif;
 }
 .usernameBg {
@@ -136,22 +158,22 @@ body {
     .messages {
         height: 85vh;
         position: absolute;
-        left: 10vw;
+        left: 15vw;
         top: 80px;
     }
 
     .sendput {
-        left: 10vw;
+        left: 15vw;
     }
 }
 
 
 .userP {
-    color: black;
+    color: #808080;
 }
 
 .msgText {
-    color: black;
+    color: white;
 }
 .iden{
     display: none;
