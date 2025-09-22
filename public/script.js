@@ -1,3 +1,4 @@
+import { Popup } from "./popup.js"
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDocs, deleteDoc, where } from 'firebase/firestore';
@@ -554,13 +555,17 @@ async function validatePassword(username) {
         if (storedPassword && hasher(storedPassword) === data[username]) {
             return true;
         }
-        let input = prompt("Enter password");
+        let input = await Popup.quick("Please enter your password.", "password");
         if (input && hasher(input) === data[username]) {
             localStorage.setItem("password", input);
             return true;
         }
         return false;
     } else {
+        if(!(localStorage.getItem("seen-pwd-warning") === true)) {
+            await Popup.quick("You don't have a registered password. If you want one, please contact someone with Git access.", "ok");
+            localStorage.setItem("seen-pwd-warning", true);
+        }
         console.log("no password found, authenticating.");
         return true;
     }
@@ -570,18 +575,18 @@ async function validatePassword(username) {
 var username;
 async function setUsername() {
     if (!localStorage.getItem("username")) {
-        username = prompt("Enter username");
+        username = await Popup.quick("Please enter your username.", "text");
         if (username == "xkcd") {
             username = "xkcd impersonator";
         }
-        if (username == "" || username == " " || username == null) {
-            alert("Please enter a username!");
+        if (username == "" || username == " " || username == null || username == undefined) {
+            await Popup.quick("Please enter a username!", "ok");
             await setUsername();
             return;
         }
         const ok = await validatePassword(username);
         if (!ok) {
-            alert("Password incorrect, please try again.");
+            await Popup.quick("Password incorrect, please try again.", "ok");
             await setUsername();
             return;
         }
@@ -591,14 +596,14 @@ async function setUsername() {
     } else {
         username = localStorage.getItem("username");
         if (username == "" || username == " " || username == null) {
-            alert("Something is really wrong. Clear your cookies and try again.");
+            await Popup.quick("Something is really wrong. We'll try to fix it, but you should clear your cookies and try again.", "ok");
             localStorage.removeItem('username');
             await setUsername();
             return;
         } else {
             const ok = await validatePassword(username);
             if (!ok) {
-                alert("Password incorrect.");
+                await Popup.quick("Password incorrect, please try again.", "ok");
                 await setUsername();
                 return;
             }
