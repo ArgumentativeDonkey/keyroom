@@ -42,7 +42,7 @@ function doDelay() {
 }
 
 // Initialize Firebase
-var currentRoom = "&hunch"
+let currentRoom = "&hunch"
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
@@ -678,7 +678,7 @@ async function setUsername() {
 }
 const userRef = collection(db, "connectedUsers");
 const usersQuery = query(userRef, orderBy("lastActive", "asc"));
-const userDocRef = doc(db, "connectedUsers", username);
+let userDocRef;
 async function getUserLastActive(user) {
     const snapshot = await getDocs(userRef);
     var found = false;
@@ -887,5 +887,6 @@ async function onload() {
     document.getElementById("&hunch").classList.add('roomActive');
     document.getElementById("&hunch").classList.remove('room');
     listenToRoom('&hunch');
+    userDocRef = doc(db, "connectedUsers", username)
 }
 onload();

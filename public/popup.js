@@ -1,4 +1,4 @@
-export class Popup {
+class Popup {
     static popupList = [];
     static async quick(text, type) {
         return new Promise(resolve => {
