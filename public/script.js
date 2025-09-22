@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDocs, deleteDoc } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDocs, deleteDoc, where } from 'firebase/firestore';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -193,11 +193,29 @@ function listenToRoom(roomName) {
             const message = doc.data();
             const tstamp = parseTimestamp(message.timestamp);
 
+
+
             const msgDiv = document.createElement("div");
             msgDiv.className = "message";
 
             const avatar = document.createElement("img");
             avatar.className = "avatar";
+            getDocs(query(collection(db, "connectedUsers"), where("name", "==", message.writer)))
+                .then(snap => {
+                    if (!snap.empty) {
+                        const userData = snap.docs[0].data();
+                        if (userData.profilePic) {
+                            avatar.src = userData.profilePic;
+                        } else {
+                            avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(message.writer)}&background=random&rounded=true`;
+                        }
+                        avatar.alt = message.writer;
+                    }
+                })
+                .catch(err => {
+                    console.error("Error fetching user data:", err);
+                });
+
             avatar.src = `https://ui-avatars.com/api/?name=${message.writer}&background=random&rounded=true`;
             avatar.alt = message.writer;
 
@@ -320,6 +338,15 @@ export async function sendMsg(message, writer, color, raw) {
                     sendMsg("Error: No message found to edit.", "System", "#4c5b8c");
                 }
                 return;
+            } else if (message.split(" ")[0] === "!editProfilePic") {
+                const newPicUrl = message.split(" ")[1];
+                const userDocRef = doc(db, "connectedUsers", writer);
+                await setDoc(userDocRef, {
+                    profilePic: newPicUrl
+                }, { merge: true });
+                sendMsg("Profile picture updated!", "System", "#4c5b8c");
+                return;
+
             } else if (message.split(" ")[0] === "!delete") {
                 const targetId = message.split(" ")[1].trim();
                 const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
@@ -515,13 +542,13 @@ async function validatePassword(username) {
     const res = await fetch("./passwords.json");
     const data = await res.json();
     console.log("validating password");
-    if(data.hasOwnProperty(username)) {
+    if (data.hasOwnProperty(username)) {
         let storedPassword = localStorage.getItem("password");
-        if(storedPassword && hasher(storedPassword) === data[username]) {
+        if (storedPassword && hasher(storedPassword) === data[username]) {
             return true;
         }
         let input = prompt("Enter password");
-        if(input && hasher(input) === data[username]){
+        if (input && hasher(input) === data[username]) {
             localStorage.setItem("password", input);
             return true;
         }
@@ -563,7 +590,7 @@ async function setUsername() {
             return;
         } else {
             const ok = await validatePassword(username);
-            if(!ok){
+            if (!ok) {
                 alert("Password incorrect.");
                 await setUsername();
                 return;
