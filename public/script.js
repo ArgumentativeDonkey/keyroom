@@ -104,14 +104,28 @@ function elapsedSecondsSince(timestamp) {
     return Math.floor(elapsedMs / 1000);
 }
 
-function getUserColor(username) {
-    if (username === "Key") return "transparent; background-image: repeating-linear-gradient(45deg, #7a3b3b, #b85c5c, #7a3b3b var(--stripe-width)); animation: stripes var(--anim-time) linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
-    if (username === "Leif") return "transparent; background-image: repeating-linear-gradient( 45deg, #63e3bf, #7383eb, #63e3bf var(--stripe-width) ); animation: stripes var(--anim-time) linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
-
-    const palette = [
-        "#e63946", "#f07c1e", "#2a9d8f", "#457b9d", "#b48c70",
-        "#e9c46a", "#a29bfe", "#06d6a0", "#ef476f", "#118ab2"
-    ];
+function getUserColor(username, hashe) {
+    if (hashe) {
+        if (username === "Key") return "7a3bff";
+        if (username === "Leif") return "63e3bf";
+        if (username === "TellBot") return "6437c4";
+    } else if (!hashe) {
+        if (username === "Key") return "transparent; background-image: repeating-linear-gradient(45deg, #7a3bff, #9b59ff, #7a3bff var(--stripe-width)); animation: stripes var(--anim-time) linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
+        if (username === "Leif") return "transparent; background-image: repeating-linear-gradient( 45deg, #63e3bf, #7383eb, #63e3bf var(--stripe-width) ); animation: stripes var(--anim-time) linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
+        if (username === "TellBot") return "#6437c4";
+    }
+    var palette;
+    if (!hashe) {
+        palette = [
+            "#e63946", "#f07c1e", "#2a9d8f", "#457b9d", "#b48c70",
+            "#e9c46a", "#a29bfe", "#06d6a0", "#ef476f", "#118ab2"
+        ];
+    } else if (hashe) {
+        palette = [
+            "e63946", "f07c1e", "2a9d8f", "457b9d", "b48c70",
+            "e9c46a", "a29bfe", "06d6a0", "ef476f", "118ab2"
+        ];
+    }
 
     let hash = 0;
     for (let i = 0; i < username.length; i++) {
@@ -198,7 +212,7 @@ function listenToRoom(roomName) {
 
             const avatar = document.createElement("img");
             avatar.className = "avatar";
-            avatar.src = `https://ui-avatars.com/api/?name=${message.writer}&background=random&rounded=true`;
+            avatar.src = `https://ui-avatars.com/api/?name=${message.writer}&background=${getUserColor(message.writer, true)}&rounded=true`;
             avatar.alt = message.writer;
 
             const content = document.createElement("div");
@@ -235,6 +249,36 @@ function checkBannedWords(string, banlist) {
     }
     return true;
 }
+const notifiedInbox = {};
+
+async function scheckInbox(username) {
+    const tellRef = collection(db, "tellMsgs");
+    const snapshot = await getDocs(tellRef);
+    let inboxCounter = 0;
+
+    snapshot.forEach(doca => {
+        const data = doca.data();
+        if (data.reciepient === username) {
+            inboxCounter++;
+        }
+    });
+    console.log(notifiedInbox[username]);
+    console.log(inboxCounter);
+    if (inboxCounter > 0 &&
+        (notifiedInbox[username] === undefined || notifiedInbox[username] !== inboxCounter)) {
+        
+        sendMsg(
+            `You have ${inboxCounter} unread messages. Type !inbox to view them.`,
+            "TellBot",
+            "#6437c4",
+            false,
+            true
+        );
+        notifiedInbox[username] = inboxCounter;
+    }
+}
+
+
 const banphrases = ["sucks", "is a loser", "hates Key", "hates everybody", "likes dying in holes", "likes holes", "likes *******", "hates themself", "hit their head on a door", "likes bagels. Bagels? I love bagels! Bagels are round. The sun is round. The sun is yellow. Bananas are yellow. Bananas have spots. Old people have spots. Old people live long lives. Life? That's my favorite cereal! I once bought a box of life for $10. $10!? That's crazy! I was crazy once. They locked me in a room, and fed me bagels.", "died due to [intentional game design]", "<img src='https://m.media-amazon.com/images/I/414LBqeOktL.jpg' max-width:300px>", "loves Trump", "loves Biden", "loves American politics", "was pushed off a cliff by a donkey"];
 function rndList(list) {
     if (!list) {
@@ -245,6 +289,7 @@ function rndList(list) {
 }
 export async function sendMsg(message, writer, color, raw) {
     try {
+        var checkInbox = false;
         if (raw !== true) raw = false;
         if (typeof message === 'string') {
             if (!checkBannedWords(message) && currentRoom !== "/codeinject" && writer !== "xkcd") {
@@ -288,38 +333,34 @@ export async function sendMsg(message, writer, color, raw) {
                 }
                 return;
             } else if (message.split(" ")[0] === "!editId") {
-                const newText = message.split(" ")[2] + " <i>(edited)</i>";
+                const targetId = message.split(" ")[1].trim();
                 const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
-                let found = false;
+                let docFound = null;
+                const newText = message.split(" ").slice(2).join(" ");
 
                 for (const doca of snapshot.docs) {
-                    const data = doca.data();
-                    if (data.iden === message.split(" ")[1]) {
-                        const docRef = doc(db, currentRoom, doca.id);
-                        await setDoc(docRef, {
-                            text: newText,
-                            writer,
-                            color,
-                            timestamp: serverTimestamp(),
-                            raw
-                        }, { merge: true });
-                        found = true;
+                    if (doca.data().iden === targetId && doca.data().writer === writer) {
+                        docFound = doca;
                         break;
                     }
-
-
-                    if (docFound) {
-                        found = true;
-                    } else {
-                        sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#4c5b8c");
-                        return;
-                    }
                 }
 
-                if (!found) {
-                    sendMsg("Error: No message found to edit.", "System", "#4c5b8c");
+                if (docFound) {
+                    const docRef = doc(db, currentRoom, docFound.id);
+                    const timestamp = docFound.data().timestamp;
+                    await setDoc(docRef, {
+                        text: newText,
+                        writer,
+                        color,
+                        timestamp,
+                        raw
+                    }, { merge: true });
+
+                    return;
+                } else {
+                    sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#4c5b8c");
                 }
-                return;
+
             } else if (message.split(" ")[0] === "!delete") {
                 const targetId = message.split(" ")[1].trim();
                 const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
@@ -340,6 +381,19 @@ export async function sendMsg(message, writer, color, raw) {
                     sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#4c5b8c");
                 }
 
+            } else if (message.trim() === "!inbox") {
+                checkInbox = true;
+            } else if (message.trim() === "!clearInbox") {
+                const targetId = message.split(" ")[1].trim();
+                const snapshot = await getDocs(query(collection(db, "tellMsgs"), orderBy("timestamp", "desc")));
+                let docFound = null;
+
+                for (const doca of snapshot.docs) {
+                    if (doca.data().writer === username) {
+                        const docRef = doc(db, currentRoom, docFound.id);
+                        await deleteDoc(docRef);
+                    }
+                }
             } else if (message.split(" ")[0] === "!showIden") {
                 document.getElementById("messages").classList.add("showIden");
             } else if (message.split(" ")[0] === "!hideIden") {
@@ -460,17 +514,25 @@ export async function sendMsg(message, writer, color, raw) {
             raw: raw,
             iden: iden
         });
+        if (checkInbox) {
+            const snapshot = await getDocs(tellRef);
 
-        const snapshot = await getDocs(tellRef);
-        snapshot.forEach(doca => {
-            const data = doca.data();
-            if (data.reciepient == username) {
-                var message = `From ${data.writer}: ${data.text}`;
-                sendMsg(message, "TellBot", '#6437c4');
-                const docRef = doc(db, "tellMsgs", doca.id);
-                deleteDoc(docRef);
-            }
-        });
+                snapshot.forEach(doca => {
+                    const data = doca.data();
+                    if (data.reciepient == username) {
+
+                        var message = `From ${data.writer}: ${data.text}`;
+                        sendMsg(message, "TellBot", '#6437c4');
+                        const docRef = doc(db, "tellMsgs", doca.id);
+                        deleteDoc(docRef);
+
+                    }
+                });
+        }
+        if (writer !== "TellBot") {
+            scheckInbox(username);
+        }
+
 
         resetRoomIfKey(message, writer, message.split(" ")[1]);
 
@@ -515,13 +577,13 @@ async function validatePassword(username) {
     const res = await fetch("./passwords.json");
     const data = await res.json();
     console.log("validating password");
-    if(data.hasOwnProperty(username)) {
+    if (data.hasOwnProperty(username)) {
         let storedPassword = localStorage.getItem("password");
-        if(storedPassword && hasher(storedPassword) === data[username]) {
+        if (storedPassword && hasher(storedPassword) === data[username]) {
             return true;
         }
         let input = prompt("Enter password");
-        if(input && hasher(input) === data[username]){
+        if (input && hasher(input) === data[username]) {
             localStorage.setItem("password", input);
             return true;
         }
@@ -563,7 +625,7 @@ async function setUsername() {
             return;
         } else {
             const ok = await validatePassword(username);
-            if(!ok){
+            if (!ok) {
                 alert("Password incorrect.");
                 await setUsername();
                 return;
