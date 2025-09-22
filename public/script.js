@@ -628,7 +628,7 @@ async function validatePassword(username) {
         }
         return false;
     } else {
-        if(!(localStorage.getItem("seen-pwd-warning") === true)) {
+        if(!(localStorage.getItem("seen-pwd-warning") === "true")) {
             await Popup.quick("You don't have a registered password. If you want one, please contact someone with Git access.", "ok");
             localStorage.setItem("seen-pwd-warning", true);
         }
@@ -676,7 +676,6 @@ async function setUsername() {
         }
     }
 }
-setUsername();
 const userRef = collection(db, "connectedUsers");
 const usersQuery = query(userRef, orderBy("lastActive", "asc"));
 const userDocRef = doc(db, "connectedUsers", username);
@@ -696,7 +695,6 @@ async function getUserLastActive(user) {
         sendMsg(`User ${user} not found.`, "LastActive", '#cf7e78');
     }
 }
-document.addEventListener("keydown", (e) => { processKeydown(e) });
 
 function processKeydown(e) {
     if (e.keyCode == 13) {
@@ -727,61 +725,7 @@ function processKeydown(e) {
 }
 
 const messagesEl = document.getElementById("messages");
-messagesEl.scrollTop = messagesEl.scrollHeight;
 
-
-await setDoc(userDocRef, {
-    name: username,
-    color: getUserColor(username),
-    lastActive: serverTimestamp()
-}, { merge: true });
-setInterval(async () => {
-    await setDoc(userDocRef, {
-        name: username,
-        color: getUserColor(username),
-        lastActive: serverTimestamp()
-    }, { merge: true });
-}, 15000);
-onSnapshot(usersQuery, (snapshot) => {
-    document.getElementById("connectedUsers").innerHTML = "<p class='userP'><b>Connected Users</b></p>"
-    snapshot.forEach((doc) => {
-        const user = doc.data();
-        if (elapsedSecondsSince(user.lastActive) <= 16) {
-            const userP = document.createElement("p");
-            userP.innerHTML = `<span style="background-color:${user.color};" class="usernameBg">${user.name}</span>`;
-            document.getElementById("connectedUsers").appendChild(userP);
-        }
-    })
-    const messagesEl = document.getElementById("messages");
-    if (messagesEl) messagesEl.scrollTop = messagesEl.scrollHeight;
-
-})
-document.getElementById("showUsers").addEventListener("click", () => {
-    if (UsersShown) {
-        document.getElementById("showUsers").innerHTML = "Show Users";
-        document.getElementById("messages").style.display = "block";
-        document.getElementById("connectedUsers").style.display = "none";
-        UsersShown = false;
-    } else if (!UsersShown) {
-        document.getElementById("showUsers").innerHTML = "Hide Users";
-        document.getElementById("messages").style.display = "none";
-        document.getElementById("connectedUsers").style.display = "block";
-        UsersShown = true;
-    }
-})
-document.getElementById("showRooms").addEventListener("click", () => {
-    if (UsersShown) {
-        document.getElementById("showRooms").innerHTML = "Show Rooms";
-        document.getElementById("messages").style.display = "block";
-        document.getElementById("rooms").style.display = "none";
-        UsersShown = false;
-    } else if (!UsersShown) {
-        document.getElementById("showRooms").innerHTML = "Hide Rooms";
-        document.getElementById("messages").style.display = "none";
-        document.getElementById("rooms").style.display = "block";
-        UsersShown = true;
-    }
-})
 function clearRoomBorders() {
     document.getElementById("&random").classList.remove('roomActive');
     document.getElementById("&xkcd").classList.remove('roomActive');
@@ -800,66 +744,6 @@ function clearRoomBorders() {
     document.getElementById("&gamescripts").classList.add('room');
     document.getElementById("&").classList.add('room');
 }
-document.getElementById("&random").addEventListener("click", () => {
-    currentRoom = "&random"
-    listenToRoom('&random')
-    clearRoomBorders();
-    document.getElementById("&random").classList.add('roomActive');
-    document.getElementById("&random").classList.remove('room');
-})
-document.getElementById("&hunch").addEventListener("click", () => {
-    currentRoom = "&hunch";
-    listenToRoom('&hunch');
-    clearRoomBorders();
-    document.getElementById("&hunch").classList.add('roomActive');
-    document.getElementById("&hunch").classList.remove('room');
-
-})
-document.getElementById("&xkcd").addEventListener("click", () => {
-    currentRoom = "&xkcd";
-    listenToRoom('&xkcd');
-    clearRoomBorders();
-    document.getElementById("&xkcd").classList.add('roomActive');
-    document.getElementById("&xkcd").classList.remove('room');
-})
-document.getElementById("&spam").addEventListener("click", () => {
-    currentRoom = "&spam";
-    clearRoomBorders();
-    document.getElementById("&spam").classList.add('roomActive');
-    document.getElementById("&spam").classList.remove('room');
-    listenToRoom('&spam');
-})
-document.getElementById("/codeinject").addEventListener("click", () => {
-    currentRoom = "/codeinject";
-    clearRoomBorders();
-    document.getElementById("/codeinject").classList.add('roomActive');
-    document.getElementById("/codeinject").classList.remove('room');
-    listenToRoom('/codeinject');
-})
-document.getElementById("&boom").addEventListener("click", () => {
-    currentRoom = "&boom";
-    clearRoomBorders();
-    document.getElementById("&boom").classList.add('roomActive');
-    document.getElementById("&boom").classList.remove('room');
-    listenToRoom('&boom');
-})
-document.getElementById("&gamescripts").addEventListener("click", () => {
-    currentRoom = "&gamescripts";
-    clearRoomBorders();
-    document.getElementById("&gamescripts").classList.add('roomActive');
-    document.getElementById("&gamescripts").classList.remove('room');
-    listenToRoom('&gamescripts');
-})
-document.getElementById("&").addEventListener("click", () => {
-    currentRoom = `&${username}`;
-    clearRoomBorders();
-    document.getElementById("&").classList.add('roomActive');
-    document.getElementById("&").classList.remove('room');
-    listenToRoom(`${username}`);
-})
-document.getElementById("&hunch").classList.add('roomActive');
-document.getElementById("&hunch").classList.remove('room');
-listenToRoom('&hunch')
 import { writeBatch } from "firebase/firestore";
 
 async function resetRoomIfKey(message, writer, room) {
@@ -887,3 +771,121 @@ async function resetRoomIfKey(message, writer, room) {
         sendMsg(`Failed to reset room: ${error.message}`, "System", "#4c5b8c");
     }
 }
+async function onload() {
+    setUsername();
+    document.addEventListener("keydown", (e) => { processKeydown(e) });
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+    await setDoc(userDocRef, {
+        name: username,
+        color: getUserColor(username),
+        lastActive: serverTimestamp()
+    }, { merge: true });
+    setInterval(async () => {
+        await setDoc(userDocRef, {
+            name: username,
+            color: getUserColor(username),
+            lastActive: serverTimestamp()
+        }, { merge: true });
+    }, 15000);
+    onSnapshot(usersQuery, (snapshot) => {
+        document.getElementById("connectedUsers").innerHTML = "<p class='userP'><b>Connected Users</b></p>"
+        snapshot.forEach((doc) => {
+            const user = doc.data();
+            if (elapsedSecondsSince(user.lastActive) <= 16) {
+                const userP = document.createElement("p");
+                userP.innerHTML = `<span style="background-color:${user.color};" class="usernameBg">${user.name}</span>`;
+                document.getElementById("connectedUsers").appendChild(userP);
+            }
+        })
+        const messagesEl = document.getElementById("messages");
+        if (messagesEl) messagesEl.scrollTop = messagesEl.scrollHeight;
+
+    })
+    document.getElementById("showUsers").addEventListener("click", () => {
+        if (UsersShown) {
+            document.getElementById("showUsers").innerHTML = "Show Users";
+            document.getElementById("messages").style.display = "block";
+            document.getElementById("connectedUsers").style.display = "none";
+            UsersShown = false;
+        } else if (!UsersShown) {
+            document.getElementById("showUsers").innerHTML = "Hide Users";
+            document.getElementById("messages").style.display = "none";
+            document.getElementById("connectedUsers").style.display = "block";
+            UsersShown = true;
+        }
+    })
+    document.getElementById("showRooms").addEventListener("click", () => {
+        if (UsersShown) {
+            document.getElementById("showRooms").innerHTML = "Show Rooms";
+            document.getElementById("messages").style.display = "block";
+            document.getElementById("rooms").style.display = "none";
+            UsersShown = false;
+        } else if (!UsersShown) {
+            document.getElementById("showRooms").innerHTML = "Hide Rooms";
+            document.getElementById("messages").style.display = "none";
+            document.getElementById("rooms").style.display = "block";
+            UsersShown = true;
+        }
+    })
+    document.getElementById("&random").addEventListener("click", () => {
+        currentRoom = "&random"
+        listenToRoom('&random')
+        clearRoomBorders();
+        document.getElementById("&random").classList.add('roomActive');
+        document.getElementById("&random").classList.remove('room');
+    })
+    document.getElementById("&hunch").addEventListener("click", () => {
+        currentRoom = "&hunch";
+        listenToRoom('&hunch');
+        clearRoomBorders();
+        document.getElementById("&hunch").classList.add('roomActive');
+        document.getElementById("&hunch").classList.remove('room');
+
+    })
+    document.getElementById("&xkcd").addEventListener("click", () => {
+        currentRoom = "&xkcd";
+        listenToRoom('&xkcd');
+        clearRoomBorders();
+        document.getElementById("&xkcd").classList.add('roomActive');
+        document.getElementById("&xkcd").classList.remove('room');
+    })
+    document.getElementById("&spam").addEventListener("click", () => {
+        currentRoom = "&spam";
+        clearRoomBorders();
+        document.getElementById("&spam").classList.add('roomActive');
+        document.getElementById("&spam").classList.remove('room');
+        listenToRoom('&spam');
+    })
+    document.getElementById("/codeinject").addEventListener("click", () => {
+        currentRoom = "/codeinject";
+        clearRoomBorders();
+        document.getElementById("/codeinject").classList.add('roomActive');
+        document.getElementById("/codeinject").classList.remove('room');
+        listenToRoom('/codeinject');
+    })
+    document.getElementById("&boom").addEventListener("click", () => {
+        currentRoom = "&boom";
+        clearRoomBorders();
+        document.getElementById("&boom").classList.add('roomActive');
+        document.getElementById("&boom").classList.remove('room');
+        listenToRoom('&boom');
+    })
+    document.getElementById("&gamescripts").addEventListener("click", () => {
+        currentRoom = "&gamescripts";
+        clearRoomBorders();
+        document.getElementById("&gamescripts").classList.add('roomActive');
+        document.getElementById("&gamescripts").classList.remove('room');
+        listenToRoom('&gamescripts');
+    })
+    document.getElementById("&").addEventListener("click", () => {
+        currentRoom = `&${username}`;
+        clearRoomBorders();
+        document.getElementById("&").classList.add('roomActive');
+        document.getElementById("&").classList.remove('room');
+        listenToRoom(`${username}`);
+    })
+    document.getElementById("&hunch").classList.add('roomActive');
+    document.getElementById("&hunch").classList.remove('room');
+    listenToRoom('&hunch');
+}
+onload();
