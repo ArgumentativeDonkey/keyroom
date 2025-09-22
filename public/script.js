@@ -209,12 +209,19 @@ function listenToRoom(roomName) {
                         } else {
                             avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(message.writer)}&background=random&rounded=true`;
                         }
-                        avatar.alt = message.writer;
+                    } else if (message.writer === "TellBot") {
+                        avatar.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDlzJDyJ_J6vRQmfW4D-ve6PWtLk6XLdu_3w&s";
+                    } else {
+                        avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(message.writer)}&background=random&rounded=true`;
                     }
+                    avatar.alt = message.writer;
                 })
                 .catch(err => {
                     console.error("Error fetching user data:", err);
+                    avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(message.writer)}&background=random&rounded=true`;
+                    avatar.alt = message.writer;
                 });
+
 
             avatar.src = `https://ui-avatars.com/api/?name=${message.writer}&background=random&rounded=true`;
             avatar.alt = message.writer;
@@ -656,7 +663,7 @@ await setDoc(userDocRef, {
     name: username,
     color: getUserColor(username),
     lastActive: serverTimestamp()
-});
+}, { merge: true });
 setInterval(async () => {
     await setDoc(userDocRef, {
         name: username,
