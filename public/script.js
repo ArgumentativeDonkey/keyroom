@@ -772,7 +772,7 @@ async function resetRoomIfKey(message, writer, room) {
     }
 }
 async function onload() {
-    await setUsername();
+    setUsername();
     document.addEventListener("keydown", (e) => { processKeydown(e) });
     messagesEl.scrollTop = messagesEl.scrollHeight;
     await setDoc(userDocRef, {
