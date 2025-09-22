@@ -628,7 +628,7 @@ async function validatePassword(username) {
         }
         return false;
     } else {
-        if(!(localStorage.getItem("seen-pwd-warning") === "true")) {
+        if(!(localStorage.getItem("seen-pwd-warning") === "true" )) {
             await Popup.quick("You don't have a registered password. If you want one, please contact someone with Git access.", "ok");
             localStorage.setItem("seen-pwd-warning", true);
         }
