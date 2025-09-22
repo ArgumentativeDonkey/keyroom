@@ -1,6 +1,7 @@
+import { Popup } from "./popup.js"
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDocs, deleteDoc } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDocs, deleteDoc, where } from 'firebase/firestore';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -207,12 +208,37 @@ function listenToRoom(roomName) {
             const message = doc.data();
             const tstamp = parseTimestamp(message.timestamp);
 
+
+
             const msgDiv = document.createElement("div");
             msgDiv.className = "message";
 
             const avatar = document.createElement("img");
             avatar.className = "avatar";
-            avatar.src = `https://ui-avatars.com/api/?name=${message.writer}&background=${getUserColor(message.writer, true)}&rounded=true`;
+            getDocs(query(collection(db, "connectedUsers"), where("name", "==", message.writer)))
+                .then(snap => {
+                    if (!snap.empty) {
+                        const userData = snap.docs[0].data();
+                        if (userData.profilePic) {
+                            avatar.src = userData.profilePic;
+                        } else {
+                            avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(message.writer)}&background=random&rounded=true`;
+                        }
+                    } else if (message.writer === "TellBot") {
+                        avatar.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDlzJDyJ_J6vRQmfW4D-ve6PWtLk6XLdu_3w&s";
+                    } else {
+                        avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(message.writer)}&background=${getUserColor(message.writer, true)}&rounded=true`;
+                    }
+                    avatar.alt = message.writer;
+                })
+                .catch(err => {
+                    console.error("Error fetching user data:", err);
+                    avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(message.writer)}&background=random&rounded=true`;
+                    avatar.alt = message.writer;
+                });
+
+
+            avatar.src = `https://ui-avatars.com/api/?name=${message.writer}&background=random&rounded=true`;
             avatar.alt = message.writer;
 
             const content = document.createElement("div");
@@ -360,6 +386,19 @@ export async function sendMsg(message, writer, color, raw) {
                 } else {
                     sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#4c5b8c");
                 }
+
+                if (!found) {
+                    sendMsg("Error: No message found to edit.", "System", "#4c5b8c");
+                }
+                return;
+            } else if (message.split(" ")[0] === "!editProfilePic") {
+                const newPicUrl = message.split(" ")[1];
+                const userDocRef = doc(db, "connectedUsers", writer);
+                await setDoc(userDocRef, {
+                    profilePic: newPicUrl
+                }, { merge: true });
+                sendMsg("Profile picture updated!", "System", "#4c5b8c");
+                return;
 
             } else if (message.split(" ")[0] === "!delete") {
                 const targetId = message.split(" ")[1].trim();
@@ -582,13 +621,17 @@ async function validatePassword(username) {
         if (storedPassword && hasher(storedPassword) === data[username]) {
             return true;
         }
-        let input = prompt("Enter password");
+        let input = await Popup.quick("Please enter your password.", "password");
         if (input && hasher(input) === data[username]) {
             localStorage.setItem("password", input);
             return true;
         }
         return false;
     } else {
+        if(!(localStorage.getItem("seen-pwd-warning") === true)) {
+            await Popup.quick("You don't have a registered password. If you want one, please contact someone with Git access.", "ok");
+            localStorage.setItem("seen-pwd-warning", true);
+        }
         console.log("no password found, authenticating.");
         return true;
     }
@@ -598,18 +641,18 @@ async function validatePassword(username) {
 var username;
 async function setUsername() {
     if (!localStorage.getItem("username")) {
-        username = prompt("Enter username");
+        username = await Popup.quick("Please enter your username.", "text");
         if (username == "xkcd") {
             username = "xkcd impersonator";
         }
-        if (username == "" || username == " " || username == null) {
-            alert("Please enter a username!");
+        if (username == "" || username == " " || username == null || username == undefined) {
+            await Popup.quick("Please enter a username!", "ok");
             await setUsername();
             return;
         }
         const ok = await validatePassword(username);
         if (!ok) {
-            alert("Password incorrect, please try again.");
+            await Popup.quick("Password incorrect, please try again.", "ok");
             await setUsername();
             return;
         }
@@ -619,14 +662,14 @@ async function setUsername() {
     } else {
         username = localStorage.getItem("username");
         if (username == "" || username == " " || username == null) {
-            alert("Something is really wrong. Clear your cookies and try again.");
+            await Popup.quick("Something is really wrong. We'll try to fix it, but you should clear your cookies and try again.", "ok");
             localStorage.removeItem('username');
             await setUsername();
             return;
         } else {
             const ok = await validatePassword(username);
             if (!ok) {
-                alert("Password incorrect.");
+                await Popup.quick("Password incorrect, please try again.", "ok");
                 await setUsername();
                 return;
             }
@@ -691,7 +734,7 @@ await setDoc(userDocRef, {
     name: username,
     color: getUserColor(username),
     lastActive: serverTimestamp()
-});
+}, { merge: true });
 setInterval(async () => {
     await setDoc(userDocRef, {
         name: username,
