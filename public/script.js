@@ -607,11 +607,7 @@ export async function sendMsg(message, writer, color, raw) {
                           <span class="iden">${iden}</span>`;
         messagesEl.appendChild(msgP);
         scrollToBottom(messagesEl);
-        if (message.split(" ")[0] === "!summon") {
-            const reciepient = message.split(" ")[1];
-            sendMail(reciepient, writer);
-            return;
-        }
+
         await addDoc(collection(db, currentRoom), {
             text: message,
             writer: writer,
@@ -634,6 +630,10 @@ export async function sendMsg(message, writer, color, raw) {
 
                 }
             });
+        }
+        if (message.split(" ")[0] === "!summon") {
+            const reciepient = message.split(" ")[1];
+            sendMail(reciepient, writer);
         }
         if (writer !== "TellBot") {
             scheckInbox(username);
