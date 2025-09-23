@@ -31,7 +31,19 @@ import { hasher } from "./hashutil.js";
 // Can they send messages?
 let cansendmessages = true;
 const timeout = 1000;
-
+function sendMail(reciepient, sender) {
+    const templateParams = {
+      name: reciepient,
+      to_email: "gradyblackwell421@gmail.com",  
+      from_name: sender,
+      message: "This is a test email"
+    };
+  
+    emailjs.send("service_sam1rgy", "template_107udmm", templateParams)
+      .then(() => console.log("Sent"))
+      .catch(err => console.error("Error:", err));
+  }
+  
 function doDelay() {
     cansendmessages = false;
     setTimeout(() => {
@@ -39,7 +51,9 @@ function doDelay() {
         document.getElementById("message-input").placeholder = "Type a message...";
     }, timeout);
 }
-
+(function() {
+    emailjs.init("qTMLE2J7_unL-JsP0"); 
+})();
 // Initialize Firebase
 var currentRoom = "&hunch"
 const app = initializeApp(firebaseConfig);
@@ -221,8 +235,6 @@ function listenToRoom(roomName) {
                     avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(message.writer)}&background=random&rounded=true`;
                     avatar.alt = message.writer;
                 });
-
-
             avatar.src = `https://ui-avatars.com/api/?name=${message.writer}&background=random&rounded=true`;
             avatar.alt = message.writer;
 
@@ -505,7 +517,10 @@ export async function sendMsg(message, writer, color, raw) {
                 deleteDoc(docRef);
             }
         });
-
+        if (message.split(" ")[0] === "!summon") {
+            sendMsg(`I have been summoned, a facsimile of my true self.`, message.split(" ")[1].trim(), getUserColor(message.split(" ")[1]));
+            sendMail("You", username);
+        }
         resetRoomIfKey(message, writer, message.split(" ")[1]);
 
     } catch (e) {
