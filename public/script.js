@@ -51,21 +51,10 @@ async function sendMail(recipient, sender) {
         const userDoc = snap.docs[0];
         const userData = userDoc.data();
 
-<<<<<<< HEAD
-        if (elapsedSecondsSince(userData.lastSummoned) < 43200) {
+        if ((elapsedSecondsSince(userData.lastSummoned) < 43200)&&userData.lastSummoned) {
+            console.log("elapsedSecs:"+elapsedSecondsSince(userData.lastSummoned) < 43200);
             Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: ${recipient} was summoned less than 12 hours ago.`);
             return;
-=======
-        if (!userData.lastSummoned || elapsedSecondsSince(userData.lastSummoned) < 43200) {
-            sendMsg(
-                userData.lastSummoned
-                    ? `Error: ${recipient} was summoned less than 12 hours ago.`
-                    : `Summoning ${recipient} for the first time!`,
-                "TellBot",
-                "#6437c4"
-            );
-            if (userData.lastSummoned) return;
->>>>>>> acb617ad98f3680ca4d903ea9f8c43e7c59ad769
         }
         
 
@@ -78,7 +67,7 @@ async function sendMail(recipient, sender) {
             name: recipient,
             to_email: userData.email,
             from_name: sender,
-            message: "This is a test email"
+            message: "You have been summoned!"
         };
 
         await emailjs.send("service_sam1rgy", "template_107udmm", templateParams);
@@ -338,7 +327,39 @@ function checkBannedWords(string, banlist) {
     return true;
 }
 const notifiedInbox = {};
+function replaceWithBossBattle(){
 
+}
+async function doBossDamage(damage) {
+    const bossRef = collection(db, "bossBattle");
+    const snapshot = query(bossRef)
+    var boss = null;
+    snapshot.forEach(doca => {
+        const data = doca.data();
+        if (data.active) {
+            boss = doc(db, "bossBattle", doca.id);
+        }
+    });
+    if (!bossRef) {
+        Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Error: There is no active boss battle. Idk how the hell you initiated this function.");
+        return;
+    }
+    
+    await addDoc(boss, {
+        health: FieldValue.increment(-damage)
+    }, {merge: true});
+}
+async function initiateBossBattle() {
+    sendMsg("You dare awaken me from my slumber? Prepare to face the wrath of the Phospholipid Bilayer!", "Phospholipid Bilayer", "#228B22", false, true);
+    const bossRef = collection(db, "bossBattle");
+    const snapshot = await getDocs(bossRef);
+    await addDoc(bossRef, {
+            health: 100,
+            active: true
+    }, {merge: true});
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    replaceWithBossBattle();
+}
 async function scheckInbox(username) {
     const tellRef = collection(db, "tellMsgs");
     const snapshot = await getDocs(tellRef);
@@ -388,7 +409,7 @@ export async function sendMsg(message, writer, color, raw) {
             } else if (message.split(" ")[0] == "!link") {
                 message = `<a href="${message.split(" ")[1]}" target="_blank" rel="noopener noreferrer">${message.split(" ")[1]}</a>`;
             } else if (message.split(" ")[0] === "!edit") {
-                const newText = message.replace("!edit ", "") + " <i>(edited)</i>";
+                const newText = message.replace("!edit ", "") + " (<i>edited</i>)";
                 const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
                 let found = false;
 
@@ -645,6 +666,10 @@ export async function sendMsg(message, writer, color, raw) {
             });
         }
         if (message.split(" ")[0] === "!summon") {
+            if (message == "!summon Phospholipid Bilayer") {
+                initiateBossBattle();
+                return;
+            }
             const reciepient = message.split(" ")[1];
             sendMail(reciepient, writer);
         }
@@ -852,6 +877,16 @@ async function resetRoomIfKey(message, writer, room) {
     }
 }
 async function onload() {
+    const bossRef = collection(db, "bossBattle");
+    const snapshot = query(bossRef)
+    var boss = null;
+    snapshot.forEach(doca => {
+        const data = doca.data();
+        if (data.active) {
+            replaceWithBossBattle();
+        }
+    });
+    
     await setUsername();
     userDocRef = doc(db, "connectedUsers", username)
     document.addEventListener("keydown", (e) => { processKeydown(e) });
