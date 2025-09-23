@@ -690,7 +690,7 @@ async function validatePassword(username) {
         return false;
     } else {
         if(!(localStorage.getItem("seen-pwd-warning") === "true" )) {
-            await Popup.quick("<span class='material-symbols-outlined'>vpn_key_off</span><br>You don't have a registered password. If you want one, please contact someone with Git access.", "ok");
+            await Popup.quick("<span class='material-symbols-outlined'>lock_open</span><br>You don't have a registered password. If you want one, please contact someone with Git access.", "ok");
             localStorage.setItem("seen-pwd-warning", true);
         }
         console.log("no password found, authenticating.");
@@ -723,7 +723,7 @@ async function setUsername() {
     } else {
         username = localStorage.getItem("username");
         if (username == "" || username == " " || username == null) {
-            await Popup.quick("<span class='material-symbols-outlined'>security</span><br>Something is really wrong. We'll try to fix it, but you should clear your cookies and try again.", "ok");
+            await Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Something is really wrong. We'll try to fix it, but you should clear your cookies and try again.", "ok");
             localStorage.removeItem('username');
             await setUsername();
             return;
