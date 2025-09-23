@@ -504,6 +504,11 @@ export async function sendMsg(message, writer, color, raw) {
                         await deleteDoc(docRef);
                     }
                 }
+            }else if (message.trim() === "!logOut") {
+                localStorage.removeItem('username');
+                localStorage.removeItem('password');
+                onload();
+                return;
             } else if (message.split(" ")[0] === "!showIden") {
                 document.getElementById("messages").classList.add("showIden");
             } else if (message.split(" ")[0] === "!hideIden") {
