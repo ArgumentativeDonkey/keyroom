@@ -31,9 +31,9 @@ export class Popup {
                     break;
                 case "confirm":
                     defaultResolve = true;
-                    popup.initbar(`<button>Yes</button><button>No</button>`);
-                    popup.bar.querySelectorAll('button')[0].onclick = () => doResolve(true);
-                    popup.bar.querySelectorAll('button')[1].onclick = () => doResolve(false);
+                    popup.initbar(`<button>No</button><button>Yes</button>`);
+                    popup.bar.querySelectorAll('button')[0].onclick = () => doResolve(false);
+                    popup.bar.querySelectorAll('button')[1].onclick = () => doResolve(true);
                     break;
                 case "text":
                     popup.initbar(`<input type='text'/><button>Submit</button>`);
