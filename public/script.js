@@ -51,11 +51,6 @@ async function sendMail(recipient, sender) {
         const userDoc = snap.docs[0];
         const userData = userDoc.data();
 
-<<<<<<< HEAD
-        if (elapsedSecondsSince(userData.lastSummoned) < 43200) {
-            Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: ${recipient} was summoned less than 12 hours ago.`);
-            return;
-=======
         if (!userData.lastSummoned || elapsedSecondsSince(userData.lastSummoned) < 43200) {
             sendMsg(
                 userData.lastSummoned
@@ -65,7 +60,6 @@ async function sendMail(recipient, sender) {
                 "#6437c4"
             );
             if (userData.lastSummoned) return;
->>>>>>> acb617ad98f3680ca4d903ea9f8c43e7c59ad769
         }
         
 
