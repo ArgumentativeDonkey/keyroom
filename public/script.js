@@ -51,10 +51,17 @@ async function sendMail(recipient, sender) {
         const userDoc = snap.docs[0];
         const userData = userDoc.data();
 
-        if (elapsedSecondsSince(userData.lastSummoned) < 43200) {
-            sendMsg(`Error: ${recipient} was summoned less than 12 hours ago.`, "TellBot", "#6437c4");
-            return;
+        if (!userData.lastSummoned || elapsedSecondsSince(userData.lastSummoned) < 43200) {
+            sendMsg(
+                userData.lastSummoned
+                    ? `Error: ${recipient} was summoned less than 12 hours ago.`
+                    : `Summoning ${recipient} for the first time!`,
+                "TellBot",
+                "#6437c4"
+            );
+            if (userData.lastSummoned) return;
         }
+        
 
         if (!userData.email) {
             sendMsg(`Error: ${recipient} has not set an email address.`, "TellBot", "#6437c4");
@@ -70,7 +77,6 @@ async function sendMail(recipient, sender) {
 
         await emailjs.send("service_sam1rgy", "template_107udmm", templateParams);
 
-        // only after successful send:
         await setDoc(userDoc.ref, { lastSummoned: serverTimestamp() }, { merge: true });
         sendMsg(`${recipient} has been summoned by ${sender}.`, "System", "#4c5b8c");
 
@@ -373,10 +379,6 @@ export async function sendMsg(message, writer, color, raw) {
                 message = `<img src="${message.split(" ")[1]}" alt="Image" style="max-width:1200px; max-height:200px;">`;
             } else if (message.split(" ")[0] == "!link") {
                 message = `<a href="${message.split(" ")[1]}" target="_blank" rel="noopener noreferrer">${message.split(" ")[1]}</a>`;
-            } else if (message.split(" ")[0] === "!summon") {
-                const reciepient = message.split(" ")[1];
-                sendMail(reciepient, writer);
-                return;
             } else if (message.split(" ")[0] === "!edit") {
                 const newText = message.replace("!edit ", "") + " <i>(edited)</i>";
                 const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
@@ -605,7 +607,11 @@ export async function sendMsg(message, writer, color, raw) {
                           <span class="iden">${iden}</span>`;
         messagesEl.appendChild(msgP);
         scrollToBottom(messagesEl);
-
+        if (message.split(" ")[0] === "!summon") {
+            const reciepient = message.split(" ")[1];
+            sendMail(reciepient, writer);
+            return;
+        }
         await addDoc(collection(db, currentRoom), {
             text: message,
             writer: writer,
