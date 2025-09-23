@@ -32,19 +32,55 @@ import { hasher } from "./hashutil.js";
 // Can they send messages?
 let cansendmessages = true;
 const timeout = 1000;
-function sendMail(reciepient, sender) {
-    const templateParams = {
-      name: reciepient,
-      to_email: "gradyblackwell421@gmail.com",  
-      from_name: sender,
-      message: "This is a test email"
-    };
-  
-    emailjs.send("service_sam1rgy", "template_107udmm", templateParams)
-      .then(() => console.log("Sent"))
-      .catch(err => console.error("Error:", err));
-  }
-  
+async function sendMail(recipient, sender) {
+    if (recipient === sender) {
+        sendMsg("Error: There is no need to summon yourself", "TellBot", "#6437c4");
+        return;
+    }
+
+    try {
+        const snap = await getDocs(
+            query(collection(db, "connectedUsers"), where("name", "==", recipient))
+        );
+
+        if (snap.empty) {
+            sendMsg(`Error: ${recipient} not found.`, "TellBot", "#6437c4");
+            return;
+        }
+
+        const userDoc = snap.docs[0];
+        const userData = userDoc.data();
+
+        if (elapsedSecondsSince(userData.lastSummoned) < 43200) {
+            sendMsg(`Error: ${recipient} was summoned less than 12 hours ago.`, "TellBot", "#6437c4");
+            return;
+        }
+
+        if (!userData.email) {
+            sendMsg(`Error: ${recipient} has not set an email address.`, "TellBot", "#6437c4");
+            return;
+        }
+
+        const templateParams = {
+            name: recipient,
+            to_email: userData.email,
+            from_name: sender,
+            message: "This is a test email"
+        };
+
+        await emailjs.send("service_sam1rgy", "template_107udmm", templateParams);
+
+        // only after successful send:
+        await setDoc(userDoc.ref, { lastSummoned: serverTimestamp() }, { merge: true });
+        sendMsg(`${recipient} has been summoned by ${sender}.`, "System", "#4c5b8c");
+
+        console.log("Email sent to " + userData.email);
+    } catch (err) {
+        console.error("Error sending mail:", err);
+    }
+}
+
+
 function doDelay() {
     cansendmessages = false;
     setTimeout(() => {
@@ -52,8 +88,8 @@ function doDelay() {
         document.getElementById("message-input").placeholder = "Type a message...";
     }, timeout);
 }
-(function() {
-    emailjs.init("qTMLE2J7_unL-JsP0"); 
+(function () {
+    emailjs.init("qTMLE2J7_unL-JsP0");
 })();
 // Initialize Firebase
 let currentRoom = "&hunch"
@@ -304,7 +340,7 @@ async function scheckInbox(username) {
     console.log(inboxCounter);
     if (inboxCounter > 0 &&
         (notifiedInbox[username] === undefined || notifiedInbox[username] !== inboxCounter)) {
-        
+
         sendMsg(
             `You have ${inboxCounter} unread messages. Type !inbox to view them.`,
             "TellBot",
@@ -337,6 +373,10 @@ export async function sendMsg(message, writer, color, raw) {
                 message = `<img src="${message.split(" ")[1]}" alt="Image" style="max-width:1200px; max-height:200px;">`;
             } else if (message.split(" ")[0] == "!link") {
                 message = `<a href="${message.split(" ")[1]}" target="_blank" rel="noopener noreferrer">${message.split(" ")[1]}</a>`;
+            } else if (message.split(" ")[0] === "!summon") {
+                const reciepient = message.split(" ")[1];
+                sendMail(reciepient, writer);
+                return;
             } else if (message.split(" ")[0] === "!edit") {
                 const newText = message.replace("!edit ", "") + " <i>(edited)</i>";
                 const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
@@ -410,6 +450,15 @@ export async function sendMsg(message, writer, color, raw) {
                     profilePic: newPicUrl
                 }, { merge: true });
                 sendMsg("Profile picture updated!", "System", "#4c5b8c");
+                return;
+
+            } else if (message.split(" ")[0] === "!setEmail") {
+                const email = message.split(" ")[1];
+                const userDocRef = doc(db, "connectedUsers", writer);
+                await setDoc(userDocRef, {
+                    email: email
+                }, { merge: true });
+                sendMsg("Email updated!", "System", "#4c5b8c");
                 return;
 
             } else if (message.split(" ")[0] === "!delete") {
@@ -568,17 +617,17 @@ export async function sendMsg(message, writer, color, raw) {
         if (checkInbox) {
             const snapshot = await getDocs(tellRef);
 
-                snapshot.forEach(doca => {
-                    const data = doca.data();
-                    if (data.reciepient == username) {
+            snapshot.forEach(doca => {
+                const data = doca.data();
+                if (data.reciepient == username) {
 
-                        var message = `From ${data.writer}: ${data.text}`;
-                        sendMsg(message, "TellBot", '#6437c4');
-                        const docRef = doc(db, "tellMsgs", doca.id);
-                        deleteDoc(docRef);
+                    var message = `From ${data.writer}: ${data.text}`;
+                    sendMsg(message, "TellBot", '#6437c4');
+                    const docRef = doc(db, "tellMsgs", doca.id);
+                    deleteDoc(docRef);
 
-                    }
-                });
+                }
+            });
         }
         if (writer !== "TellBot") {
             scheckInbox(username);
@@ -640,7 +689,7 @@ async function validatePassword(username) {
         }
         return false;
     } else {
-        if(!(localStorage.getItem("seen-pwd-warning") === "true" )) {
+        if (!(localStorage.getItem("seen-pwd-warning") === "true")) {
             await Popup.quick("You don't have a registered password. If you want one, please contact someone with Git access.", "ok");
             localStorage.setItem("seen-pwd-warning", true);
         }
