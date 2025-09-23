@@ -1,4 +1,4 @@
-//import { Popup } from "./popup.js"
+import { Popup } from "./popup.js"
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDocs, deleteDoc, where } from 'firebase/firestore';
