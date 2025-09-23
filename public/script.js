@@ -34,7 +34,7 @@ let cansendmessages = true;
 const timeout = 1000;
 async function sendMail(recipient, sender) {
     if (recipient === sender) {
-        sendMsg("Error: There is no need to summon yourself", "TellBot", "#6437c4");
+        Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Error: There is no need to summon yourself");
         return;
     }
 
@@ -44,13 +44,18 @@ async function sendMail(recipient, sender) {
         );
 
         if (snap.empty) {
-            sendMsg(`Error: ${recipient} not found.`, "TellBot", "#6437c4");
+            Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: ${recipient} not found.`);
             return;
         }
 
         const userDoc = snap.docs[0];
         const userData = userDoc.data();
 
+<<<<<<< HEAD
+        if (elapsedSecondsSince(userData.lastSummoned) < 43200) {
+            Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: ${recipient} was summoned less than 12 hours ago.`);
+            return;
+=======
         if (!userData.lastSummoned || elapsedSecondsSince(userData.lastSummoned) < 43200) {
             sendMsg(
                 userData.lastSummoned
@@ -60,11 +65,12 @@ async function sendMail(recipient, sender) {
                 "#6437c4"
             );
             if (userData.lastSummoned) return;
+>>>>>>> acb617ad98f3680ca4d903ea9f8c43e7c59ad769
         }
         
 
         if (!userData.email) {
-            sendMsg(`Error: ${recipient} has not set an email address.`, "TellBot", "#6437c4");
+            Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: ${recipient} has not set an email address.`);
             return;
         }
 
@@ -314,7 +320,8 @@ function listenToRoom(roomName) {
     });
 }
 
-const banned = ["<"];
+const banned = ["<", "fuck", "shit"];
+const bannedeq = ["'&lt;'", "a very bad word", "a bad word"];
 function checkBannedWords(string, banlist) {
     if (!string) {
         string = "";
@@ -324,6 +331,7 @@ function checkBannedWords(string, banlist) {
     }
     for (let i = 0; i < banlist.length; i++) {
         if (string.includes(banlist[i].toLowerCase())) {
+            Popup.quick(`<span class="material-symbols-outlined">dangerous</span><br>Your message was blocked due to the inclusion of ${bannedeq[i]}.`, "ok")
             return false;
         }
     }
@@ -359,7 +367,7 @@ async function scheckInbox(username) {
 }
 
 
-const banphrases = ["sucks", "is a loser", "hates Key", "hates everybody", "likes dying in holes", "likes holes", "likes *******", "hates themself", "hit their head on a door", "likes bagels. Bagels? I love bagels! Bagels are round. The sun is round. The sun is yellow. Bananas are yellow. Bananas have spots. Old people have spots. Old people live long lives. Life? That's my favorite cereal! I once bought a box of life for $10. $10!? That's crazy! I was crazy once. They locked me in a room, and fed me bagels.", "died due to [intentional game design]", "<img src='https://m.media-amazon.com/images/I/414LBqeOktL.jpg' max-width:300px>", "loves Trump", "loves Biden", "loves American politics", "was pushed off a cliff by a donkey"];
+const banphrases = ["sucks", "is a loser", "hates Key", "hates everybody", "likes dying in holes", "likes holes", "likes *******", "hates themself", "hit their head on a door", "likes bagels. Bagels? I love bagels! Bagels are round. The sun is round. The sun is yellow. Bananas are yellow. Bananas have spots. Old people have spots. Old people live long lives. Life? That's my favorite cereal! I once bought a box of life for $10. $10!? That's crazy! I was crazy once. They locked me in a room, and fed me bagels.", "died due to [intentional game design]", "<img src='https://m.media-amazon.com/images/I/414LBqeOktL.jpg' width='300px'>", "loves Trump", "loves Biden", "loves American politics", "was pushed off a cliff by a donkey"];
 function rndList(list) {
     if (!list) {
         list = banphrases;
@@ -403,13 +411,13 @@ export async function sendMsg(message, writer, color, raw) {
                     if (docFound) {
                         found = true;
                     } else {
-                        sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#4c5b8c");
+                        Popup.quick(`<span class="material-symbols-outlined">warning</span><br>Error: No message found with ID ${targetId}.`);
                         return;
                     }
                 }
 
                 if (!found) {
-                    sendMsg("Error: No message found to edit.", "System", "4c5b8c");
+                    Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Error: No message found to edit.");
                 }
                 return;
             } else if (message.split(" ")[0] === "!editId") {
@@ -438,11 +446,11 @@ export async function sendMsg(message, writer, color, raw) {
 
                     return;
                 } else {
-                    sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#4c5b8c");
+                    Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: No message found with ID ${targetId}.`);
                 }
 
                 if (!found) {
-                    sendMsg("Error: No message found to edit.", "System", "#4c5b8c");
+                    Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Error: No message found to edit.");
                 }
                 return;
             } else if (message.split(" ")[0] === "!editProfilePic") {
@@ -451,7 +459,7 @@ export async function sendMsg(message, writer, color, raw) {
                 await setDoc(userDocRef, {
                     profilePic: newPicUrl
                 }, { merge: true });
-                sendMsg("Profile picture updated!", "System", "#4c5b8c");
+                Popup.quick(`<span class='material-symbols-outlined'>account_circle</span><br>Profile picture updated!<br><img width='100px' src=${newPicUrl}/>`);
                 return;
 
             } else if (message.split(" ")[0] === "!setEmail") {
@@ -460,7 +468,7 @@ export async function sendMsg(message, writer, color, raw) {
                 await setDoc(userDocRef, {
                     email: email
                 }, { merge: true });
-                sendMsg("Email updated!", "System", "#4c5b8c");
+                Popup.quick(`<span class="material-symbols-outlined">mail</span><br>Email updated to ${email}`, "ok")
                 return;
 
             } else if (message.split(" ")[0] === "!delete") {
@@ -480,7 +488,7 @@ export async function sendMsg(message, writer, color, raw) {
                     await deleteDoc(docRef);
                     return;
                 } else {
-                    sendMsg(`Error: No message found with ID ${targetId}.`, "System", "#4c5b8c");
+                    Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: No message found with ID ${targetId}.`);
                 }
 
             } else if (message.trim() === "!inbox") {
@@ -651,7 +659,7 @@ export async function sendMsg(message, writer, color, raw) {
 async function tell(message, writer, reciepient) {
     try {
         if (reciepient == writer) {
-            sendMsg(`Error: There is no need to message yourself`, "TellBot", '#6437c4');
+            Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: There is no need to message yourself`);
             return;
         }
         await addDoc(collection(db, "tellMsgs"), {
@@ -759,7 +767,7 @@ async function getUserLastActive(user) {
 
     });
     if (!found) {
-        sendMsg(`User ${user} not found.`, "LastActive", '#cf7e78');
+        Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: user ${user} not found.`);
     }
 }
 
@@ -835,7 +843,7 @@ async function resetRoomIfKey(message, writer, room) {
         }
     } catch (error) {
         console.error("Error in resetRoomIfKey:", error);
-        sendMsg(`Failed to reset room: ${error.message}`, "System", "#4c5b8c");
+        Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: failed to reset room: ${error.message}`);
     }
 }
 async function onload() {
