@@ -773,6 +773,7 @@ async function resetRoomIfKey(message, writer, room) {
 }
 async function onload() {
     await setUsername();
+    userDocRef = doc(db, "connectedUsers", username)
     document.addEventListener("keydown", (e) => { processKeydown(e) });
     messagesEl.scrollTop = messagesEl.scrollHeight;
     await setDoc(userDocRef, {
@@ -887,6 +888,5 @@ async function onload() {
     document.getElementById("&hunch").classList.add('roomActive');
     document.getElementById("&hunch").classList.remove('room');
     listenToRoom('&hunch');
-    userDocRef = doc(db, "connectedUsers", username)
 }
 onload();
