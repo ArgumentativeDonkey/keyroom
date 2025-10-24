@@ -6,7 +6,7 @@ Chatroom syntax: <br>
 `!editProfilePic {image url}` - Sets your profile picture to be displayed<br>
 **TellBot** - A bot designed to send messages to inactive users. The bot will notify users when they have messages in their inbox and relay them when the recieving user uses `!inbox`<br>
 `!tell {recipient username} {message}` <br>
-`!summon {recipient username}` - Sends a user an email. 12-hr cooldown. <br>
+`!summon {recipient username} {message}` - Sends a user an email summoning them to the Keyroom alongside delivering the message in the `{message}` field. 6 minute cooldown. <br>
 `!inbox` - View your inbox, if you have any incoming messages. <br>
 **&Xkcd** - The following commands wil only work in the &xkcd room.<br>
 `!xkcd latest` - displays latest xkcd. <br>
