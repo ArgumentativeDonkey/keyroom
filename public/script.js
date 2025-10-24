@@ -32,7 +32,7 @@ import { hasher } from "./hashutil.js";
 // Can they send messages?
 let cansendmessages = true;
 const timeout = 1000;
-async function sendMail(recipient, sender) {
+async function sendMail(recipient, sender, message) {
     if (recipient === sender) {
         Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Error: There is no need to summon yourself");
         return;
@@ -51,8 +51,8 @@ async function sendMail(recipient, sender) {
         const userDoc = snap.docs[0];
         const userData = userDoc.data();
 
-        if ((elapsedSecondsSince(userData.lastSummoned) < 43200)&&userData.lastSummoned) {
-            console.log("elapsedSecs:"+elapsedSecondsSince(userData.lastSummoned) < 43200);
+        if ((elapsedSecondsSince(userData.lastSummoned) < 360)&&userData.lastSummoned) {
+            console.log("elapsedSecs:"+elapsedSecondsSince(userData.lastSummoned) < 360);
             Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: ${recipient} was summoned less than 12 hours ago.`);
             return;
         }
@@ -67,7 +67,7 @@ async function sendMail(recipient, sender) {
             name: recipient,
             to_email: userData.email,
             from_name: sender,
-            message: "You have been summoned!"
+            message: "You have been summoned! From "+sender+": "+message
         };
 
         await emailjs.send("service_sam1rgy", "template_107udmm", templateParams);
@@ -671,8 +671,14 @@ export async function sendMsg(message, writer, color, raw) {
                 initiateBossBattle();
                 return;
             }
-            const reciepient = message.split(" ")[1];
-            sendMail(reciepient, writer);
+            if (message.split(" ")[2] != undefined){
+                const reciepient = message.split(" ")[1];
+                const message = message.split(" ").slice(2).join(" ");
+                sendMail(reciepient, writer, message);
+            } else {
+                const reciepient = message.split(" ")[1];
+                sendMail(reciepient, writer, "");
+            }
         }
         if (writer !== "TellBot") {
             scheckInbox(username);
