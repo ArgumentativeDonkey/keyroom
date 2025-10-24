@@ -11,8 +11,9 @@ Chatroom syntax: <br>
 **&Xkcd** - The following commands wil only work in the &xkcd room.<br>
 `!xkcd latest` - displays latest xkcd. <br>
 `!xkcd {number}` - displays xkcd of selected number. <br>
-**&CodeInject only** <br>
+**&CodeInject only** - The &Codeinject room allows users to inject custom html, css, and js, alongside allowing the use of the following commands. <br>
 `!spin {message}` - makes the message spin at high velocities. <br>
+`!rotate {degrees} {message}` - rotates the message a certain amount of degrees.
 **Misc.** - Random unrelated commands <br>
 `!lastactive {username}` - gets the last recorded time somebody of entered username was on the page, regardless of if they sent any messages. <br>
 `!image {image url}` - creates an image (max size 200x200 px) from the given url. <br>
