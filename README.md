@@ -4,7 +4,7 @@ Chatroom syntax: <br>
 `!logOut` - Logs you out and begins the login prompt again<br>
 `!setEmail {email}` - Sets your email for summoning<br>
 `!editProfilePic {image url}` - Sets your profile picture to be displayed<br>
-**TellBot** - A bot designed to send messages to inactive users. The bot will automatically reply with all messages sent to a user the next time they send a message in any room.<br>
+**TellBot** - A bot designed to send messages to inactive users. The bot will notify users when they have messages in their inbox and relay them when the recieving user uses `!inbox`<br>
 `!tell {recipient username} {message}` <br>
 `!summon {recipient username}` - Sends a user an email. 12-hr cooldown. <br>
 `!inbox` - View your inbox, if you have any incoming messages. <br>
