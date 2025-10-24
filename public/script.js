@@ -53,7 +53,7 @@ async function sendMail(recipient, sender, message) {
 
         if ((elapsedSecondsSince(userData.lastSummoned) < 360)&&userData.lastSummoned) {
             console.log("elapsedSecs:"+elapsedSecondsSince(userData.lastSummoned) < 360);
-            Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: ${recipient} was summoned less than 12 hours ago.`);
+            Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: ${recipient} was summoned less than 6 minutes ago.`);
             return;
         }
         
