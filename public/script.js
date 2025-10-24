@@ -328,11 +328,11 @@ function checkBannedWords(string, banlist) {
 }
 const notifiedInbox = {};
 function replaceWithBossBattle(){
-
+    console.log("replaced with boss battle");
 }
 async function doBossDamage(damage) {
     const bossRef = collection(db, "bossBattle");
-    const snapshot = query(bossRef)
+    const snapshot = getDocs(bossRef)
     var boss = null;
     snapshot.forEach(doca => {
         const data = doca.data();
@@ -401,7 +401,8 @@ export async function sendMsg(message, writer, color, raw) {
         var checkInbox = false;
         if (raw !== true) raw = false;
         if (typeof message === 'string') {
-            if (!checkBannedWords(message) && currentRoom !== "/codeinject" && writer !== "xkcd") {
+            if (!checkBannedWords(message) &&  (currentRoom !== "/codeinject"&&currentRoom!==`${username}`) && writer !== "xkcd") {
+                console.log(currentRoom);
                 message = rndList();
             }
             if (message.split(" ")[0] == "!image") {
@@ -542,7 +543,7 @@ export async function sendMsg(message, writer, color, raw) {
             } else if (message.split(" ")[0] === "!rainbow") {
                 color = "transparent; background-image: repeating-linear-gradient( 45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000 var(--stripe-width)); animation: stripes var(--anim-time) linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
                 message = `<span>${message.split(" ").splice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!rotate" && currentRoom == "/codeinject") {
+            } else if (message.split(" ")[0] === "!rotate" && (currentRoom == "/codeinject"||currentRoom==`&${username}`)) {
                 message = `<span style="display:inline-block; transform:rotate(${message.split(" ")[1]}deg);">${message.split(" ").slice(2).join(" ")}</span>`;
             } else if (message.split(" ")[0] === "!unrainbow") {
                 color = "white";
@@ -551,7 +552,7 @@ export async function sendMsg(message, writer, color, raw) {
                 message = `<span style="font-size:0.5em;">${message.split(" ").splice(1).join(" ")}</span>`;
             } else if (message.split(" ")[0] === "!grow") {
                 message = `<span style="font-size:2em;">${message.split(" ").splice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!spin" && currentRoom == "/codeinject") {
+            } else if (message.split(" ")[0] === "!spin" && (currentRoom == "/codeinject"||currentRoom==`&${username}`)) {
                 message = `<span style="display:inline-block; animation: spin 2s linear infinite;">${message.split(" ").splice(1).join(" ")}</span>`;
             } else if (message.split(" ")[0] === "!code") {
                 message = `<code>${message.split(" ").splice(1).join(" ")}</code>`;
@@ -878,7 +879,7 @@ async function resetRoomIfKey(message, writer, room) {
 }
 async function onload() {
     const bossRef = collection(db, "bossBattle");
-    const snapshot = query(bossRef)
+    const snapshot = await getDocs(bossRef)
     var boss = null;
     snapshot.forEach(doca => {
         const data = doca.data();
