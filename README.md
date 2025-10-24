@@ -16,7 +16,7 @@ Chatroom syntax: <br>
 `!rotate {degrees} {message}` - rotates the message a certain amount of degrees.
 **Misc.** - Random unrelated commands <br>
 `!lastactive {username}` - gets the last recorded time somebody of entered username was on the page, regardless of if they sent any messages. <br>
-`!image {image url}` - creates an image from the given url. We suggest uploading images to [Imugur](Imugur.com) then copying the image url. <br>
+`!image {image url}` - creates an image from the given url. We suggest uploading images to [Imugur](https://Imugur.com) then copying the image url. <br>
 `!link {link url}` - creates a link of the given url. <br>
 `!edit {text}` - changes your last sent message's text to the inputted text. Leaves an *(edited)* tag after the edited message. <br>
 `!showIden` - shows all message ids. <br>
