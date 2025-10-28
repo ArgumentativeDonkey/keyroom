@@ -6,14 +6,14 @@ Chatroom syntax: <br>
 `!editProfilePic {image url}` - Sets your profile picture to be displayed<br>
 **TellBot** - A bot designed to send messages to inactive users. The bot will notify users when they have messages in their inbox and relay them when the recieving user uses `!inbox`<br>
 `!tell {recipient username} {message}` <br>
-`!summon {recipient username}` - Sends a user an email. 12-hr cooldown. <br>
+`!summon {recipient username} {message}` - Sends a user an email summoning them to the Keyroom alongside delivering the message in the `{message}` field. 6 minute cooldown. <br>
 `!inbox` - View your inbox, if you have any incoming messages. <br>
 **&Xkcd** - The following commands wil only work in the &xkcd room.<br>
 `!xkcd latest` - displays latest xkcd. <br>
 `!xkcd {number}` - displays xkcd of selected number. <br>
 **&CodeInject only** - The &Codeinject room allows users to inject custom html, css, and js, alongside allowing the use of the following commands. <br>
 `!spin {message}` - makes the message spin at high velocities. <br>
-`!rotate {degrees} {message}` - rotates the message a certain amount of degrees.
+`!rotate {degrees} {message}` - rotates the message a certain amount of degrees. <br>
 **Misc.** - Random unrelated commands <br>
 `!lastactive {username}` - gets the last recorded time somebody of entered username was on the page, regardless of if they sent any messages. <br>
 `!image {image url}` - creates an image from the given url. We suggest uploading images to [Imgur](https://Imgur.com) then copying the image url. <br>

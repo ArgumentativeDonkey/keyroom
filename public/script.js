@@ -158,11 +158,11 @@ function elapsedSecondsSince(timestamp) {
 
 function getUserColor(username, hashe) {
     if (hashe) {
-        if (username === "Key") return "7a3bff";
+        if (username === "Key") return "000000";
         if (username === "Leif") return "63e3bf";
         if (username === "TellBot") return "6437c4";
     } else if (!hashe) {
-        if (username === "Key") return "transparent; background-image: repeating-linear-gradient(45deg, #7a3bff, #9b59ff, #7a3bff var(--stripe-width)); animation: stripes var(--anim-time) linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
+        if (username === "Key") return "transparent; background-image: repeating-linear-gradient(45deg, #000000, #000010, #000000 var(--stripe-width)); animation: stripes var(--anim-time) linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
         if (username === "Leif") return "transparent; background-image: repeating-linear-gradient( 45deg, #63e3bf, #7383eb, #63e3bf var(--stripe-width) ); animation: stripes var(--anim-time) linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
         if (username === "TellBot") return "#6437c4";
     }
@@ -367,7 +367,7 @@ async function scheckInbox(username) {
 
     snapshot.forEach(doca => {
         const data = doca.data();
-        if (data.reciepient === username) {
+        if (data.reciepient === username || data.reciepient === "*") {
             inboxCounter++;
         }
     });
@@ -529,7 +529,11 @@ export async function sendMsg(message, writer, color, raw) {
             }else if (message.trim() === "!logOut") {
                 localStorage.removeItem('username');
                 localStorage.removeItem('password');
-                onload();
+                Popup.quick("Reloading...", "_");
+                setTimeout(() => {
+                    window.location.reload(true);
+                }, 100);
+                await onload();
                 return;
             } else if (message.split(" ")[0] === "!showIden") {
                 document.getElementById("messages").classList.add("showIden");
@@ -656,12 +660,15 @@ export async function sendMsg(message, writer, color, raw) {
 
             snapshot.forEach(doca => {
                 const data = doca.data();
-                if (data.reciepient == username) {
-
-                    var message = `From ${data.writer}: ${data.text}`;
+                if (data.reciepient == username || data.reciepient === "*") {
+                    var message = `${data.reciepient === "*" ? "Announcement from " : "From "}${data.writer}: ${data.text}`;
                     sendMsg(message, "TellBot", '#6437c4');
                     const docRef = doc(db, "tellMsgs", doca.id);
-                    deleteDoc(docRef);
+                    if(data.reciepient === username) {
+                        deleteDoc(docRef);
+                    } else if (data.timestamp > serverTimestamp() + 1*24*60*60*1000) {
+                        deleteDoc(docRef);
+                    }
 
                 }
             });
@@ -692,6 +699,7 @@ export async function sendMsg(message, writer, color, raw) {
     }
 }
 
+const allowedPingAll = ["Leif", "Key"];
 
 async function tell(message, writer, reciepient) {
     try {
@@ -699,6 +707,14 @@ async function tell(message, writer, reciepient) {
             Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: There is no need to message yourself`);
             return;
         }
+        
+        if (reciepient == "*") {
+            if(!allowedPingAll.includes(writer)) {
+                Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: You are not allowed to send announcements to all users.`);
+                return;
+            }
+        }
+
         await addDoc(collection(db, "tellMsgs"), {
             text: message,
             writer: writer,
@@ -894,6 +910,10 @@ async function onload() {
         }
     });
     
+    userDocRef = null;
+    username = null;
+    document.removeEventListener("keydown", (e) => { processKeydown(e) });
+
     await setUsername();
     userDocRef = doc(db, "connectedUsers", username)
     document.addEventListener("keydown", (e) => { processKeydown(e) });
