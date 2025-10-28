@@ -51,8 +51,8 @@ async function sendMail(recipient, sender) {
         const userDoc = snap.docs[0];
         const userData = userDoc.data();
 
-        if ((elapsedSecondsSince(userData.lastSummoned) < 43200)&&userData.lastSummoned) {
-            console.log("elapsedSecs:"+elapsedSecondsSince(userData.lastSummoned) < 43200);
+        if ((elapsedSecondsSince(userData.lastSummoned) < 360)&&userData.lastSummoned) {
+            console.log("elapsedSecs:"+elapsedSecondsSince(userData.lastSummoned) < 360);
             Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: ${recipient} was summoned less than 12 hours ago.`);
             return;
         }
@@ -158,11 +158,11 @@ function elapsedSecondsSince(timestamp) {
 
 function getUserColor(username, hashe) {
     if (hashe) {
-        if (username === "Key") return "7a3bff";
+        if (username === "Key") return "000000";
         if (username === "Leif") return "63e3bf";
         if (username === "TellBot") return "6437c4";
     } else if (!hashe) {
-        if (username === "Key") return "transparent; background-image: repeating-linear-gradient(45deg, #7a3bff, #9b59ff, #7a3bff var(--stripe-width)); animation: stripes var(--anim-time) linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
+        if (username === "Key") return "transparent; background-image: repeating-linear-gradient(45deg, #000000, #000010, #000000 var(--stripe-width)); animation: stripes var(--anim-time) linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
         if (username === "Leif") return "transparent; background-image: repeating-linear-gradient( 45deg, #63e3bf, #7383eb, #63e3bf var(--stripe-width) ); animation: stripes var(--anim-time) linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
         if (username === "TellBot") return "#6437c4";
     }
