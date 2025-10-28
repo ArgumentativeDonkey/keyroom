@@ -367,7 +367,7 @@ async function scheckInbox(username) {
 
     snapshot.forEach(doca => {
         const data = doca.data();
-        if (data.reciepient === username) {
+        if (data.reciepient === username || data.reciepient === "*") {
             inboxCounter++;
         }
     });
@@ -660,9 +660,8 @@ export async function sendMsg(message, writer, color, raw) {
 
             snapshot.forEach(doca => {
                 const data = doca.data();
-                if (data.reciepient == username) {
-
-                    var message = `From ${data.writer}: ${data.text}`;
+                if (data.reciepient == username || data.reciepient === "*") {
+                    var message = `${data.reciepient === "*" ? "<b>ANNOUNCEMENT</b> " : null}From ${data.writer}: ${data.text}`;
                     sendMsg(message, "TellBot", '#6437c4');
                     const docRef = doc(db, "tellMsgs", doca.id);
                     deleteDoc(docRef);
@@ -696,6 +695,7 @@ export async function sendMsg(message, writer, color, raw) {
     }
 }
 
+const allowedPingAll = ["Leif", "Key"];
 
 async function tell(message, writer, reciepient) {
     try {
@@ -703,6 +703,14 @@ async function tell(message, writer, reciepient) {
             Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: There is no need to message yourself`);
             return;
         }
+        
+        if (reciepient == "*") {
+            if(!allowedPingAll.includes(writer)) {
+                Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: You are not allowed to send announcements to all users.`);
+                return;
+            }
+        }
+
         await addDoc(collection(db, "tellMsgs"), {
             text: message,
             writer: writer,
