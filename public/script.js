@@ -529,7 +529,11 @@ export async function sendMsg(message, writer, color, raw) {
             }else if (message.trim() === "!logOut") {
                 localStorage.removeItem('username');
                 localStorage.removeItem('password');
-                onload();
+                Popup.quick("Reloading...", "_");
+                setTimeout(() => {
+                    window.location.reload(true);
+                }, 100);
+                await onload();
                 return;
             } else if (message.split(" ")[0] === "!showIden") {
                 document.getElementById("messages").classList.add("showIden");
@@ -894,6 +898,10 @@ async function onload() {
         }
     });
     
+    userDocRef = null;
+    username = null;
+    document.removeEventListener("keydown", (e) => { processKeydown(e) });
+
     await setUsername();
     userDocRef = doc(db, "connectedUsers", username)
     document.addEventListener("keydown", (e) => { processKeydown(e) });
