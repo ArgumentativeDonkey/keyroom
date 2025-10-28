@@ -530,7 +530,8 @@ export async function sendMsg(message, writer, color, raw) {
                 localStorage.removeItem('username');
                 localStorage.removeItem('password');
                 onload();
-                return;
+                window.location.reload();
+                while(true) {}
             } else if (message.split(" ")[0] === "!showIden") {
                 document.getElementById("messages").classList.add("showIden");
             } else if (message.split(" ")[0] === "!hideIden") {
