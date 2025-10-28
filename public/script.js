@@ -661,7 +661,7 @@ export async function sendMsg(message, writer, color, raw) {
             snapshot.forEach(doca => {
                 const data = doca.data();
                 if (data.reciepient == username || data.reciepient === "*") {
-                    var message = `${data.reciepient === "*" ? "<b>ANNOUNCEMENT</b> " : null}From ${data.writer}: ${data.text}`;
+                    var message = `${data.reciepient === "*" ? "<b>ANNOUNCEMENT</b> " : ""}From ${data.writer}: ${data.text}`;
                     sendMsg(message, "TellBot", '#6437c4');
                     const docRef = doc(db, "tellMsgs", doca.id);
                     deleteDoc(docRef);
