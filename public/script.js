@@ -1036,10 +1036,37 @@ async function onload() {
     listenToRoom('&hunch');
 }
 onload();
-document.body.setAttribute("data-theme", 'dark');
+if (localStorage.getItem("theme") != null) {
+    document.body.setAttribute("data-theme", localStorage.getItem("theme"));
+} else {
+    document.body.setAttribute("data-theme", 'dark');
+}
 document.getElementById("blueTheme").addEventListener("click", () => {
     document.body.setAttribute("data-theme", 'blue');
+    localStorage.setItem("theme", 'blue');
 });
 document.getElementById("darkTheme").addEventListener("click", () => {
     document.body.setAttribute("data-theme", 'dark');
+    localStorage.setItem("theme", 'dark');
+
+});
+document.getElementById("sunsetTheme").addEventListener("click", () => {
+    document.body.setAttribute("data-theme", 'sunset');
+    localStorage.setItem("theme", 'sunset');
+});
+document.getElementById("mintTheme").addEventListener("click", () => {
+    document.body.setAttribute("data-theme", 'mint');
+    localStorage.setItem("theme", 'mint');
+});
+document.getElementById("forestTheme").addEventListener("click", () => {
+    document.body.setAttribute("data-theme", 'forest');
+    localStorage.setItem("theme", 'forest');
+});
+document.getElementById("amethystTheme").addEventListener("click", () => {
+    document.body.setAttribute("data-theme", 'amethyst');
+    localStorage.setItem("theme", 'amethyst');
+});
+document.getElementById("greyscaleTheme").addEventListener("click", () => {
+    document.body.setAttribute("data-theme", 'greyscale');
+    localStorage.setItem("theme", 'greyscale');
 });
