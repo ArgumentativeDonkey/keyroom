@@ -306,6 +306,7 @@ function listenToRoom(roomName) {
             messagesEl.appendChild(msgDiv);
         });
         scrollToBottom(messagesEl);
+        console.log("2")
     });
 }
 
@@ -646,6 +647,8 @@ export async function sendMsg(message, writer, color, raw) {
                           <span class="iden">${iden}</span>`;
         messagesEl.appendChild(msgP);
         scrollToBottom(messagesEl);
+        console.log("3")
+
 
         await addDoc(collection(db, currentRoom), {
             text: message,
@@ -787,6 +790,7 @@ async function setUsername() {
 
         localStorage.setItem("username", username);
         scrollToBottom(document.getElementById("messages"));
+        console.log("4")
     } else {
         username = localStorage.getItem("username");
         if (username == "" || username == " " || username == null) {
@@ -1032,3 +1036,10 @@ async function onload() {
     listenToRoom('&hunch');
 }
 onload();
+document.body.setAttribute("data-theme", 'dark');
+document.getElementById("blueTheme").addEventListener("click", () => {
+    document.body.setAttribute("data-theme", 'blue');
+});
+document.getElementById("darkTheme").addEventListener("click", () => {
+    document.body.setAttribute("data-theme", 'dark');
+});

@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Keyroom</title>
   <link rel="stylesheet" href="style.css">
-  
+
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
   <script type="importmap">
       {
@@ -18,41 +18,48 @@
       }
     </script>
   <script type="module" src="./popup.js"></script>
-  
+
 </head>
 
 <body>
-  <div id="popupDivWrapper">
-    <div id="popupDiv">
+  <div class="fullWrapper">
+    <div id="popupDivWrapper">
+      <div id="popupDiv">
+      </div>
     </div>
-  </div>
-  <div class="rooms" id="rooms">
-    <div class="roomsListDiv">
-      <h4 class="roomsTitle">Rooms</h4>
-      <ul class="roomsList">
-        <li class="room" id="&hunch">& hunch</li>
-        <li class="room" id="&random">& random</li>
-        <li class="room" id="&spam">& spam</li>
-        <li class="room" id="&xkcd">& xkcd</li>
-        <li class="room" id="/codeinject">& codeinject</li>
-        <li class="room" id="&boom">& boom</li>
-        <li class="room" id="&gamescripts">& gamescripts</li>
-        <li class="room" id="&">& private</li>
-        <li class="room" ><a href="https://github.com/ArgumentativeDonkey/keyroom/blob/main/README.md" style="text-decoration: none; color: inherit;" target="_blank">Command Help</a></li>
-      </ul>
+    <div class="rooms" id="rooms">
+      <div class="roomsListDiv">
+        <h4 class="roomsTitle">Rooms</h4>
+        <ul class="roomsList">
+          <li class="room" id="&hunch">& hunch</li>
+          <li class="room" id="&random">& random</li>
+          <li class="room" id="&spam">& spam</li>
+          <li class="room" id="&xkcd">& xkcd</li>
+          <li class="room" id="/codeinject">& codeinject</li>
+          <li class="room" id="&boom">& boom</li>
+          <li class="room" id="&gamescripts">& gamescripts</li>
+          <li class="room" id="&">& private</li>
+          <li class="room"><a href="https://github.com/ArgumentativeDonkey/keyroom/blob/main/README.md"
+              style="text-decoration: none; color: inherit;" target="_blank">Command Help</a></li>
+        </ul>
+      </div>
     </div>
+    <div class="messages" id="messages"></div>
+    <div class="send"></div>
+    <input class="sendput" type="text" id="message-input" placeholder="Wow, what a beautiful box...">
+    <div class="desktopDiv" id="connectedUsers">
+      <p class="userP"><b>Connected Users</b></p>
+    </div>
+    <div class="themesDiv">
+      <li class="themes">Themes</li>
+      <li class="theme" id="blueTheme">Blue</li>
+      <li class="theme" id="darkTheme">Dark</li>
+    </div>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="module" src="script.js"></script>
+    <button class="showUsersMobile" id="showUsers">Show Active users</button>
+    <button class="showRoomsMobile" id="showRooms">Show rooms</button>
   </div>
-  <div class="messages" id="messages"></div>
-  <div class="send"></div>
-  <input class="sendput" type="text" id="message-input" placeholder="Wow, what a beautiful box...">
-  <div class="desktopDiv" id="connectedUsers">
-    <p class="userP"><b>Connected Users</b></p>
-  </div>
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script type="module" src="script.js"></script>
-  <button class="showUsersMobile" id="showUsers">Show Active users</button>
-  <button class="showRoomsMobile" id="showRooms">Show rooms</button>
-
 </body>
 
 </html>
