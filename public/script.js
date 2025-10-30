@@ -92,8 +92,8 @@ function doDelay() {
 (function () {
     emailjs.init("qTMLE2J7_unL-JsP0");
 })();
-// Initialize Firebase
 let currentRoom = "&hunch"
+document.getElementById("messages").setAttribute("data-theme", "normal");
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
@@ -105,7 +105,6 @@ var UsersShown = false;
 function parseTimestamp(input) {
     let date;
 
-    // Firestore Timestamps have toDate()
     if (input && typeof input.toDate === "function") {
         date = input.toDate();
     } else if (input && typeof input === "object") {
@@ -120,7 +119,6 @@ function parseTimestamp(input) {
 
     if (!date) return "??:?? ?/??/??";
 
-    // Compact formatter: "17:30 8/9/25"
     const opts = { timeZone: "America/Denver", hour: "2-digit", minute: "2-digit" };
     const time = new Intl.DateTimeFormat("en-US", opts).format(date);
 
@@ -681,10 +679,10 @@ export async function sendMsg(message, writer, color, raw) {
                 initiateBossBattle();
                 return;
             }
-            if (message.split(" ")[2] != undefined){
+            if (message.split(" ")[2] !== undefined){
                 const reciepient = message.split(" ")[1];
-                const message = message.split(" ").slice(2).join(" ");
-                sendMail(reciepient, writer, message);
+                const msg = message.split(" ").slice(2).join(" ");
+                sendMail(reciepient, writer, msg);
             } else {
                 const reciepient = message.split(" ")[1];
                 sendMail(reciepient, writer, "");
@@ -903,6 +901,17 @@ async function resetRoomIfKey(message, writer, room) {
         Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: failed to reset room: ${error.message}`);
     }
 }
+async function switchRoom(room, messageStyling) {
+    if (!messageStyling) {
+        messageStyling = "normal";
+    }
+    currentRoom = room
+    document.getElementById("messages").setAttribute("data-theme", messageStyling);
+    listenToRoom(room)
+    clearRoomBorders();
+    document.getElementById(room).classList.add('roomActive');
+    document.getElementById(room).classList.remove('room');
+}
 async function onload() {
     const bossRef = collection(db, "bossBattle");
     const snapshot = await getDocs(bossRef)
@@ -975,57 +984,32 @@ async function onload() {
         }
     })
     document.getElementById("&random").addEventListener("click", () => {
-        currentRoom = "&random"
-        listenToRoom('&random')
-        clearRoomBorders();
-        document.getElementById("&random").classList.add('roomActive');
-        document.getElementById("&random").classList.remove('room');
+        switchRoom("&random");
     })
     document.getElementById("&hunch").addEventListener("click", () => {
-        currentRoom = "&hunch";
-        listenToRoom('&hunch');
-        clearRoomBorders();
-        document.getElementById("&hunch").classList.add('roomActive');
-        document.getElementById("&hunch").classList.remove('room');
-
+        switchRoom("&hunch");
     })
     document.getElementById("&xkcd").addEventListener("click", () => {
-        currentRoom = "&xkcd";
-        listenToRoom('&xkcd');
-        clearRoomBorders();
-        document.getElementById("&xkcd").classList.add('roomActive');
-        document.getElementById("&xkcd").classList.remove('room');
+        switchRoom("&xkcd");
     })
     document.getElementById("&spam").addEventListener("click", () => {
-        currentRoom = "&spam";
-        clearRoomBorders();
-        document.getElementById("&spam").classList.add('roomActive');
-        document.getElementById("&spam").classList.remove('room');
-        listenToRoom('&spam');
+        switchRoom("&spam");
     })
     document.getElementById("/codeinject").addEventListener("click", () => {
-        currentRoom = "/codeinject";
-        clearRoomBorders();
-        document.getElementById("/codeinject").classList.add('roomActive');
-        document.getElementById("/codeinject").classList.remove('room');
-        listenToRoom('/codeinject');
+        switchRoom("/codeinject");
     })
     document.getElementById("&boom").addEventListener("click", () => {
-        currentRoom = "&boom";
-        clearRoomBorders();
-        document.getElementById("&boom").classList.add('roomActive');
-        document.getElementById("&boom").classList.remove('room');
-        listenToRoom('&boom');
+        switchRoom("&boom");
     })
     document.getElementById("&gamescripts").addEventListener("click", () => {
-        currentRoom = "&gamescripts";
-        clearRoomBorders();
-        document.getElementById("&gamescripts").classList.add('roomActive');
-        document.getElementById("&gamescripts").classList.remove('room');
-        listenToRoom('&gamescripts');
+        switchRoom("&gamescripts");
+    })
+    document.getElementById("&music").addEventListener("click", () => {
+        switchRoom("&music", "music");
     })
     document.getElementById("&").addEventListener("click", () => {
         currentRoom = `&${username}`;
+        document.getElementById("messages").setAttribute("data-theme", "normal");
         clearRoomBorders();
         document.getElementById("&").classList.add('roomActive');
         document.getElementById("&").classList.remove('room');

@@ -23,7 +23,17 @@ body[data-theme='blue'] {
     --stripe-calc: calc(var(--stripe-width) * 1.41421356237);
     --anim-time: 8s;
 }
-
+.messages[data-theme='music'] {
+    height: 65vh;
+    position: absolute;
+    left: 15vw;
+    top: 30vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    overflow-wrap: break-word;
+    width: 85vw;
+    font-size: 14px;
+}
 body[data-theme='dark'] {
     --bg: #1a1a1e;
     --bg-secondary: #121214;
@@ -216,7 +226,7 @@ h1 { color: var(--txt); }
     border-right: 2px var(--border-color-strong) solid;
 }
 
-.messages {
+.messages[data-theme='normal'] {
     height: 80vh;
     overflow-y: scroll;
     overflow-x: hidden;
