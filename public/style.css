@@ -3,7 +3,7 @@
     to { background-position: var(--stripe-calc) 0; }
 }
 
-body[data-theme='blue'] {
+[data-theme='blue'] {
     --bg: #f0f8ff;
     --bg-secondary: #d6eaf8;
     --bg-secondary-hover: #cce0ff;
@@ -34,7 +34,7 @@ body[data-theme='blue'] {
     width: 85vw;
     font-size: 14px;
 }
-body[data-theme='dark'] {
+[data-theme='dark'] {
     --bg: #1a1a1e;
     --bg-secondary: #121214;
     --bg-secondary-hover: #121214;
@@ -54,7 +54,7 @@ body[data-theme='dark'] {
     --anim-time: 8s;
 }
 
-body[data-theme='forest'] {
+[data-theme='forest'] {
     --bg: #f1f8f1;
     --bg-secondary: #d9e9d9;
     --bg-secondary-hover: #c8e0c8;
@@ -75,7 +75,7 @@ body[data-theme='forest'] {
     --anim-time: 8s;
 }
 
-body[data-theme='sunset'] {
+[data-theme='sunset'] {
     --bg: #fff3e0;
     --bg-secondary: #ffe0b2;
     --bg-secondary-hover: #ffcc80;
@@ -96,7 +96,7 @@ body[data-theme='sunset'] {
     --anim-time: 8s;
 }
 
-body[data-theme='amethyst'] {
+[data-theme='amethyst'] {
     --bg: #f3e5f5;
     --bg-secondary: #e1bee7;
     --bg-secondary-hover: #ce93d8;
@@ -117,7 +117,7 @@ body[data-theme='amethyst'] {
     --anim-time: 8s;
 }
 
-body[data-theme='greyscale'] {
+[data-theme='greyscale'] {
     --bg: #f5f5f5;
     --bg-secondary: #e0e0e0;
     --bg-secondary-hover: #d1d1d1;
@@ -138,7 +138,7 @@ body[data-theme='greyscale'] {
     --anim-time: 8s;
 }
 
-body[data-theme='mint'] {
+[data-theme='mint'] {
     --bg: #e0f2f1;
     --bg-secondary: #b2dfdb;
     --bg-secondary-hover: #80cbc4;
@@ -530,7 +530,7 @@ body {
     color: inherit;
     text-decoration: underline;
 }
-.theme:hover {
+.themesDiv li {
     font-size: inherit+4px;
 }
 .themesDiv:hover {
