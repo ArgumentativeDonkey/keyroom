@@ -1319,6 +1319,9 @@ async function onload() {
     })
     document.getElementById("&music").addEventListener("click", () => {
         switchRoom("&music", "music");
+        loadYouTubeVideo('YsdaAQzdmpo');
+        manageMusic();
+        console.log("loading");
     })
     document.getElementById("&").addEventListener("click", () => {
         switchRoom(`&${username}`);
