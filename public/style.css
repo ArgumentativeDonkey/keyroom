@@ -23,7 +23,7 @@ body[data-theme='blue'] {
     --stripe-calc: calc(var(--stripe-width) * 1.41421356237);
     --anim-time: 8s;
 }
-.messages[data-theme='music'] {
+body [data-format='music'] .messages {
     height: 65vh;
     position: absolute;
     left: 15vw;
@@ -34,6 +34,10 @@ body[data-theme='blue'] {
     width: 85vw;
     font-size: 14px;
 }
+body [data-format='music'] .musicEmbed {
+    display: block;
+}
+
 body[data-theme='dark'] {
     --bg: #1a1a1e;
     --bg-secondary: #121214;

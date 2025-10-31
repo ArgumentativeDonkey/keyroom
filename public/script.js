@@ -864,6 +864,7 @@ function clearRoomBorders() {
     document.getElementById("/codeinject").classList.remove('roomActive');
     document.getElementById("&boom").classList.remove('roomActive');
     document.getElementById("&gamescripts").classList.remove('roomActive');
+    document.getElementById("&music").classList.remove('roomActive');
     document.getElementById("&").classList.remove('roomActive');
     document.getElementById("&random").classList.add('room');
     document.getElementById("&xkcd").classList.add('room');
@@ -873,6 +874,7 @@ function clearRoomBorders() {
     document.getElementById("&boom").classList.add('room');
     document.getElementById("&gamescripts").classList.add('room');
     document.getElementById("&").classList.add('room');
+    document.getElementById("&music").classList.add('room');
 }
 import { writeBatch } from "firebase/firestore";
 
@@ -1006,6 +1008,7 @@ async function onload() {
     })
     document.getElementById("&music").addEventListener("click", () => {
         switchRoom("&music", "music");
+
     })
     document.getElementById("&").addEventListener("click", () => {
         currentRoom = `&${username}`;
