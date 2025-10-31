@@ -14,6 +14,8 @@ Chatroom syntax: <br>
 **&CodeInject only** - The &Codeinject room allows users to inject custom html, css, and js, alongside allowing the use of the following commands. <br>
 `!spin {message}` - makes the message spin at high velocities. <br>
 `!rotate {degrees} {message}` - rotates the message a certain amount of degrees. <br>
+**&music** - synced music across all devices using youtube's embed API. <br>
+`!video {youtube video code}` - changes the video/song. The video code is the letters after the v= in the url. <br>
 **Misc.** - Random unrelated commands <br>
 `!lastactive {username}` - gets the last recorded time somebody of entered username was on the page, regardless of if they sent any messages. <br>
 `!image {image url}` - creates an image from the given url. We suggest uploading images to [Imgur](https://Imgur.com) then copying the image url. <br>
