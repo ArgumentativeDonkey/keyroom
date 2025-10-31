@@ -23,6 +23,7 @@
 
 <body>
   <div class="fullWrapper">
+    <div class="musicFrame" id="player"></div>
     <div id="popupDivWrapper">
       <div id="popupDiv">
       </div>
@@ -52,16 +53,11 @@
       <p class="userP"><b>Connected Users</b></p>
     </div>
     <div class="themesDiv">
-      <li class="themes">Themes</li>
-      <li class="theme" id="blueTheme">Blue</li>
-      <li class="theme" id="darkTheme">Dark</li>
-      <li class="theme" id="mintTheme">Mint</li>
-      <li class="theme" id="greyscaleTheme">Greyscale</li>
-      <li class="theme" id="amethystTheme">Amethyst</li>
-      <li class="theme" id="sunsetTheme">Sunset</li>
-      <li class="theme" id="forestTheme">Forest</li>
+      <li class="themes">themes</li>
+      
     </div>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="module" src="musicroom.js"></script>
     <script type="module" src="script.js"></script>
     <script type="module" src="themes.js"></script>
     <button class="showUsersMobile" id="showUsers">Show Active users</button>

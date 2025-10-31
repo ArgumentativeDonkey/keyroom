@@ -1,7 +1,7 @@
 import { Popup } from "./popup.js"
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDocs, deleteDoc, where } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDocs, deleteDoc, where, getDoc } from 'firebase/firestore';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -51,12 +51,12 @@ async function sendMail(recipient, sender, message) {
         const userDoc = snap.docs[0];
         const userData = userDoc.data();
 
-        if ((elapsedSecondsSince(userData.lastSummoned) < 360)&&userData.lastSummoned) {
-            console.log("elapsedSecs:"+elapsedSecondsSince(userData.lastSummoned) < 360);
+        if ((elapsedSecondsSince(userData.lastSummoned) < 360) && userData.lastSummoned) {
+            console.log("elapsedSecs:" + elapsedSecondsSince(userData.lastSummoned) < 360);
             Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: ${recipient} was summoned less than 6 minutes ago.`);
             return;
         }
-        
+
 
         if (!userData.email) {
             Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: ${recipient} has not set an email address.`);
@@ -67,7 +67,7 @@ async function sendMail(recipient, sender, message) {
             name: recipient,
             to_email: userData.email,
             from_name: sender,
-            message: "You have been summoned! From "+sender+": "+message
+            message: "You have been summoned! From " + sender + ": " + message
         };
 
         await emailjs.send("service_sam1rgy", "template_107udmm", templateParams);
@@ -98,7 +98,9 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
 const messagesRef = collection(db, currentRoom);
-const messagesQuery = query(messagesRef, orderBy("timestamp", "asc"));
+const musicRef = collection(db, "music");
+const messagesQuery = query(musicRef, orderBy("timestamp", "asc"));
+const musicQuery = query(messagesRef, orderBy("timestamp", "asc"));
 const tellRef = collection(db, "tellMsgs");
 const tellQuery = query(tellRef, orderBy("timestamp", "asc"));
 var UsersShown = false;
@@ -308,7 +310,7 @@ function listenToRoom(roomName) {
     });
 }
 
-const banned = ["<", "fuck", "shit"];
+const banned = ["<", "fuck"];
 const bannedeq = ["'&lt;'", "a very bad word", "a bad word"];
 function checkBannedWords(string, banlist) {
     if (!string) {
@@ -326,7 +328,7 @@ function checkBannedWords(string, banlist) {
     return true;
 }
 const notifiedInbox = {};
-function replaceWithBossBattle(){
+function replaceWithBossBattle() {
     console.log("replaced with boss battle");
 }
 async function doBossDamage(damage) {
@@ -343,19 +345,19 @@ async function doBossDamage(damage) {
         Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Error: There is no active boss battle. Idk how the hell you initiated this function.");
         return;
     }
-    
+
     await addDoc(boss, {
         health: FieldValue.increment(-damage)
-    }, {merge: true});
+    }, { merge: true });
 }
 async function initiateBossBattle() {
     sendMsg("You dare awaken me from my slumber? Prepare to face the wrath of the Phospholipid Bilayer!", "Phospholipid Bilayer", "#228B22", false, true);
     const bossRef = collection(db, "bossBattle");
     const snapshot = await getDocs(bossRef);
     await addDoc(bossRef, {
-            health: 100,
-            active: true
-    }, {merge: true});
+        health: 100,
+        active: true
+    }, { merge: true });
     await new Promise(resolve => setTimeout(resolve, 3000));
     replaceWithBossBattle();
 }
@@ -400,300 +402,318 @@ export async function sendMsg(message, writer, color, raw) {
         var checkInbox = false;
         if (raw !== true) raw = false;
         if (typeof message === 'string') {
-            if (!checkBannedWords(message) &&  (currentRoom !== "/codeinject"&&currentRoom!==`${username}`) && writer !== "xkcd") {
+            if (!checkBannedWords(message) && (currentRoom !== "/codeinject" && currentRoom !== `${username}`) && writer !== "xkcd") {
                 console.log(currentRoom);
                 message = rndList();
             }
             if (message.split(" ")[0] == "!image") {
                 message = `<img src="${message.split(" ")[1]}" alt="Image" style="max-width:1200px; max-height:200px;">`;
-            } else if (message.split(" ")[0] == "!link") {
-                message = `<a href="${message.split(" ")[1]}" target="_blank" rel="noopener noreferrer">${message.split(" ")[1]}</a>`;
-            } else if (message.split(" ")[0] === "!edit") {
-                const newText = message.replace("!edit ", "") + " (<i>edited</i>)";
-                const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
-                let found = false;
-
-                for (const doca of snapshot.docs) {
-                    const data = doca.data();
-                    if (data.writer === writer) {
-                        const docRef = doc(db, currentRoom, doca.id);
-                        await setDoc(docRef, {
-                            text: newText,
-                            writer,
-                            color,
-                            timestamp: serverTimestamp(),
-                            raw
-                        }, { merge: true });
-                        found = true;
-                        break;
-                    }
-
-
-                    if (docFound) {
-                        found = true;
-                    } else {
-                        Popup.quick(`<span class="material-symbols-outlined">warning</span><br>Error: No message found with ID ${targetId}.`);
-                        return;
-                    }
+            } else if (message.split(" ")[0] === "!video") {
+                const input = message.split(" ").slice(1).join(" ");
+                if (!input) {
+                    Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Usage: !video [YouTube_Video_ID or URL]<br>Example: !video dQw4w9WgXcQ");
+                    return;
                 }
-
-                if (!found) {
-                    Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Error: No message found to edit.");
+                if (currentRoom !== "&music") {
+                    Popup.quick("<span class='material-symbols-outlined'>warning</span><br>You must be in the &music room to change videos!");
+                    return;
                 }
+                const videoId = extractVideoId(input);
+                if (!videoId) {
+                    Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Invalid YouTube video ID or URL!<br>Example: !video dQw4w9WgXcQ");
+                    return;
+                }
+                changeVideo(videoId, writer);
                 return;
-            } else if (message.split(" ")[0] === "!editId") {
-                const targetId = message.split(" ")[1].trim();
-                const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
-                let docFound = null;
-                const newText = message.split(" ").slice(2).join(" ");
+            }
+        } else if (message.split(" ")[0] == "!link") {
+            message = `<a href="${message.split(" ")[1]}" target="_blank" rel="noopener noreferrer">${message.split(" ")[1]}</a>`;
+        } else if (message.split(" ")[0] === "!edit") {
+            const newText = message.replace("!edit ", "") + " (<i>edited</i>)";
+            const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
+            let found = false;
 
-                for (const doca of snapshot.docs) {
-                    if (doca.data().iden === targetId && doca.data().writer === writer) {
-                        docFound = doca;
-                        break;
-                    }
-                }
-
-                if (docFound) {
-                    const docRef = doc(db, currentRoom, docFound.id);
-                    const timestamp = docFound.data().timestamp;
+            for (const doca of snapshot.docs) {
+                const data = doca.data();
+                if (data.writer === writer) {
+                    const docRef = doc(db, currentRoom, doca.id);
                     await setDoc(docRef, {
                         text: newText,
                         writer,
                         color,
-                        timestamp,
+                        timestamp: serverTimestamp(),
                         raw
                     }, { merge: true });
-
-                    return;
-                } else {
-                    Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: No message found with ID ${targetId}.`);
+                    found = true;
+                    break;
                 }
 
-                if (!found) {
-                    Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Error: No message found to edit.");
-                }
-                return;
-            } else if (message.split(" ")[0] === "!editProfilePic") {
-                const newPicUrl = message.split(" ")[1];
-                const userDocRef = doc(db, "connectedUsers", writer);
-                await setDoc(userDocRef, {
-                    profilePic: newPicUrl
-                }, { merge: true });
-                Popup.quick(`<span class='material-symbols-outlined'>account_circle</span><br>Profile picture updated!<br><img width='100px' src=${newPicUrl}/>`);
-                return;
-
-            } else if (message.split(" ")[0] === "!setEmail") {
-                const email = message.split(" ")[1];
-                const userDocRef = doc(db, "connectedUsers", writer);
-                await setDoc(userDocRef, {
-                    email: email
-                }, { merge: true });
-                Popup.quick(`<span class="material-symbols-outlined">mail</span><br>Email updated to ${email}`, "ok")
-                return;
-
-            } else if (message.split(" ")[0] === "!delete") {
-                const targetId = message.split(" ")[1].trim();
-                const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
-                let docFound = null;
-
-                for (const doca of snapshot.docs) {
-                    if (doca.data().iden === targetId && doca.data().writer === writer) {
-                        docFound = doca;
-                        break;
-                    }
-                }
 
                 if (docFound) {
+                    found = true;
+                } else {
+                    Popup.quick(`<span class="material-symbols-outlined">warning</span><br>Error: No message found with ID ${targetId}.`);
+                    return;
+                }
+            }
+
+            if (!found) {
+                Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Error: No message found to edit.");
+            }
+            return;
+        } else if (message.split(" ")[0] === "!editId") {
+            const targetId = message.split(" ")[1].trim();
+            const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
+            let docFound = null;
+            const newText = message.split(" ").slice(2).join(" ");
+
+            for (const doca of snapshot.docs) {
+                if (doca.data().iden === targetId && doca.data().writer === writer) {
+                    docFound = doca;
+                    break;
+                }
+            }
+
+            if (docFound) {
+                const docRef = doc(db, currentRoom, docFound.id);
+                const timestamp = docFound.data().timestamp;
+                await setDoc(docRef, {
+                    text: newText,
+                    writer,
+                    color,
+                    timestamp,
+                    raw
+                }, { merge: true });
+
+                return;
+            } else {
+                Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: No message found with ID ${targetId}.`);
+            }
+
+            if (!found) {
+                Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Error: No message found to edit.");
+            }
+            return;
+        } else if (message.split(" ")[0] === "!editProfilePic") {
+            const newPicUrl = message.split(" ")[1];
+            const userDocRef = doc(db, "connectedUsers", writer);
+            await setDoc(userDocRef, {
+                profilePic: newPicUrl
+            }, { merge: true });
+            Popup.quick(`<span class='material-symbols-outlined'>account_circle</span><br>Profile picture updated!<br><img width='100px' src=${newPicUrl}/>`);
+            return;
+
+        } else if (message.split(" ")[0] === "!setEmail") {
+            const email = message.split(" ")[1];
+            const userDocRef = doc(db, "connectedUsers", writer);
+            await setDoc(userDocRef, {
+                email: email
+            }, { merge: true });
+            Popup.quick(`<span class="material-symbols-outlined">mail</span><br>Email updated to ${email}`, "ok")
+            return;
+
+        } else if (message.split(" ")[0] === "!delete") {
+            const targetId = message.split(" ")[1].trim();
+            const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
+            let docFound = null;
+
+            for (const doca of snapshot.docs) {
+                if (doca.data().iden === targetId && doca.data().writer === writer) {
+                    docFound = doca;
+                    break;
+                }
+            }
+
+            if (docFound) {
+                const docRef = doc(db, currentRoom, docFound.id);
+                await deleteDoc(docRef);
+                return;
+            } else {
+                Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: No message found with ID ${targetId}.`);
+            }
+
+        } else if (message.trim() === "!inbox") {
+            checkInbox = true;
+        } else if (message.trim() === "!clearInbox") {
+            const targetId = message.split(" ")[1].trim();
+            const snapshot = await getDocs(query(collection(db, "tellMsgs"), orderBy("timestamp", "desc")));
+            let docFound = null;
+
+            for (const doca of snapshot.docs) {
+                if (doca.data().writer === username) {
                     const docRef = doc(db, currentRoom, docFound.id);
                     await deleteDoc(docRef);
-                    return;
-                } else {
-                    Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: No message found with ID ${targetId}.`);
                 }
-
-            } else if (message.trim() === "!inbox") {
-                checkInbox = true;
-            } else if (message.trim() === "!clearInbox") {
-                const targetId = message.split(" ")[1].trim();
-                const snapshot = await getDocs(query(collection(db, "tellMsgs"), orderBy("timestamp", "desc")));
-                let docFound = null;
-
-                for (const doca of snapshot.docs) {
-                    if (doca.data().writer === username) {
-                        const docRef = doc(db, currentRoom, docFound.id);
-                        await deleteDoc(docRef);
-                    }
-                }
-            }else if (message.trim() === "!logOut") {
-                localStorage.removeItem('username');
-                localStorage.removeItem('password');
-                Popup.quick("Reloading...", "_");
-                setTimeout(() => {
-                    window.location.reload(true);
-                }, 100);
-                await onload();
-                return;
-            } else if (message.split(" ")[0] === "!showIden") {
-                document.getElementById("messages").classList.add("showIden");
-            } else if (message.split(" ")[0] === "!hideIden") {
-                document.getElementById("messages").classList.remove("showIden");
             }
-            else if (message.split(" ")[0] === "!flip") {
-                document.getElementById("messages").style.transform = "scaleY(-1) rotate(1deg)";
-            } else if (message.split(" ")[0] === "!unflip") {
-                document.getElementById("messages").style.transform = "scaleY(1) rotate(0deg)";
-            } else if (message.split(" ")[0] === "!rainbow") {
-                color = "transparent; background-image: repeating-linear-gradient( 45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000 var(--stripe-width)); animation: stripes var(--anim-time) linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
-                message = `<span>${message.split(" ").splice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!rotate" && (currentRoom == "/codeinject"||currentRoom==`&${username}`)) {
-                message = `<span style="display:inline-block; transform:rotate(${message.split(" ")[1]}deg);">${message.split(" ").slice(2).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!unrainbow") {
-                color = "white";
-                message = `<span>${message.split(" ").splice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!shrink") {
-                message = `<span style="font-size:0.5em;">${message.split(" ").splice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!grow") {
-                message = `<span style="font-size:2em;">${message.split(" ").splice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!spin" && (currentRoom == "/codeinject"||currentRoom==`&${username}`)) {
-                message = `<span style="display:inline-block; animation: spin 2s linear infinite;">${message.split(" ").splice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!code") {
-                message = `<code>${message.split(" ").splice(1).join(" ")}</code>`;
-            } else if (message.split(" ")[0] === "!bold") {
-                message = `<b>${message.split(" ").splice(1).join(" ")}</b>`;
-            } else if (message.split(" ")[0] === "!italic") {
-                message = `<i>${message.split(" ").splice(1).join(" ")}</i>`;
-            } else if (message.split(" ")[0] === "!underline") {
-                message = `<u>${message.split(" ").splice(1).join(" ")}</u>`;
-            } else if (message.split(" ")[0] === "!strikethrough") {
-                message = `<s>${message.split(" ").splice(1).join(" ")}</s>`;
-            } else if (message.split(" ")[0] === "!reverse") {
-                const text = message.split(" ").slice(1).join(" ");
-                message = `<span>${text.split("").reverse().join("")}</span>`;
-            } else if (message.split(" ")[0] === "!upper") {
-                message = `<span>${message.split(" ").slice(1).join(" ").toUpperCase()}</span>`;
-            } else if (message.split(" ")[0] === "!lower") {
-                message = `<span>${message.split(" ").slice(1).join(" ").toLowerCase()}</span>`;
-            } else if (message.split(" ")[0] === "!wave") {
-                const text = message.split(" ").slice(1).join(" ");
-                message = `<span style="display:inline-block; animation: wave 2s infinite;">${text}</span>`;
-            } else if (message.split(" ")[0] === "!glitch") {
-                const text = message.split(" ").slice(1).join(" ");
-                message = `<span class="glitch" data-text="${text}">${text}</span>`;
-            } else if (message.split(" ")[0] === "!shrug") {
-                message = `<span>${message.split(" ").slice(1).join(" ")} ¯\\_(ツ)_/¯</span>`;
-            } else if (message.split(" ")[0] === "!spoiler") {
-                message = `<span style="background:black; color:black;" onmouseover="this.style.color='white'">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!blink") {
-                message = `<span style="animation: blink 1s steps(2, start) infinite;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!monospace") {
-                message = `<span style="font-family:monospace;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!shake") {
-                message = `<span style="display:inline-block; animation: shake 0.5s infinite;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!fade") {
-                message = `<span style="animation: fadeIn 2s;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!count") {
-                const text = message.split(" ").slice(1).join(" ");
-                message = `<span>${text} (${text.length} chars)</span>`;
-            } else if (message.split(" ")[0] === "!time") {
-                message = `<span>${new Date().toLocaleTimeString()}</span>`;
-            } else if (message.split(" ")[0] === "!date") {
-                message = `<span>${new Date().toLocaleDateString()}</span>`;
-            } else if (message.split(" ")[0] === "!rainbowtext") {
-                const text = message.split(" ").slice(1).join(" ");
-                message = `<span style="background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet); -webkit-background-clip: text; color: transparent;">${text}</span>`;
-            } else if (message.split(" ")[0] === "!binary") {
-                let text = message.split(" ").slice(1).join(" ");
-                text = text.split("").map(c => c.charCodeAt(0).toString(2)).join(" ");
-                message = `<span>${text}</span>`;
-            } else if (message.split(" ")[0] === "!leet") {
-                let text = message.split(" ").slice(1).join(" ");
-                text = text.replace(/a/gi, "4").replace(/e/gi, "3").replace(/i/gi, "1").replace(/o/gi, "0").replace(/s/gi, "5").replace(/t/gi, "7");
-                message = `<span>${text}</span>`;
-            } else if (message.split(" ")[0] === "!reversewords") {
-                let text = message.split(" ").slice(1).reverse().join(" ");
-                message = `<span>${text}</span>`;
-            } else if (message.split(" ")[0] === "!outline") {
-                message = `<span style="color:black; -webkit-text-stroke:1px red;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!glow") {
-                message = `<span style="color:#fff; text-shadow:0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!zebra") {
-                let text = message.split(" ").slice(1).join(" ");
-                message = `<span>${text.split("").map((c, i) => `<span style="background:${i % 2 ? "#000" : "#fff"};color:${i % 2 ? "#fff" : "#000"};">${c}</span>`).join("")}</span>`;
-            } else if (message.split(" ")[0] === "!wavey") {
-                message = `<span style="text-decoration:underline wavy red;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!stretch") {
-                message = `<span style="letter-spacing:5px;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!tight") {
-                message = `<span style="letter-spacing:-1px;">${message.split(" ").slice(1).join(" ")}</span>`;
-            } else if (message.split(" ")[0] === "!hollow") {
-                message = `<span style="color:transparent; -webkit-text-stroke:1px black;">${message.split(" ").slice(1).join(" ")}</span>`;
-            }
-
-
-
-
-
-
+        } else if (message.trim() === "!logOut") {
+            localStorage.removeItem('username');
+            localStorage.removeItem('password');
+            Popup.quick("Reloading...", "_");
+            setTimeout(() => {
+                window.location.reload(true);
+            }, 100);
+            await onload();
+            return;
+        } else if (message.split(" ")[0] === "!showIden") {
+            document.getElementById("messages").classList.add("showIden");
+        } else if (message.split(" ")[0] === "!hideIden") {
+            document.getElementById("messages").classList.remove("showIden");
         }
+        else if (message.split(" ")[0] === "!flip") {
+            document.getElementById("messages").style.transform = "scaleY(-1) rotate(1deg)";
+        } else if (message.split(" ")[0] === "!unflip") {
+            document.getElementById("messages").style.transform = "scaleY(1) rotate(0deg)";
+        } else if (message.split(" ")[0] === "!rainbow") {
+            color = "transparent; background-image: repeating-linear-gradient( 45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000 var(--stripe-width)); animation: stripes var(--anim-time) linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
+            message = `<span>${message.split(" ").splice(1).join(" ")}</span>`;
+        } else if (message.split(" ")[0] === "!rotate" && (currentRoom == "/codeinject" || currentRoom == `&${username}`)) {
+            message = `<span style="display:inline-block; transform:rotate(${message.split(" ")[1]}deg);">${message.split(" ").slice(2).join(" ")}</span>`;
+        } else if (message.split(" ")[0] === "!unrainbow") {
+            color = "white";
+            message = `<span>${message.split(" ").splice(1).join(" ")}</span>`;
+        } else if (message.split(" ")[0] === "!shrink") {
+            message = `<span style="font-size:0.5em;">${message.split(" ").splice(1).join(" ")}</span>`;
+        } else if (message.split(" ")[0] === "!grow") {
+            message = `<span style="font-size:2em;">${message.split(" ").splice(1).join(" ")}</span>`;
+        } else if (message.split(" ")[0] === "!spin" && (currentRoom == "/codeinject" || currentRoom == `&${username}`)) {
+            message = `<span style="display:inline-block; animation: spin 2s linear infinite;">${message.split(" ").splice(1).join(" ")}</span>`;
+        } else if (message.split(" ")[0] === "!code") {
+            message = `<code>${message.split(" ").splice(1).join(" ")}</code>`;
+        } else if (message.split(" ")[0] === "!bold") {
+            message = `<b>${message.split(" ").splice(1).join(" ")}</b>`;
+        } else if (message.split(" ")[0] === "!italic") {
+            message = `<i>${message.split(" ").splice(1).join(" ")}</i>`;
+        } else if (message.split(" ")[0] === "!underline") {
+            message = `<u>${message.split(" ").splice(1).join(" ")}</u>`;
+        } else if (message.split(" ")[0] === "!strikethrough") {
+            message = `<s>${message.split(" ").splice(1).join(" ")}</s>`;
+        } else if (message.split(" ")[0] === "!reverse") {
+            const text = message.split(" ").slice(1).join(" ");
+            message = `<span>${text.split("").reverse().join("")}</span>`;
+        } else if (message.split(" ")[0] === "!upper") {
+            message = `<span>${message.split(" ").slice(1).join(" ").toUpperCase()}</span>`;
+        } else if (message.split(" ")[0] === "!lower") {
+            message = `<span>${message.split(" ").slice(1).join(" ").toLowerCase()}</span>`;
+        } else if (message.split(" ")[0] === "!wave") {
+            const text = message.split(" ").slice(1).join(" ");
+            message = `<span style="display:inline-block; animation: wave 2s infinite;">${text}</span>`;
+        } else if (message.split(" ")[0] === "!glitch") {
+            const text = message.split(" ").slice(1).join(" ");
+            message = `<span class="glitch" data-text="${text}">${text}</span>`;
+        } else if (message.split(" ")[0] === "!shrug") {
+            message = `<span>${message.split(" ").slice(1).join(" ")} ¯\\_(ツ)_/¯</span>`;
+        } else if (message.split(" ")[0] === "!spoiler") {
+            message = `<span style="background:black; color:black;" onmouseover="this.style.color='white'">${message.split(" ").slice(1).join(" ")}</span>`;
+        } else if (message.split(" ")[0] === "!blink") {
+            message = `<span style="animation: blink 1s steps(2, start) infinite;">${message.split(" ").slice(1).join(" ")}</span>`;
+        } else if (message.split(" ")[0] === "!monospace") {
+            message = `<span style="font-family:monospace;">${message.split(" ").slice(1).join(" ")}</span>`;
+        } else if (message.split(" ")[0] === "!shake") {
+            message = `<span style="display:inline-block; animation: shake 0.5s infinite;">${message.split(" ").slice(1).join(" ")}</span>`;
+        } else if (message.split(" ")[0] === "!fade") {
+            message = `<span style="animation: fadeIn 2s;">${message.split(" ").slice(1).join(" ")}</span>`;
+        } else if (message.split(" ")[0] === "!count") {
+            const text = message.split(" ").slice(1).join(" ");
+            message = `<span>${text} (${text.length} chars)</span>`;
+        } else if (message.split(" ")[0] === "!time") {
+            message = `<span>${new Date().toLocaleTimeString()}</span>`;
+        } else if (message.split(" ")[0] === "!date") {
+            message = `<span>${new Date().toLocaleDateString()}</span>`;
+        } else if (message.split(" ")[0] === "!rainbowtext") {
+            const text = message.split(" ").slice(1).join(" ");
+            message = `<span style="background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet); -webkit-background-clip: text; color: transparent;">${text}</span>`;
+        } else if (message.split(" ")[0] === "!binary") {
+            let text = message.split(" ").slice(1).join(" ");
+            text = text.split("").map(c => c.charCodeAt(0).toString(2)).join(" ");
+            message = `<span>${text}</span>`;
+        } else if (message.split(" ")[0] === "!leet") {
+            let text = message.split(" ").slice(1).join(" ");
+            text = text.replace(/a/gi, "4").replace(/e/gi, "3").replace(/i/gi, "1").replace(/o/gi, "0").replace(/s/gi, "5").replace(/t/gi, "7");
+            message = `<span>${text}</span>`;
+        } else if (message.split(" ")[0] === "!reversewords") {
+            let text = message.split(" ").slice(1).reverse().join(" ");
+            message = `<span>${text}</span>`;
+        } else if (message.split(" ")[0] === "!outline") {
+            message = `<span style="color:black; -webkit-text-stroke:1px red;">${message.split(" ").slice(1).join(" ")}</span>`;
+        } else if (message.split(" ")[0] === "!glow") {
+            message = `<span style="color:#fff; text-shadow:0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff;">${message.split(" ").slice(1).join(" ")}</span>`;
+        } else if (message.split(" ")[0] === "!zebra") {
+            let text = message.split(" ").slice(1).join(" ");
+            message = `<span>${text.split("").map((c, i) => `<span style="background:${i % 2 ? "#000" : "#fff"};color:${i % 2 ? "#fff" : "#000"};">${c}</span>`).join("")}</span>`;
+        } else if (message.split(" ")[0] === "!wavey") {
+            message = `<span style="text-decoration:underline wavy red;">${message.split(" ").slice(1).join(" ")}</span>`;
+        } else if (message.split(" ")[0] === "!stretch") {
+            message = `<span style="letter-spacing:5px;">${message.split(" ").slice(1).join(" ")}</span>`;
+        } else if (message.split(" ")[0] === "!tight") {
+            message = `<span style="letter-spacing:-1px;">${message.split(" ").slice(1).join(" ")}</span>`;
+        } else if (message.split(" ")[0] === "!hollow") {
+            message = `<span style="color:transparent; -webkit-text-stroke:1px black;">${message.split(" ").slice(1).join(" ")}</span>`;
+        }
+
+
+
+
+
+
+    
         const messagesEl = document.getElementById("messages");
-        const msgP = document.createElement("p");
-        const iden = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-        console.log("iden:", iden);
-        msgP.innerHTML = `<span style="background-color:${color};" class="usernameBg">${writer}</span>
+    const msgP = document.createElement("p");
+    const iden = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    console.log("iden:", iden);
+    msgP.innerHTML = `<span style="background-color:${color};" class="usernameBg">${writer}</span>
                           <span class="msgText"> ${message} <b>(sending...)</b></span>
                           <span class="iden">${iden}</span>`;
-        messagesEl.appendChild(msgP);
-        scrollToBottom(messagesEl);
-        console.log("3")
+    messagesEl.appendChild(msgP);
+    scrollToBottom(messagesEl);
+    console.log("3")
 
 
-        await addDoc(collection(db, currentRoom), {
-            text: message,
-            writer: writer,
-            color: color,
-            timestamp: serverTimestamp(),
-            raw: raw,
-            iden: iden
-        });
-        if (checkInbox) {
-            const snapshot = await getDocs(tellRef);
+    await addDoc(collection(db, currentRoom), {
+        text: message,
+        writer: writer,
+        color: color,
+        timestamp: serverTimestamp(),
+        raw: raw,
+        iden: iden
+    });
+    if (checkInbox) {
+        const snapshot = await getDocs(tellRef);
 
-            snapshot.forEach(doca => {
-                const data = doca.data();
-                if (data.reciepient == username || data.reciepient === "*") {
-                    var message = `${data.reciepient === "*" ? "Announcement from " : "From "}${data.writer}: ${data.text}`;
-                    sendMsg(message, "TellBot", '#6437c4');
-                    const docRef = doc(db, "tellMsgs", doca.id);
-                    if(data.reciepient === username) {
-                        deleteDoc(docRef);
-                    } else if (data.timestamp > serverTimestamp() + 1*24*60*60*1000) {
-                        deleteDoc(docRef);
-                    }
-
+        snapshot.forEach(doca => {
+            const data = doca.data();
+            if (data.reciepient == username || data.reciepient === "*") {
+                var message = `${data.reciepient === "*" ? "Announcement from " : "From "}${data.writer}: ${data.text}`;
+                sendMsg(message, "TellBot", '#6437c4');
+                const docRef = doc(db, "tellMsgs", doca.id);
+                if (data.reciepient === username) {
+                    deleteDoc(docRef);
+                } else if (data.timestamp > serverTimestamp() + 1 * 24 * 60 * 60 * 1000) {
+                    deleteDoc(docRef);
                 }
-            });
-        }
-        if (message.split(" ")[0] === "!summon") {
-            if (message == "!summon Phospholipid Bilayer") {
-                initiateBossBattle();
-                return;
+
             }
-            if (message.split(" ")[2] !== undefined){
-                const reciepient = message.split(" ")[1];
-                const msg = message.split(" ").slice(2).join(" ");
-                sendMail(reciepient, writer, msg);
-            } else {
-                const reciepient = message.split(" ")[1];
-                sendMail(reciepient, writer, "");
-            }
+        });
+    }
+    if (message.split(" ")[0] === "!summon") {
+        if (message == "!summon Phospholipid Bilayer") {
+            initiateBossBattle();
+            return;
         }
-        if (writer !== "TellBot") {
-            scheckInbox(username);
+        if (message.split(" ")[2] !== undefined) {
+            const reciepient = message.split(" ")[1];
+            const msg = message.split(" ").slice(2).join(" ");
+            sendMail(reciepient, writer, msg);
+        } else {
+            const reciepient = message.split(" ")[1];
+            sendMail(reciepient, writer, "");
         }
+    }
+    if (writer !== "TellBot") {
+        scheckInbox(username);
+    }
 
 
-        resetRoomIfKey(message, writer, message.split(" ")[1]);
+    resetRoomIfKey(message, writer, message.split(" ")[1]);
 
     } catch (e) {
         console.error(e);
@@ -708,9 +728,9 @@ async function tell(message, writer, reciepient) {
             Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: There is no need to message yourself`);
             return;
         }
-        
+
         if (reciepient == "*") {
-            if(!allowedPingAll.includes(writer)) {
+            if (!allowedPingAll.includes(writer)) {
                 Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: You are not allowed to send announcements to all users.`);
                 return;
             }
@@ -757,7 +777,7 @@ async function validatePassword(username) {
         }
         return false;
     } else {
-        if(!(localStorage.getItem("seen-pwd-warning") === "true" )) {
+        if (!(localStorage.getItem("seen-pwd-warning") === "true")) {
             await Popup.quick("<span class='material-symbols-outlined'>lock_open</span><br>You don't have a registered password. If you want one, please contact someone with Git access.", "ok");
             localStorage.setItem("seen-pwd-warning", true);
         }
@@ -853,6 +873,297 @@ function processKeydown(e) {
         document.getElementById("message-input").value = "";
     }
 }
+let currentVideoId = null;
+let player;
+let isSyncing = false;
+let isLocalStateChange = false;
+let lastPosition = 0;
+let positionCheckInterval = null;
+let playerReady = false;
+
+// Generate a unique device ID
+let deviceId = localStorage.getItem('deviceId');
+if (!deviceId) {
+    deviceId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    localStorage.setItem('deviceId', deviceId);
+}
+
+function loadYouTubeAPI() {
+    if (!window.YT) {
+        const tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    }
+}
+
+window.onYouTubeIframeAPIReady = function () {
+    console.log('YouTube API ready');
+};
+
+function loadYouTubeVideo(videoId, autoInit = true) {
+    console.log("loading video:", videoId);
+    currentVideoId = videoId;
+
+    try {
+        loadYouTubeAPI();
+        const checkAPI = setInterval(() => {
+            if (window.YT && window.YT.Player) {
+                clearInterval(checkAPI);
+                if (player && player.destroy) {
+                    player.destroy();
+                }
+
+                player = new YT.Player('player', {
+                    height: '315',
+                    width: '560',
+                    videoId: videoId,
+                    playerVars: {
+                        'autoplay': 0
+                    },
+                    events: {
+                        'onReady': onPlayerReady,
+                        'onStateChange': onPlayerStateChange
+                    }
+                });
+                if (autoInit) {
+                    manageMusic();
+                }
+            }
+        }, 100);
+    } catch (e) {
+        console.error(e);
+    }
+}
+async function changeVideo(videoId, changedBy) {
+    try {
+        const musicDocRef = doc(db, "music", "state");
+        await setDoc(musicDocRef, {
+            name: "state",
+            videoId: videoId,
+            position: 0,
+            paused: true,
+            updatedBy: changedBy,
+            deviceId: deviceId,
+            videoChangedAt: serverTimestamp(),
+            timestamp: serverTimestamp()
+        }, { merge: true });
+
+        console.log(`Video changed to ${videoId} by ${changedBy}`);
+        sendMsg(`Video changed to: https://youtube.com/watch?v=${videoId}`, "MusicBot", "#9b59b6");
+
+    } catch (error) {
+        console.error("Error changing video:", error);
+        Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error changing video: ${error.message}`);
+    }
+}
+async function manageMusic() {
+    const musicDocRef = doc(db, "music", "state");
+    onSnapshot(musicDocRef, async (docSnapshot) => {
+        if (!docSnapshot.exists()) {
+            console.log("No music state found");
+            return;
+        }
+
+        const data = docSnapshot.data();
+        console.log("Music state updated:", data);
+        if (data.videoId && data.videoId !== currentVideoId) {
+            console.log(`Video changed from ${currentVideoId} to ${data.videoId} by ${data.updatedBy}`);
+            currentVideoId = data.videoId;
+            playerReady = false;
+            if (positionCheckInterval) {
+                clearInterval(positionCheckInterval);
+                positionCheckInterval = null;
+            }
+            loadYouTubeVideo(data.videoId, false);
+            return;
+        }
+        if (data.deviceId === deviceId) {
+            console.log("Ignoring own device update");
+            return;
+        }
+        if (!playerReady) {
+            console.log("Player not ready yet, waiting...");
+            return;
+        }
+        if (data.position !== undefined && player && player.seekTo && !isSyncing) {
+            const currentTime = getCurrentTime();
+            const timeDiff = Math.abs(currentTime - data.position);
+
+            if (timeDiff > 2) {
+                console.log(`Syncing to ${data.position}s from ${data.updatedBy} (device: ${data.deviceId})`);
+                isSyncing = true;
+                lastPosition = data.position;
+                seekTo(data.position);
+                setTimeout(() => { isSyncing = false; }, 1000);
+            }
+        }
+        if (data.paused !== undefined && player) {
+            const currentState = player.getPlayerState();
+            const isCurrentlyPlaying = currentState === YT.PlayerState.PLAYING;
+
+            if (data.paused && isCurrentlyPlaying) {
+                console.log(`${data.updatedBy} paused the video`);
+                isLocalStateChange = true;
+                pauseVideo();
+                setTimeout(() => { isLocalStateChange = false; }, 500);
+            } else if (!data.paused && !isCurrentlyPlaying) {
+                console.log(`${data.updatedBy} played the video`);
+                isLocalStateChange = true;
+                isSyncing = true;
+                seekTo(data.position);
+                setTimeout(() => {
+                    playVideo();
+                    setTimeout(() => { isSyncing = false; }, 500);
+                }, 100);
+                setTimeout(() => { isLocalStateChange = false; }, 500);
+            }
+        }
+    });
+}
+async function onPlayerReady(event) {
+    console.log('Player ready');
+    playerReady = true;
+    const musicDocRef = doc(db, "music", "state");
+    if (player && player.getVideoData) {
+        const videoData = player.getVideoData();
+        currentVideoId = videoData.video_id;
+    }
+
+    try {
+        const docSnap = await getDoc(musicDocRef);
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            console.log("Initial sync to position:", data.position);
+            
+            if (data.position) {
+                seekTo(data.position);
+                lastPosition = data.position;
+            }
+            if (!data.paused) {
+                setTimeout(() => {
+                    playVideo();
+                }, 500);
+            }
+        }
+    } catch (error) {
+        console.error("Error during initial sync:", error);
+    }
+
+    if (positionCheckInterval) {
+        clearInterval(positionCheckInterval);
+    }
+
+    positionCheckInterval = setInterval(async () => {
+        if (player && player.getCurrentTime && !isSyncing && !isLocalStateChange && playerReady) {
+            const currentTime = player.getCurrentTime();
+            const timeDiff = Math.abs(currentTime - lastPosition);
+
+            if (timeDiff > 1.5) {
+                console.log(`${username} manually seeked from ${lastPosition}s to ${currentTime}s`);
+
+                await setDoc(musicDocRef, {
+                    name: "state",
+                    position: currentTime,
+                    updatedBy: username,
+                    deviceId: deviceId,
+                    timestamp: serverTimestamp()
+                }, { merge: true });
+
+                lastPosition = currentTime;
+            } else {
+                lastPosition = currentTime;
+            }
+        }
+    }, 300);
+}
+function extractVideoId(input) {
+    if (/^[a-zA-Z0-9_-]{11}$/.test(input)) {
+        return input;
+    }
+
+    const patterns = [
+        /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+        /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+        /youtube\.com\/v\/([a-zA-Z0-9_-]{11})/
+    ];
+
+    for (const pattern of patterns) {
+        const match = input.match(pattern);
+        if (match && match[1]) {
+            return match[1];
+        }
+    }
+    return null;
+}
+async function onPlayerStateChange(event) {
+    if (!playerReady) return;
+
+    const state = event.data;
+    const musicDocRef = doc(db, "music", "state");
+
+    if (isLocalStateChange) {
+        console.log("Ignoring state change from remote sync");
+        return;
+    }
+
+    const currentTime = getCurrentTime();
+
+    if (state === YT.PlayerState.PLAYING) {
+        console.log('Video is playing');
+        lastPosition = currentTime;
+
+        await setDoc(musicDocRef, {
+            name: "state",
+            paused: false,
+            position: currentTime,
+            updatedBy: username,
+            deviceId: deviceId,
+            timestamp: serverTimestamp()
+        }, { merge: true });
+
+    } else if (state === YT.PlayerState.PAUSED) {
+        console.log('Video is paused');
+
+        await setDoc(musicDocRef, {
+            name: "state",
+            paused: true,
+            position: currentTime,
+            updatedBy: username,
+            deviceId: deviceId,
+            timestamp: serverTimestamp()
+        }, { merge: true });
+
+    } else if (state === YT.PlayerState.ENDED) {
+        console.log('Video ended');
+        sendMsg(`Video ended`, "MusicBot", "#9b59b6");
+    }
+}
+
+function pauseVideo() {
+    if (player && player.pauseVideo) {
+        player.pauseVideo();
+    }
+}
+
+function playVideo() {
+    if (player && player.playVideo) {
+        player.playVideo();
+    }
+}
+
+function seekTo(seconds) {
+    if (player && player.seekTo) {
+        player.seekTo(seconds, true);
+    }
+}
+
+function getCurrentTime() {
+    if (player && player.getCurrentTime) {
+        return player.getCurrentTime();
+    }
+    return 0;
+}
 
 const messagesEl = document.getElementById("messages");
 
@@ -864,6 +1175,7 @@ function clearRoomBorders() {
     document.getElementById("/codeinject").classList.remove('roomActive');
     document.getElementById("&boom").classList.remove('roomActive');
     document.getElementById("&gamescripts").classList.remove('roomActive');
+    document.getElementById("&music").classList.remove('roomActive');
     document.getElementById("&").classList.remove('roomActive');
     document.getElementById("&random").classList.add('room');
     document.getElementById("&xkcd").classList.add('room');
@@ -873,6 +1185,7 @@ function clearRoomBorders() {
     document.getElementById("&boom").classList.add('room');
     document.getElementById("&gamescripts").classList.add('room');
     document.getElementById("&").classList.add('room');
+    document.getElementById("&music").classList.add('room');
 }
 import { writeBatch } from "firebase/firestore";
 
@@ -894,7 +1207,7 @@ async function resetRoomIfKey(message, writer, room) {
 
             await batch.commit();
 
-            sendMsg(`All messages in room ${targetRoom} have been reset by Key.`, "System", "#4c5b8c");
+            sendMsg(`All messages in room ${targetRoom} have been reset by ${username}.`, "System", "#4c5b8c");
         }
     } catch (error) {
         console.error("Error in resetRoomIfKey:", error);
@@ -906,7 +1219,7 @@ async function switchRoom(room, messageStyling) {
         messageStyling = "normal";
     }
     currentRoom = room
-    document.getElementById("messages").setAttribute("data-theme", messageStyling);
+    document.body.setAttribute("data-format", messageStyling);
     listenToRoom(room)
     clearRoomBorders();
     document.getElementById(room).classList.add('roomActive');
@@ -922,7 +1235,7 @@ async function onload() {
             replaceWithBossBattle();
         }
     });
-    
+
     userDocRef = null;
     username = null;
     document.removeEventListener("keydown", (e) => { processKeydown(e) });
@@ -1006,14 +1319,12 @@ async function onload() {
     })
     document.getElementById("&music").addEventListener("click", () => {
         switchRoom("&music", "music");
+        loadYouTubeVideo('YsdaAQzdmpo');
+        manageMusic();
+        console.log("loading");
     })
     document.getElementById("&").addEventListener("click", () => {
-        currentRoom = `&${username}`;
-        document.getElementById("messages").setAttribute("data-theme", "normal");
-        clearRoomBorders();
-        document.getElementById("&").classList.add('roomActive');
-        document.getElementById("&").classList.remove('room');
-        listenToRoom(`${username}`);
+        switchRoom(`&${username}`);
     })
     document.getElementById("&hunch").classList.add('roomActive');
     document.getElementById("&hunch").classList.remove('room');
