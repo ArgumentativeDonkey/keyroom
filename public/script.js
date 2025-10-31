@@ -92,7 +92,7 @@ function doDelay() {
 (function () {
     emailjs.init("qTMLE2J7_unL-JsP0");
 })();
-let currentRoom = "&hunch"
+let currentRoom = "&general"
 document.getElementById("messages").setAttribute("data-theme", "normal");
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
@@ -1167,7 +1167,7 @@ function clearRoomBorders() {
     document.getElementById("&random").classList.remove('roomActive');
     document.getElementById("&xkcd").classList.remove('roomActive');
     document.getElementById("&spam").classList.remove('roomActive');
-    document.getElementById("&hunch").classList.remove('roomActive');
+    document.getElementById("&general").classList.remove('roomActive');
     document.getElementById("/codeinject").classList.remove('roomActive');
     document.getElementById("&boom").classList.remove('roomActive');
     document.getElementById("&gamescripts").classList.remove('roomActive');
@@ -1176,7 +1176,7 @@ function clearRoomBorders() {
     document.getElementById("&random").classList.add('room');
     document.getElementById("&xkcd").classList.add('room');
     document.getElementById("&spam").classList.add('room');
-    document.getElementById("&hunch").classList.add('room');
+    document.getElementById("&general").classList.add('room');
     document.getElementById("/codeinject").classList.add('room');
     document.getElementById("&boom").classList.add('room');
     document.getElementById("&gamescripts").classList.add('room');
@@ -1219,6 +1219,10 @@ async function switchRoom(room, messageStyling) {
             player.mute();
         }
         
+    } else if (room === "music") {
+        if (document.getElementById("player").tagName.toLowerCase() !== "div") {
+            player.unMute();
+        }
     }
     currentRoom = room
     document.body.setAttribute("data-format", messageStyling);
@@ -1301,8 +1305,8 @@ async function onload() {
     document.getElementById("&random").addEventListener("click", () => {
         switchRoom("&random");
     })
-    document.getElementById("&hunch").addEventListener("click", () => {
-        switchRoom("&hunch");
+    document.getElementById("&general").addEventListener("click", () => {
+        switchRoom("&general");
     })
     document.getElementById("&xkcd").addEventListener("click", () => {
         switchRoom("&xkcd");
@@ -1328,8 +1332,8 @@ async function onload() {
     document.getElementById("&").addEventListener("click", () => {
         switchRoom(`&${username}`);
     })
-    document.getElementById("&hunch").classList.add('roomActive');
-    document.getElementById("&hunch").classList.remove('room');
-    listenToRoom('&hunch');
+    document.getElementById("&general").classList.add('roomActive');
+    document.getElementById("&general").classList.remove('room');
+    listenToRoom('&general');
 }
 onload();
