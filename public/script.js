@@ -880,14 +880,11 @@ let isLocalStateChange = false;
 let lastPosition = 0;
 let positionCheckInterval = null;
 let playerReady = false;
-
-// Generate a unique device ID
 let deviceId = localStorage.getItem('deviceId');
 if (!deviceId) {
     deviceId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     localStorage.setItem('deviceId', deviceId);
 }
-
 function loadYouTubeAPI() {
     if (!window.YT) {
         const tag = document.createElement('script');
@@ -896,7 +893,6 @@ function loadYouTubeAPI() {
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
     }
 }
-
 window.onYouTubeIframeAPIReady = function () {
     console.log('YouTube API ready');
 };
@@ -1217,6 +1213,12 @@ async function resetRoomIfKey(message, writer, room) {
 async function switchRoom(room, messageStyling) {
     if (!messageStyling) {
         messageStyling = "normal";
+    }
+    if (room !== "music") {
+        if (document.getElementById("player").tagName.toLowerCase() !== "div") {
+            player.mute();
+        }
+        
     }
     currentRoom = room
     document.body.setAttribute("data-format", messageStyling);
