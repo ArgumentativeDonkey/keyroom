@@ -558,8 +558,7 @@ export async function sendMsg(message, writer, color, raw) {
             document.getElementById("messages").classList.add("showIden");
         } else if (message.split(" ")[0].trim() === "!hideIden") {
             document.getElementById("messages").classList.remove("showIden");
-        }
-        else if (message.split(" ")[0].trim() === "!flip") {
+        } else if (message.split(" ")[0].trim() === "!flip") {
             document.getElementById("messages").style.transform = "scaleY(-1) rotate(1deg)";
         } else if (message.split(" ")[0].trim() === "!unflip") {
             document.getElementById("messages").style.transform = "scaleY(1) rotate(0deg)";
@@ -581,6 +580,7 @@ export async function sendMsg(message, writer, color, raw) {
             message = `<code>${message.split(" ").splice(1).join(" ")}</code>`;
         } else if (message.split(" ")[0].trim() === "!bold") {
             message = `<b>${message.split(" ").splice(1).join(" ")}</b>`;
+            console.log("test");
         } else if (message.split(" ")[0].trim() === "!italic") {
             message = `<i>${message.split(" ").splice(1).join(" ")}</i>`;
         } else if (message.split(" ")[0].trim() === "!underline") {
