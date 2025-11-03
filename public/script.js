@@ -405,7 +405,7 @@ export async function sendMsg(message, writer, color, raw) {
         var checkInbox = false;
         if (raw !== true) raw = false;
         if (typeof message === 'string') {
-            if (!checkBannedWords(message) && (currentRoom !== "/codeinject" && currentRoom !== `${username}`) && writer !== "xkcd") {
+            if ((currentRoom !== "/codeinject" && currentRoom !== `${username}`) && writer !== "xkcd" && !checkBannedWords(message)) {
                 console.log(currentRoom);
                 message = rndList();
             }
