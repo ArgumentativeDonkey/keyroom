@@ -9,7 +9,7 @@ const themes = [{
   name:"sunset"
 }, {
   key:"mint",
-  name:"mint"
+  name:"Mint"
 }, {
   key:"forest",
   name:"forest"
@@ -23,9 +23,8 @@ const themes = [{
 
 const wrappers = document.querySelectorAll(".themesDiv");
 
-export async function themesLoad() {
-  console.log("Wrappers found:", wrappers.length);
-  
+export function themesLoad() {
+
   if (localStorage.getItem("theme") != null) {
     document.body.setAttribute("data-theme", localStorage.getItem("theme"));
   } else {
@@ -37,8 +36,7 @@ export async function themesLoad() {
       let el = document.createElement("li");
       el.innerText = themes[i].name;
       el.addEventListener("click", () => {
-        console.log("Clicked:", themes[i].key);
-        document.body.setAttribute("data-theme", themes[i].key);
+        rootData.theme = themes[i].key;
         localStorage.setItem("theme", themes[i].key);
       });
       wrappers[z].appendChild(el);
@@ -46,4 +44,4 @@ export async function themesLoad() {
   }
 }
 
-await themesLoad();
+themesLoad();
