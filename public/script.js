@@ -157,9 +157,6 @@ function elapsedSecondsSince(timestamp) {
 }
 
 function getUserColor(username, hashe) {
-    if(document.documentElement.dataset.theme === "greyscale") {
-        return "grey";
-    }
     if (hashe) {
         if (username === "Key") return "000000";
         if (username === "Leif") return "63e3bf";
@@ -297,9 +294,9 @@ function listenToRoom(roomName) {
             content.className = "msgContent";
 
             if (message.raw) {
-                content.innerHTML = `<span class="usernameBg" style="background-color:${message.color};">${message.writer}</span>${message.text}`;
+                content.innerHTML = `<span class="usernameBg" style="background-color:${document.documentElement.dataset.theme !== "greyscale" ? message.color : "grey"};">${message.writer}</span>${message.text}`;
             } else {
-                content.innerHTML = `<span class="usernameBg" style="background-color:${message.color};">${message.writer}</span>
+                content.innerHTML = `<span class="usernameBg" style="background-color:${document.documentElement.dataset.theme !== "greyscale" ? message.color : "grey"};">${message.writer}</span>
                                      <span class="msgText"><b>${tstamp}</b><br>${message.text}</span>
                                      <span class="iden">${message.iden}</span>`;
             }
@@ -664,7 +661,7 @@ export async function sendMsg(message, writer, color, raw) {
     const msgP = document.createElement("p");
     const iden = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     console.log("iden:", iden);
-    msgP.innerHTML = `<span style="background-color:${color};" class="usernameBg">${writer}</span>
+    msgP.innerHTML = `<span style="background-color:${document.documentElement.dataset.theme !== "greyscale" ? color : "grey"};" class="usernameBg">${writer}</span>
                           <span class="msgText"> ${message} <b>(sending...)</b></span>
                           <span class="iden">${iden}</span>`;
     messagesEl.appendChild(msgP);
@@ -1277,7 +1274,7 @@ async function onload() {
             const user = doc.data();
             if (elapsedSecondsSince(user.lastActive) <= 16) {
                 const userP = document.createElement("p");
-                userP.innerHTML = `<span style="background-color:${user.color};" class="usernameBg">${user.name}</span>`;
+                userP.innerHTML = `<span style="background-color:${document.documentElement.dataset.theme !== "greyscale" ? user.color : "grey"};" class="usernameBg">${user.name}</span>`;
                 document.getElementById("connectedUsers").appendChild(userP);
             }
         })
