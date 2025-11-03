@@ -157,6 +157,9 @@ function elapsedSecondsSince(timestamp) {
 }
 
 function getUserColor(username, hashe) {
+    if(document.documentElement.dataset.theme == "greyscale") {
+        return "grey";
+    }
     if (hashe) {
         if (username === "Key") return "000000";
         if (username === "Leif") return "63e3bf";
