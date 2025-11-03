@@ -157,6 +157,9 @@ function elapsedSecondsSince(timestamp) {
 }
 
 function getUserColor(username, hashe) {
+    if(document.documentElement.dataset.theme == "greyscale") {
+        return "grey";
+    }
     if (hashe) {
         if (username === "Key") return "000000";
         if (username === "Leif") return "63e3bf";
@@ -426,7 +429,8 @@ export async function sendMsg(message, writer, color, raw) {
                 changeVideo(videoId, writer);
                 return;
             }
-        } else if (message.split(" ")[0].trim() == "!link") {
+        }
+        if (message.split(" ")[0].trim() == "!link") {
             message = `<a href="${message.split(" ")[1]}" target="_blank" rel="noopener noreferrer">${message.split(" ")[1]}</a>`;
         } else if (message.split(" ")[0].trim() === "!edit") {
             const newText = message.replace("!edit ", "") + " (<i>edited</i>)";
