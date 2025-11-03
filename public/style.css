@@ -746,6 +746,14 @@ body {
     width: fit-content;
 }
 
+/* SECTION special theme modifiers */
+
 [data-theme='greyscale'] img {
     filter: grayscale(1);
 }
+
+[data-theme='greyscale'] *::selection {
+    background-color: lightgray;
+}
+
+/* !SECTION */
