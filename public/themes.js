@@ -1,47 +1,49 @@
+
 const themes = [{
   key:"dark",
-  name:"dark"
+  name:"Dark"
 }, {
   key:"blue",
-  name:"blue"
+  name:"Blue"
 }, {
   key:"sunset",
-  name:"sunset"
+  name:"Sunset"
 }, {
   key:"mint",
   name:"mint"
 }, {
   key:"forest",
-  name:"forest"
+  name:"Forest"
 }, {
   key:"amethyst",
-  name:"amethyst"
+  name:"Amethyst (purple)"
 }, {
   key:"greyscale",
-  name:"grayscale"
+  name:"Grayscale"
 }];
+
+const rootData = document.documentElement.dataset;
 
 const wrappers = document.querySelectorAll(".themesDiv");
 
 export async function themesLoad() {
-  console.log("Wrappers found:", wrappers.length);
-  
+
   if (localStorage.getItem("theme") != null) {
-    document.body.setAttribute("data-theme", localStorage.getItem("theme"));
+    rootData.theme = localStorage.getItem("theme");
   } else {
-    document.body.setAttribute("data-theme", 'dark');
+    rootData.theme = 'dark';
   }
-  
+
   for(let i = 0; i < themes.length; i++) {
+    let el = document.createElement("li");
+    el.innerText = themes[i].name;
+    el.addEventListener("click", () => {
+      rootData.theme = themes[i].key;
+      localStorage.setItem("theme", themes[i].key);
+    });
+
     for(let z = 0; z < wrappers.length; z++) {
-      let el = document.createElement("li");
-      el.innerText = themes[i].name;
-      el.addEventListener("click", () => {
-        console.log("Clicked:", themes[i].key);
-        document.body.setAttribute("data-theme", themes[i].key);
-        localStorage.setItem("theme", themes[i].key);
-      });
-      wrappers[z].appendChild(el);
+      wrappers[z].appendChild(el.cloneNode(true));
     }
   }
 }
