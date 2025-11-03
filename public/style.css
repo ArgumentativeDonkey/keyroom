@@ -745,3 +745,7 @@ body {
     margin-top: 2px;
     width: fit-content;
 }
+
+[data-theme='greyscale'] img {
+    filter: grayscale(1);
+}
