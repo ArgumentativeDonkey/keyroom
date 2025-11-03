@@ -791,10 +791,15 @@ async function validatePassword(username) {
 }
 
 
+// ANCHOR setUsername function
 var username;
 async function setUsername() {
     if (!localStorage.getItem("username")) {
         username = await Popup.quick("<span class='material-symbols-outlined'>person</span><br>Please enter your username.", "text");
+        if (!checkBannedWords()) {
+            await setUsername();
+            return;
+        }
         if (username == "xkcd") {
             username = "xkcd impersonator";
         }
