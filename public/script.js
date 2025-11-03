@@ -406,9 +406,9 @@ export async function sendMsg(message, writer, color, raw) {
                 console.log(currentRoom);
                 message = rndList();
             }
-            if (message.split(" ")[0] == "!image") {
+            if (message.split(" ")[0].trim() == "!image") {
                 message = `<img src="${message.split(" ")[1]}" alt="Image" style="max-width:1200px; max-height:200px;">`;
-            } else if (message.split(" ")[0] === "!video") {
+            } else if (message.split(" ")[0].trim() === "!video") {
                 const input = message.split(" ").slice(1).join(" ");
                 if (!input) {
                     Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Usage: !video [YouTube_Video_ID or URL]<br>Example: !video dQw4w9WgXcQ");
@@ -426,9 +426,9 @@ export async function sendMsg(message, writer, color, raw) {
                 changeVideo(videoId, writer);
                 return;
             }
-        } else if (message.split(" ")[0] == "!link") {
+        } else if (message.split(" ")[0].trim() == "!link") {
             message = `<a href="${message.split(" ")[1]}" target="_blank" rel="noopener noreferrer">${message.split(" ")[1]}</a>`;
-        } else if (message.split(" ")[0] === "!edit") {
+        } else if (message.split(" ")[0].trim() === "!edit") {
             const newText = message.replace("!edit ", "") + " (<i>edited</i>)";
             const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
             let found = false;
@@ -461,7 +461,7 @@ export async function sendMsg(message, writer, color, raw) {
                 Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Error: No message found to edit.");
             }
             return;
-        } else if (message.split(" ")[0] === "!editId") {
+        } else if (message.split(" ")[0].trim() === "!editId") {
             const targetId = message.split(" ")[1].trim();
             const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
             let docFound = null;
@@ -494,7 +494,7 @@ export async function sendMsg(message, writer, color, raw) {
                 Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Error: No message found to edit.");
             }
             return;
-        } else if (message.split(" ")[0] === "!editProfilePic") {
+        } else if (message.split(" ")[0].trim() === "!editProfilePic") {
             const newPicUrl = message.split(" ")[1];
             const userDocRef = doc(db, "connectedUsers", writer);
             await setDoc(userDocRef, {
@@ -503,7 +503,7 @@ export async function sendMsg(message, writer, color, raw) {
             Popup.quick(`<span class='material-symbols-outlined'>account_circle</span><br>Profile picture updated!<br><img width='100px' src=${newPicUrl}/>`);
             return;
 
-        } else if (message.split(" ")[0] === "!setEmail") {
+        } else if (message.split(" ")[0].trim() === "!setEmail") {
             const email = message.split(" ")[1];
             const userDocRef = doc(db, "connectedUsers", writer);
             await setDoc(userDocRef, {
@@ -512,7 +512,7 @@ export async function sendMsg(message, writer, color, raw) {
             Popup.quick(`<span class="material-symbols-outlined">mail</span><br>Email updated to ${email}`, "ok")
             return;
 
-        } else if (message.split(" ")[0] === "!delete") {
+        } else if (message.split(" ")[0].trim() === "!delete") {
             const targetId = message.split(" ")[1].trim();
             const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
             let docFound = null;
@@ -554,99 +554,99 @@ export async function sendMsg(message, writer, color, raw) {
             }, 100);
             await onload();
             return;
-        } else if (message.split(" ")[0] === "!showIden") {
+        } else if (message.split(" ")[0].trim() === "!showIden") {
             document.getElementById("messages").classList.add("showIden");
-        } else if (message.split(" ")[0] === "!hideIden") {
+        } else if (message.split(" ")[0].trim() === "!hideIden") {
             document.getElementById("messages").classList.remove("showIden");
         }
-        else if (message.split(" ")[0] === "!flip") {
+        else if (message.split(" ")[0].trim() === "!flip") {
             document.getElementById("messages").style.transform = "scaleY(-1) rotate(1deg)";
-        } else if (message.split(" ")[0] === "!unflip") {
+        } else if (message.split(" ")[0].trim() === "!unflip") {
             document.getElementById("messages").style.transform = "scaleY(1) rotate(0deg)";
-        } else if (message.split(" ")[0] === "!rainbow") {
+        } else if (message.split(" ")[0].trim() === "!rainbow") {
             color = "transparent; background-image: repeating-linear-gradient( 45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000 var(--stripe-width)); animation: stripes var(--anim-time) linear infinite; background-position: 0 0; background-size: var(--stripe-calc) var(--stripe-calc)";
             message = `<span>${message.split(" ").splice(1).join(" ")}</span>`;
-        } else if (message.split(" ")[0] === "!rotate" && (currentRoom == "/codeinject" || currentRoom == `&${username}`)) {
+        } else if (message.split(" ")[0].trim() === "!rotate" && (currentRoom == "/codeinject" || currentRoom == `&${username}`)) {
             message = `<span style="display:inline-block; transform:rotate(${message.split(" ")[1]}deg);">${message.split(" ").slice(2).join(" ")}</span>`;
-        } else if (message.split(" ")[0] === "!unrainbow") {
+        } else if (message.split(" ")[0].trim() === "!unrainbow") {
             color = "white";
             message = `<span>${message.split(" ").splice(1).join(" ")}</span>`;
-        } else if (message.split(" ")[0] === "!shrink") {
+        } else if (message.split(" ")[0].trim() === "!shrink") {
             message = `<span style="font-size:0.5em;">${message.split(" ").splice(1).join(" ")}</span>`;
-        } else if (message.split(" ")[0] === "!grow") {
+        } else if (message.split(" ")[0].trim() === "!grow") {
             message = `<span style="font-size:2em;">${message.split(" ").splice(1).join(" ")}</span>`;
-        } else if (message.split(" ")[0] === "!spin" && (currentRoom == "/codeinject" || currentRoom == `&${username}`)) {
+        } else if (message.split(" ")[0].trim() === "!spin" && (currentRoom == "/codeinject" || currentRoom == `&${username}`)) {
             message = `<span style="display:inline-block; animation: spin 2s linear infinite;">${message.split(" ").splice(1).join(" ")}</span>`;
-        } else if (message.split(" ")[0] === "!code") {
+        } else if (message.split(" ")[0].trim() === "!code") {
             message = `<code>${message.split(" ").splice(1).join(" ")}</code>`;
-        } else if (message.split(" ")[0] === "!bold") {
+        } else if (message.split(" ")[0].trim() === "!bold") {
             message = `<b>${message.split(" ").splice(1).join(" ")}</b>`;
-        } else if (message.split(" ")[0] === "!italic") {
+        } else if (message.split(" ")[0].trim() === "!italic") {
             message = `<i>${message.split(" ").splice(1).join(" ")}</i>`;
-        } else if (message.split(" ")[0] === "!underline") {
+        } else if (message.split(" ")[0].trim() === "!underline") {
             message = `<u>${message.split(" ").splice(1).join(" ")}</u>`;
-        } else if (message.split(" ")[0] === "!strikethrough") {
+        } else if (message.split(" ")[0].trim() === "!strikethrough") {
             message = `<s>${message.split(" ").splice(1).join(" ")}</s>`;
-        } else if (message.split(" ")[0] === "!reverse") {
+        } else if (message.split(" ")[0].trim() === "!reverse") {
             const text = message.split(" ").slice(1).join(" ");
             message = `<span>${text.split("").reverse().join("")}</span>`;
-        } else if (message.split(" ")[0] === "!upper") {
+        } else if (message.split(" ")[0].trim() === "!upper") {
             message = `<span>${message.split(" ").slice(1).join(" ").toUpperCase()}</span>`;
-        } else if (message.split(" ")[0] === "!lower") {
+        } else if (message.split(" ")[0].trim() === "!lower") {
             message = `<span>${message.split(" ").slice(1).join(" ").toLowerCase()}</span>`;
-        } else if (message.split(" ")[0] === "!wave") {
+        } else if (message.split(" ")[0].trim() === "!wave") {
             const text = message.split(" ").slice(1).join(" ");
             message = `<span style="display:inline-block; animation: wave 2s infinite;">${text}</span>`;
-        } else if (message.split(" ")[0] === "!glitch") {
+        } else if (message.split(" ")[0].trim() === "!glitch") {
             const text = message.split(" ").slice(1).join(" ");
             message = `<span class="glitch" data-text="${text}">${text}</span>`;
-        } else if (message.split(" ")[0] === "!shrug") {
+        } else if (message.split(" ")[0].trim() === "!shrug") {
             message = `<span>${message.split(" ").slice(1).join(" ")} ¯\\_(ツ)_/¯</span>`;
-        } else if (message.split(" ")[0] === "!spoiler") {
+        } else if (message.split(" ")[0].trim() === "!spoiler") {
             message = `<span style="background:black; color:black;" onmouseover="this.style.color='white'">${message.split(" ").slice(1).join(" ")}</span>`;
-        } else if (message.split(" ")[0] === "!blink") {
+        } else if (message.split(" ")[0].trim() === "!blink") {
             message = `<span style="animation: blink 1s steps(2, start) infinite;">${message.split(" ").slice(1).join(" ")}</span>`;
-        } else if (message.split(" ")[0] === "!monospace") {
+        } else if (message.split(" ")[0].trim() === "!monospace") {
             message = `<span style="font-family:monospace;">${message.split(" ").slice(1).join(" ")}</span>`;
-        } else if (message.split(" ")[0] === "!shake") {
+        } else if (message.split(" ")[0].trim() === "!shake") {
             message = `<span style="display:inline-block; animation: shake 0.5s infinite;">${message.split(" ").slice(1).join(" ")}</span>`;
-        } else if (message.split(" ")[0] === "!fade") {
+        } else if (message.split(" ")[0].trim() === "!fade") {
             message = `<span style="animation: fadeIn 2s;">${message.split(" ").slice(1).join(" ")}</span>`;
-        } else if (message.split(" ")[0] === "!count") {
+        } else if (message.split(" ")[0].trim() === "!count") {
             const text = message.split(" ").slice(1).join(" ");
             message = `<span>${text} (${text.length} chars)</span>`;
-        } else if (message.split(" ")[0] === "!time") {
+        } else if (message.split(" ")[0].trim() === "!time") {
             message = `<span>${new Date().toLocaleTimeString()}</span>`;
-        } else if (message.split(" ")[0] === "!date") {
+        } else if (message.split(" ")[0].trim() === "!date") {
             message = `<span>${new Date().toLocaleDateString()}</span>`;
-        } else if (message.split(" ")[0] === "!rainbowtext") {
+        } else if (message.split(" ")[0].trim() === "!rainbowtext") {
             const text = message.split(" ").slice(1).join(" ");
             message = `<span style="background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet); -webkit-background-clip: text; color: transparent;">${text}</span>`;
-        } else if (message.split(" ")[0] === "!binary") {
+        } else if (message.split(" ")[0].trim() === "!binary") {
             let text = message.split(" ").slice(1).join(" ");
             text = text.split("").map(c => c.charCodeAt(0).toString(2)).join(" ");
             message = `<span>${text}</span>`;
-        } else if (message.split(" ")[0] === "!leet") {
+        } else if (message.split(" ")[0].trim() === "!leet") {
             let text = message.split(" ").slice(1).join(" ");
             text = text.replace(/a/gi, "4").replace(/e/gi, "3").replace(/i/gi, "1").replace(/o/gi, "0").replace(/s/gi, "5").replace(/t/gi, "7");
             message = `<span>${text}</span>`;
-        } else if (message.split(" ")[0] === "!reversewords") {
+        } else if (message.split(" ")[0].trim() === "!reversewords") {
             let text = message.split(" ").slice(1).reverse().join(" ");
             message = `<span>${text}</span>`;
-        } else if (message.split(" ")[0] === "!outline") {
+        } else if (message.split(" ")[0].trim() === "!outline") {
             message = `<span style="color:black; -webkit-text-stroke:1px red;">${message.split(" ").slice(1).join(" ")}</span>`;
-        } else if (message.split(" ")[0] === "!glow") {
+        } else if (message.split(" ")[0].trim() === "!glow") {
             message = `<span style="color:#fff; text-shadow:0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff;">${message.split(" ").slice(1).join(" ")}</span>`;
-        } else if (message.split(" ")[0] === "!zebra") {
+        } else if (message.split(" ")[0].trim() === "!zebra") {
             let text = message.split(" ").slice(1).join(" ");
             message = `<span>${text.split("").map((c, i) => `<span style="background:${i % 2 ? "#000" : "#fff"};color:${i % 2 ? "#fff" : "#000"};">${c}</span>`).join("")}</span>`;
-        } else if (message.split(" ")[0] === "!wavey") {
+        } else if (message.split(" ")[0].trim() === "!wavey") {
             message = `<span style="text-decoration:underline wavy red;">${message.split(" ").slice(1).join(" ")}</span>`;
-        } else if (message.split(" ")[0] === "!stretch") {
+        } else if (message.split(" ")[0].trim() === "!stretch") {
             message = `<span style="letter-spacing:5px;">${message.split(" ").slice(1).join(" ")}</span>`;
-        } else if (message.split(" ")[0] === "!tight") {
+        } else if (message.split(" ")[0].trim() === "!tight") {
             message = `<span style="letter-spacing:-1px;">${message.split(" ").slice(1).join(" ")}</span>`;
-        } else if (message.split(" ")[0] === "!hollow") {
+        } else if (message.split(" ")[0].trim() === "!hollow") {
             message = `<span style="color:transparent; -webkit-text-stroke:1px black;">${message.split(" ").slice(1).join(" ")}</span>`;
         }
 
@@ -694,7 +694,7 @@ export async function sendMsg(message, writer, color, raw) {
             }
         });
     }
-    if (message.split(" ")[0] === "!summon") {
+    if (message.split(" ")[0].trim() === "!summon") {
         if (message == "!summon Phospholipid Bilayer") {
             initiateBossBattle();
             return;
