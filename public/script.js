@@ -1253,6 +1253,9 @@ async function onload() {
     document.removeEventListener("keydown", (e) => { processKeydown(e) });
 
     await setUsername();
+    if (username=="xkcd" ){
+        username = "xkcd impersonator";
+    }
     userDocRef = doc(db, "connectedUsers", username)
     document.addEventListener("keydown", (e) => { processKeydown(e) });
     messagesEl.scrollTop = messagesEl.scrollHeight;
