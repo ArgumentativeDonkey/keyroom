@@ -294,10 +294,11 @@ function listenToRoom(roomName) {
             content.className = "msgContent";
 
             if (message.raw) {
-                content.innerHTML = `<span class="usernameBg" style="background-color:${document.documentElement.dataset.theme !== "greyscale" ? message.color : "grey"};">${message.writer}</span>${message.text}`;
+                content.innerHTML = `<span class="usernameBg" style="background-color:${document.body.dataset.theme !== "greyscale" ? message.color : "grey"};">${message.writer}</span>${message.text}`;
             } else {
-                content.innerHTML = `<span class="usernameBg" style="background-color:${document.documentElement.dataset.theme !== "greyscale" ? message.color : "grey"};">${message.writer}</span>
-                                     <span class="msgText"><b>${tstamp}</b><br>${message.text}</span>
+                content.style.display = "inline-block";
+                content.innerHTML = `<span class="usernameBg" style="background-color:${document.body.dataset.theme !== "greyscale" ? message.color : "grey"};">${message.writer}</span>
+                                     <span class="msgText"><b>${tstamp}</b><span style='font-size:10px;margin:0;padding:0;'>\n\n</span>: ${message.text}</span>
                                      <span class="iden">${message.iden}</span>`;
             }
 
@@ -399,6 +400,7 @@ function rndList(list) {
 }
 export async function sendMsg(message, writer, color, raw) {
     try {
+        console.log(message);
         var checkInbox = false;
         if (raw !== true) raw = false;
         if (typeof message === 'string') {
@@ -650,18 +652,11 @@ export async function sendMsg(message, writer, color, raw) {
         } else if (message.split(" ")[0].trim() === "!hollow") {
             message = `<span style="color:transparent; -webkit-text-stroke:1px black;">${message.split(" ").slice(1).join(" ")}</span>`;
         }
-
-
-
-
-
-
-    
         const messagesEl = document.getElementById("messages");
     const msgP = document.createElement("p");
     const iden = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     console.log("iden:", iden);
-    msgP.innerHTML = `<span style="background-color:${document.documentElement.dataset.theme !== "greyscale" ? color : "grey"};" class="usernameBg">${writer}</span>
+    msgP.innerHTML = `<span style="background-color:${document.body.dataset.theme !== "greyscale" ? color : "grey"};" class="usernameBg">${writer}</span>
                           <span class="msgText"> ${message} <b>(sending...)</b></span>
                           <span class="iden">${iden}</span>`;
     messagesEl.appendChild(msgP);
@@ -1277,7 +1272,7 @@ async function onload() {
             const user = doc.data();
             if (elapsedSecondsSince(user.lastActive) <= 16) {
                 const userP = document.createElement("p");
-                userP.innerHTML = `<span style="background-color:${document.documentElement.dataset.theme !== "greyscale" ? user.color : "grey"};" class="usernameBg">${user.name}</span>`;
+                userP.innerHTML = `<span style="background-color:${document.body.dataset.theme !== "greyscale" ? user.color : "grey"};" class="usernameBg">${user.name}</span>`;
                 document.getElementById("connectedUsers").appendChild(userP);
             }
         })

@@ -54,9 +54,18 @@
     </div>
     <div class="themesDiv">
       <li class="themes">themes</li>
-      
+
     </div>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function (OneSignal) {
+        await OneSignal.init({
+          appId: "8d285783-0e1e-4efa-bc48-768d7f6bae26",
+        });
+      });
+    </script>
     <script type="module" src="musicroom.js"></script>
     <script type="module" src="script.js"></script>
     <script type="module" src="themes.js"></script>
