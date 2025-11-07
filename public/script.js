@@ -1217,12 +1217,12 @@ async function switchRoom(room, messageStyling) {
     }
     if (room !== "music") {
         if (document.getElementById("player").tagName.toLowerCase() !== "div") {
-            player.mute();
+//            player.mute();
         }
         
     } else if (room === "music") {
         if (document.getElementById("player").tagName.toLowerCase() !== "div") {
-            player.unMute();
+//            player.unMute();
         }
     }
     currentRoom = room
