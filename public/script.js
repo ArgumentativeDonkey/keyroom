@@ -516,6 +516,7 @@ export async function sendMsg(message, writer, color, raw) {
             return;
 
         } else if (message.split(" ")[0].trim() === "!delete") {
+            try {
             const targetId = message.split(" ")[1].trim();
             const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
             let docFound = null;
@@ -534,6 +535,9 @@ export async function sendMsg(message, writer, color, raw) {
             } else {
                 Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: No message found with ID ${targetId}.`);
             }
+        } catch (err) {
+            console.error("Error deleting message:", err);
+        }
 
         } else if (message.trim() === "!inbox") {
             checkInbox = true;
