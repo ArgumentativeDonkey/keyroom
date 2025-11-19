@@ -7,6 +7,8 @@ import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTim
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+var messages = 0;
+var nNotify = false;
 const firebaseConfig = {
 
     apiKey: "AIzaSyDmpLh9AVbQo4XorhNUpwgkZYv8D8USIhI",
@@ -253,6 +255,18 @@ function listenToRoom(roomName) {
     const messagesQuery = query(messagesRef, orderBy("timestamp", "asc"));
 
     unsubscribeMessages = onSnapshot(messagesQuery, (snapshot) => {
+        document.head.querySelector('title').innerText = `Keyroom - ${currentRoom}`;
+        if (!nNotify) {
+            messages = snapshot.size;
+            nNotify = true;
+        } else if (snapshot.size > messages) {
+            messages = snapshot.size;
+            if (document.hidden) {
+                console.log("New message detected in background");
+                document.head.querySelector('title').innerText = `NEW MESSAGE — Keyroom — ${currentRoom}`;
+            }
+        }
+    
         const messagesEl = document.getElementById("messages");
         messagesEl.innerHTML = "";
         snapshot.forEach((doc) => {
@@ -1216,6 +1230,7 @@ async function resetRoomIfKey(message, writer, room) {
     }
 }
 async function switchRoom(room, messageStyling) {
+    nNotify = false;
     if (!messageStyling) {
         messageStyling = "normal";
     }
@@ -1284,6 +1299,12 @@ async function onload() {
         if (messagesEl) messagesEl.scrollTop = messagesEl.scrollHeight;
 
     })
+    document.addEventListener("visibilitychange", function() {
+        if (!document.hidden){
+            document.head.querySelector('title').innerText = `Keyroom - ${currentRoom}`;
+        }
+    });
+
     document.getElementById("showUsers").addEventListener("click", () => {
         if (UsersShown) {
             document.getElementById("showUsers").innerHTML = "Show Users";
