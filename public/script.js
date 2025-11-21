@@ -312,7 +312,7 @@ function listenToRoom(roomName) {
             } else {
                 content.style.display = "inline-block";
                 content.innerHTML = `<span class="usernameBg">${message.writer}</span>
-                                     <span class="msgText"><span style='font-size:10px;margin:0;padding:0;'>\n\n</span>: ${message.text}</span>
+                                     <span class="msgText"><span style='font-size:10px;margin:0;padding:0;'></span>: ${message.text}</span>
                                      <span class="iden">${message.iden}<b>${tstamp}</b></span>`;
             }
 
