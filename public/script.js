@@ -9,6 +9,7 @@ import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTim
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 var messages = 0;
 var nNotify = false;
+var gameInitiated = false;
 const firebaseConfig = {
 
     apiKey: "AIzaSyDmpLh9AVbQo4XorhNUpwgkZYv8D8USIhI",
@@ -1189,7 +1190,7 @@ function clearRoomBorders() {
     document.getElementById("&general").classList.remove('roomActive');
     document.getElementById("/codeinject").classList.remove('roomActive');
     document.getElementById("&boom").classList.remove('roomActive');
-    document.getElementById("&gamescripts").classList.remove('roomActive');
+    document.getElementById("&game").classList.remove('roomActive');
     document.getElementById("&music").classList.remove('roomActive');
     document.getElementById("&").classList.remove('roomActive');
     document.getElementById("&random").classList.add('room');
@@ -1198,7 +1199,7 @@ function clearRoomBorders() {
     document.getElementById("&general").classList.add('room');
     document.getElementById("/codeinject").classList.add('room');
     document.getElementById("&boom").classList.add('room');
-    document.getElementById("&gamescripts").classList.add('room');
+    document.getElementById("&game").classList.add('room');
     document.getElementById("&").classList.add('room');
     document.getElementById("&music").classList.add('room');
 }
@@ -1279,7 +1280,8 @@ async function onload() {
     await setDoc(userDocRef, {
         name: username,
         color: getUserColor(username),
-        lastActive: serverTimestamp()
+        lastActive: serverTimestamp(),
+        gameInitiated: gameInitiated
     }, { merge: true });
     setInterval(async () => {
         await setDoc(userDocRef, {
@@ -1296,6 +1298,9 @@ async function onload() {
                 const userP = document.createElement("p");
                 userP.innerHTML = `<span style="color: "black";" class="usernameBg">${user.name}</span>`;
                 document.getElementById("connectedUsers").appendChild(userP);
+            }
+            if (user.name == username && user.gameInitiated && !gameInitiated) {
+                gameInitiated = true;
             }
         })
         const messagesEl = document.getElementById("messages");
@@ -1352,8 +1357,8 @@ async function onload() {
     document.getElementById("&boom").addEventListener("click", () => {
         switchRoom("&boom");
     })
-    document.getElementById("&gamescripts").addEventListener("click", () => {
-        switchRoom("&gamescripts");
+    document.getElementById("&game").addEventListener("click", () => {
+        switchRoom("&game");
     })
     document.getElementById("&music").addEventListener("click", () => {
         switchRoom("&music", "music");
