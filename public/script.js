@@ -312,7 +312,7 @@ function listenToRoom(roomName) {
             } else {
                 content.style.display = "inline-block";
                 content.innerHTML = `<span class="usernameBg">${message.writer}</span>
-                                     <span class="msgText"><span style='font-size:10px;margin:0;padding:0;'>\n\n</span>: ${message.text}</span>
+                                     <span class="msgText"><span style='font-size:10px;margin:0;padding:0;color:"black";'>\n\n</span>: ${message.text}</span>
                                      <span class="iden">${message.iden}<b>${tstamp}</b></span>`;
             }
 
@@ -1294,7 +1294,7 @@ async function onload() {
             const user = doc.data();
             if (elapsedSecondsSince(user.lastActive) <= 16) {
                 const userP = document.createElement("p");
-                userP.innerHTML = `<span style="background-color:${document.body.dataset.theme !== "greyscale" ? user.color : "grey"};" class="usernameBg">${user.name}</span>`;
+                userP.innerHTML = `<span style="color: "black";" class="usernameBg">${user.name}</span>`;
                 document.getElementById("connectedUsers").appendChild(userP);
             }
         })
