@@ -319,6 +319,7 @@ body {
     padding: 4px;
     border-radius: 2px;
     border: 1px solid var(--primary-accent);
+    margin-bottom: 2px;
 }
 
 @media(max-width:500px) {
@@ -408,12 +409,6 @@ body {
     border-radius: 5px;
     max-width: 80%;
     word-wrap: break-word;
-}
-
-.usernameBg {
-    color: white;
-    font-weight: bold;
-    margin-bottom: 2px;
 }
 
 .msgText {
