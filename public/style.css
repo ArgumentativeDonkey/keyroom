@@ -316,9 +316,6 @@ body {
 .usernameBg {
     color: var(--txt);
     font-weight: bold;
-    padding: 4px;
-    border-radius: 2px;
-    border: 1px solid var(--primary-accent);
     margin-bottom: 2px;
 }
 
