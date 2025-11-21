@@ -279,9 +279,10 @@ h1 {
     margin-top: 2px;
     padding-top: 1px;
     padding-bottom: 1px;
-    background-color: var(--primary-accent);
+    /*background-color: var(--primary-accent);*/
     font-size: 17px;
     color: var(--txt-accent);
+    text-decoration: bold;
 }
 
 .rooms {
