@@ -308,11 +308,11 @@ function listenToRoom(roomName) {
             content.className = "msgContent";
 
             if (message.raw) {
-                content.innerHTML = `<span class="usernameBg" style="background-color:${document.body.dataset.theme !== "greyscale" ? message.color : "grey"};">${message.writer}</span>${message.text}`;
+                content.innerHTML = `<span class="usernameBg">${message.writer}</span>${message.text}`;
             } else {
                 content.style.display = "inline-block";
-                content.innerHTML = `<span class="usernameBg" style="color:"black";"><b>${message.writer}</b></span>
-                                     <span class="msgText"><span style='font-size:10px;margin:0;padding:0;'>\n\n</span>${message.text}</span>
+                content.innerHTML = `<span class="usernameBg">${message.writer}</span>
+                                     <span class="msgText"><b>${tstamp}</b><span style='font-size:10px;margin:0;padding:0;'>\n\n</span>: ${message.text}</span>
                                      <span class="iden">${message.iden}</span>`;
             }
 
@@ -674,7 +674,7 @@ export async function sendMsg(message, writer, color, raw) {
     const msgP = document.createElement("p");
     const iden = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     console.log("iden:", iden);
-    msgP.innerHTML = `<span style="background-color:${document.body.dataset.theme !== "greyscale" ? color : "grey"};" class="usernameBg">${writer}</span>
+    msgP.innerHTML = `<span class="usernameBg">${writer}</span>
                           <span class="msgText"> ${message} <b>(sending...)</b></span>
                           <span class="iden">${iden}</span>`;
     messagesEl.appendChild(msgP);
