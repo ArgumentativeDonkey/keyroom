@@ -287,7 +287,7 @@ function listenToRoom(roomName) {
                         if (userData.profilePic) {
                             avatar.src = userData.profilePic;
                         } else {
-                            avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(message.writer)}&background=random&rounded=true`;
+                            avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(message.writer)}&background=${getUserColor(message.writer)}&rounded=true`;
                         }
                     } else if (message.writer === "TellBot") {
                         avatar.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDlzJDyJ_J6vRQmfW4D-ve6PWtLk6XLdu_3w&s";
@@ -311,8 +311,8 @@ function listenToRoom(roomName) {
                 content.innerHTML = `<span class="usernameBg" style="background-color:${document.body.dataset.theme !== "greyscale" ? message.color : "grey"};">${message.writer}</span>${message.text}`;
             } else {
                 content.style.display = "inline-block";
-                content.innerHTML = `<span class="usernameBg" style="background-color:${document.body.dataset.theme !== "greyscale" ? message.color : "grey"};">${message.writer}</span>
-                                     <span class="msgText"><b>${tstamp}</b><span style='font-size:10px;margin:0;padding:0;'>\n\n</span>: ${message.text}</span>
+                content.innerHTML = `<span class="usernameBg" style="color:"black";"><b>${message.writer}</b></span>
+                                     <span class="msgText"><span style='font-size:10px;margin:0;padding:0;'>\n\n</span>${message.text}</span>
                                      <span class="iden">${message.iden}</span>`;
             }
 
@@ -1248,6 +1248,9 @@ async function switchRoom(room, messageStyling) {
     document.body.setAttribute("data-format", messageStyling);
     listenToRoom(room)
     clearRoomBorders();
+    if (room==`${"&"}${username}`){
+        document.getElementById("&").classList.add('roomActive');
+    }
     document.getElementById(room).classList.add('roomActive');
     document.getElementById(room).classList.remove('room');
 }
