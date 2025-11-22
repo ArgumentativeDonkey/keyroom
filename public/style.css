@@ -239,10 +239,6 @@ h1 {
     outline: 0;
     color: var(--txt);
 }
-.sendput::placeholder {
-    color: var(--txt);
-    opacity: 0.8;
-}
 .sendput:focus {
     outline: 0;
 }
