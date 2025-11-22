@@ -1,0 +1,20 @@
+@font-face {
+    font-family: "Outfit";
+    src: url("Outfit.ttf") format("truetype");
+}
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Outfit", "Courier New", monospace;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+main {
+    width: 50%;
+    min-width: 400px;
+    max-width: 100%;
+}
+code {
+    font-family: "Courier New", monospace;
+}

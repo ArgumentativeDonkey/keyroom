@@ -28,7 +28,6 @@ Chatroom syntax: <br>
 `!unflip` - undoes !flip. <br>
 `!rainbow {message}` - send the message with a rainbow badge. <br>
 `!unrainbow {message}` - send the message with an unrainbowed badge. <br>
-`!rotate {deg} {message}` - sends the message rotated a certain amount of degrees. <br>
 `!code {message}` - gives the message code formatting. <br>
 `!grow {message}` - makes the sent message bigger. <br>
 `!shrink {message}` - makes the sent message smaller. <br>
