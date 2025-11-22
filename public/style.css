@@ -28,11 +28,11 @@
 
 [data-theme="grapefruit"] {
     --bg: #fff1e6;
-    --txt: #7e3a3a;
+    --txt: #1c1c1c;
 }
 [data-theme="blue"] {
     --bg: #f0f8ff;
-    --txt: #2c3e50;
+    --txt: #1c1c1c;
 }
 
 .musicFrame {
@@ -70,17 +70,17 @@ body[data-format="normal"] .musicFrame {
 
 [data-theme="forest"] {
     --bg: #f1f8f1;
-    --txt: #3d4f3d;
+    --txt: #1c1c1c;
 }
 
 [data-theme="sunset"] {
     --bg: #fff3e0;
-    --txt: #6d4c41;
+    --txt: #1c1c1c;
 }
 
 [data-theme="amethyst"] {
     --bg: #f3e5f5;
-    --txt: #4a148c;
+    --txt: #1c1c1c;
 }
 
 [data-theme="greyscale"] {
@@ -90,7 +90,7 @@ body[data-format="normal"] .musicFrame {
 
 [data-theme="mint"] {
     --bg: #e0f2f1;
-    --txt: #004d40;
+    --txt: #1c1c1c;
 }
 
 h1 {

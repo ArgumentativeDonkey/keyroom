@@ -10,6 +10,7 @@ import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTim
 var messages = 0;
 var nNotify = false;
 var gameInitiated = false;
+var notifiedGameInit = false;
 const firebaseConfig = {
 
     apiKey: "AIzaSyDmpLh9AVbQo4XorhNUpwgkZYv8D8USIhI",
@@ -402,6 +403,16 @@ async function scheckInbox(username) {
         );
         notifiedInbox[username] = inboxCounter;
     }
+    if (!gameInitiated && !notifiedGameInit) {
+       sendMsg(
+            `Welcome! It seems you have not yet initiated yourself into the game! Please type !initiate into &game at the next possible convient moment.`,
+            "System",
+            "#4c5b8c",
+            false,
+            true
+        );
+        notifiedGameInit = true;
+    }
 }
 
 
@@ -443,6 +454,9 @@ export async function sendMsg(message, writer, color, raw) {
                 changeVideo(videoId, writer);
                 return;
             }
+        }
+        if (currentRoom == "&game") {
+            processGameInput(message, writer);
         }
         if (message.split(" ")[0].trim() == "!link") {
             message = `<a href="${message.split(" ")[1]}" target="_blank" rel="noopener noreferrer">${message.split(" ")[1]}</a>`;
@@ -1372,5 +1386,26 @@ async function onload() {
     document.getElementById("&general").classList.add('roomActive');
     document.getElementById("&general").classList.remove('room');
     listenToRoom('&general');
+}
+
+function processGameInput (input) {
+    if (input == "!initiate") {
+        initiateGame();
+    }
+}
+function initiateGame() {
+    //This is going to set the initation but i don't wanna do it until its done
+    /*gameInitiated = true;
+    userDocRef = doc(db, "connectedUsers", username)
+    setDoc(userDocRef, {
+        name: username,
+        color: getUserColor(username),
+        lastActive: serverTimestamp(),
+        gameInitiated: gameInitiated
+    }, { merge: true });
+    */
+   playerSelectedRace = null;
+   playerSelected
+   Popup.quick()
 }
 onload();
