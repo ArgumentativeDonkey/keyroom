@@ -1211,7 +1211,7 @@ async function resetRoomIfKey(message, writer, room) {
         const cmd = parts[0].toLowerCase();
         const targetRoom = room || parts[1] || currentRoom;
 
-        if ((writer === "Key" || writer === "Leif") && cmd === "!reset") {
+        if ((('&' + writer) === targetRoom || writer === "Key" || writer === "Leif") && cmd === "!reset") {
             console.log("Resetting room:", targetRoom);
             const snapshot = await getDocs(collection(db, targetRoom));
             const batch = writeBatch(db);
