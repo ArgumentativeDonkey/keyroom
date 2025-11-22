@@ -11,8 +11,7 @@ body {
     justify-content: center;
 }
 main {
-    width: 50%;
-    min-width: 400px;
+    width: 650px;
     max-width: 100%;
 }
 code {
