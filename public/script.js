@@ -2,6 +2,7 @@ import { Popup } from "./popup.js"
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDocs, deleteDoc, where, getDoc } from 'firebase/firestore';
+import { Class, Entity, Player, Skill, GameData } from "./gameData.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -268,7 +269,7 @@ function listenToRoom(roomName) {
                 document.head.querySelector('title').innerText = `NEW MESSAGE — Keyroom — ${currentRoom}`;
             }
         }
-    
+
         const messagesEl = document.getElementById("messages");
         messagesEl.innerHTML = "";
         snapshot.forEach((doc) => {
@@ -404,7 +405,7 @@ async function scheckInbox(username) {
         notifiedInbox[username] = inboxCounter;
     }
     if (!gameInitiated && !notifiedGameInit) {
-       sendMsg(
+        sendMsg(
             `Welcome! It seems you have not yet initiated yourself into the game! Please type !initiate into &game at the next possible convient moment.`,
             "System",
             "#4c5b8c",
@@ -546,27 +547,27 @@ export async function sendMsg(message, writer, color, raw) {
 
         } else if (message.split(" ")[0].trim() === "!delete") {
             try {
-            const targetId = message.split(" ")[1].trim();
-            const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
-            let docFound = null;
+                const targetId = message.split(" ")[1].trim();
+                const snapshot = await getDocs(query(collection(db, currentRoom), orderBy("timestamp", "desc")));
+                let docFound = null;
 
-            for (const doca of snapshot.docs) {
-                if (doca.data().iden === targetId && doca.data().writer === writer) {
-                    docFound = doca;
-                    break;
+                for (const doca of snapshot.docs) {
+                    if (doca.data().iden === targetId && doca.data().writer === writer) {
+                        docFound = doca;
+                        break;
+                    }
                 }
-            }
 
-            if (docFound) {
-                const docRef = doc(db, currentRoom, docFound.id);
-                await deleteDoc(docRef);
-                return;
-            } else {
-                Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: No message found with ID ${targetId}.`);
+                if (docFound) {
+                    const docRef = doc(db, currentRoom, docFound.id);
+                    await deleteDoc(docRef);
+                    return;
+                } else {
+                    Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: No message found with ID ${targetId}.`);
+                }
+            } catch (err) {
+                console.error("Error deleting message:", err);
             }
-        } catch (err) {
-            console.error("Error deleting message:", err);
-        }
 
         } else if (message.trim() === "!inbox") {
             checkInbox = true;
@@ -686,63 +687,63 @@ export async function sendMsg(message, writer, color, raw) {
             message = `<span style="color:transparent; -webkit-text-stroke:1px black;">${message.split(" ").slice(1).join(" ")}</span>`;
         }
         const messagesEl = document.getElementById("messages");
-    const msgP = document.createElement("p");
-    const iden = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-    console.log("iden:", iden);
-    msgP.innerHTML = `<span class="usernameBg">${writer}</span>
+        const msgP = document.createElement("p");
+        const iden = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        console.log("iden:", iden);
+        msgP.innerHTML = `<span class="usernameBg">${writer}</span>
                           <span class="msgText"> ${message} <b>(sending...)</b></span>
                           <span class="iden">${iden}</span>`;
-    messagesEl.appendChild(msgP);
-    scrollToBottom(messagesEl);
-    console.log("3")
+        messagesEl.appendChild(msgP);
+        scrollToBottom(messagesEl);
+        console.log("3")
 
 
-    await addDoc(collection(db, currentRoom), {
-        text: message,
-        writer: writer,
-        color: color,
-        timestamp: serverTimestamp(),
-        raw: raw,
-        iden: iden
-    });
-    if (checkInbox) {
-        const snapshot = await getDocs(tellRef);
-
-        snapshot.forEach(doca => {
-            const data = doca.data();
-            if (data.reciepient == username || data.reciepient === "*") {
-                var message = `${data.reciepient === "*" ? "Announcement from " : "From "}${data.writer}: ${data.text}`;
-                sendMsg(message, "TellBot", '#6437c4');
-                const docRef = doc(db, "tellMsgs", doca.id);
-                if (data.reciepient === username) {
-                    deleteDoc(docRef);
-                } else if (data.timestamp > serverTimestamp() + 1 * 24 * 60 * 60 * 1000) {
-                    deleteDoc(docRef);
-                }
-
-            }
+        await addDoc(collection(db, currentRoom), {
+            text: message,
+            writer: writer,
+            color: color,
+            timestamp: serverTimestamp(),
+            raw: raw,
+            iden: iden
         });
-    }
-    if (message.split(" ")[0].trim() === "!summon") {
-        if (message == "!summon Phospholipid Bilayer") {
-            initiateBossBattle();
-            return;
+        if (checkInbox) {
+            const snapshot = await getDocs(tellRef);
+
+            snapshot.forEach(doca => {
+                const data = doca.data();
+                if (data.reciepient == username || data.reciepient === "*") {
+                    var message = `${data.reciepient === "*" ? "Announcement from " : "From "}${data.writer}: ${data.text}`;
+                    sendMsg(message, "TellBot", '#6437c4');
+                    const docRef = doc(db, "tellMsgs", doca.id);
+                    if (data.reciepient === username) {
+                        deleteDoc(docRef);
+                    } else if (data.timestamp > serverTimestamp() + 1 * 24 * 60 * 60 * 1000) {
+                        deleteDoc(docRef);
+                    }
+
+                }
+            });
         }
-        if (message.split(" ")[2] !== undefined) {
-            const reciepient = message.split(" ")[1];
-            const msg = message.split(" ").slice(2).join(" ");
-            sendMail(reciepient, writer, msg);
-        } else {
-            const reciepient = message.split(" ")[1];
-            sendMail(reciepient, writer, "");
+        if (message.split(" ")[0].trim() === "!summon") {
+            if (message == "!summon Phospholipid Bilayer") {
+                initiateBossBattle();
+                return;
+            }
+            if (message.split(" ")[2] !== undefined) {
+                const reciepient = message.split(" ")[1];
+                const msg = message.split(" ").slice(2).join(" ");
+                sendMail(reciepient, writer, msg);
+            } else {
+                const reciepient = message.split(" ")[1];
+                sendMail(reciepient, writer, "");
+            }
         }
-    }
-    if (writer !== "TellBot") {
-        scheckInbox(username);
-    }
+        if (writer !== "TellBot") {
+            scheckInbox(username);
+        }
 
 
-    resetRoomIfKey(message, writer, message.split(" ")[1]);
+        resetRoomIfKey(message, writer, message.split(" ")[1]);
 
     } catch (e) {
         console.error(e);
@@ -1065,7 +1066,7 @@ async function onPlayerReady(event) {
         if (docSnap.exists()) {
             const data = docSnap.data();
             console.log("Initial sync to position:", data.position);
-            
+
             if (data.position) {
                 seekTo(data.position);
                 lastPosition = data.position;
@@ -1251,19 +1252,19 @@ async function switchRoom(room, messageStyling) {
     }
     if (room !== "music") {
         if (document.getElementById("player").tagName.toLowerCase() !== "div") {
-//            player.mute();
+            //            player.mute();
         }
-        
+
     } else if (room === "music") {
         if (document.getElementById("player").tagName.toLowerCase() !== "div") {
-//            player.unMute();
+            //            player.unMute();
         }
     }
     currentRoom = room
     document.body.setAttribute("data-format", messageStyling);
     listenToRoom(room)
     clearRoomBorders();
-    if (room==`${"&"}${username}`){
+    if (room == `${"&"}${username}`) {
         document.getElementById("&").classList.add('roomActive');
     }
     document.getElementById(room).classList.add('roomActive');
@@ -1285,7 +1286,7 @@ async function onload() {
     document.removeEventListener("keydown", (e) => { processKeydown(e) });
 
     await setUsername();
-    if (username=="xkcd" ){
+    if (username == "xkcd") {
         username = "xkcd impersonator";
     }
     userDocRef = doc(db, "connectedUsers", username)
@@ -1321,8 +1322,8 @@ async function onload() {
         if (messagesEl) messagesEl.scrollTop = messagesEl.scrollHeight;
 
     })
-    document.addEventListener("visibilitychange", function() {
-        if (!document.hidden){
+    document.addEventListener("visibilitychange", function () {
+        if (!document.hidden) {
             document.head.querySelector('title').innerText = `Keyroom - ${currentRoom}`;
         }
     });
@@ -1388,12 +1389,12 @@ async function onload() {
     listenToRoom('&general');
 }
 
-function processGameInput (input) {
+function processGameInput(input) {
     if (input == "!initiate") {
         initiateGame();
     }
 }
-function initiateGame() {
+async function initiateGame() {
     //This is going to set the initation but i don't wanna do it until its done
     /*gameInitiated = true;
     userDocRef = doc(db, "connectedUsers", username)
@@ -1404,8 +1405,21 @@ function initiateGame() {
         gameInitiated: gameInitiated
     }, { merge: true });
     */
-   playerSelectedRace = null;
-   playerSelected
-   Popup.quick()
-}
-onload();
+    var playerSelectedRace = null;
+    var playerSelectedClass = null;
+    var raceOptions = (function () {
+        var races = GameData.Races;
+        returnStr = "";
+        for (i = 0; i < races.length; i++) {
+            if (i + 1 != races.length) {
+                returnStr += `${races[i].name}}}, `;
+            } else {
+                returnStr += `and ${races[i].name}}}.`;
+            }
+        }
+        return returnStr;
+    }())
+        Popup.quick(`Welcome to the Grand Game, ${username}. We're glad to see you!`, "ok");
+        var Race = Popup.quick(`First off, you'll need to choose the race (species), or your character. Your options are ${raceOptions()}. To view more information about a race, type it's name into the below box.`, "text");
+    }
+    onload();
