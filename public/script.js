@@ -8,6 +8,7 @@ import { Class, Entity, Player, Skill, GameData } from "./gameData.js";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+var gameData = new GameData(); //Import data for the game
 var messages = 0;
 var nNotify = false;
 var gameInitiated = false;
@@ -404,7 +405,7 @@ async function scheckInbox(username) {
         );
         notifiedInbox[username] = inboxCounter;
     }
-    if (!gameInitiated && !notifiedGameInit) {
+    /*if (!gameInitiated && !notifiedGameInit) {
         sendMsg(
             `Welcome! It seems you have not yet initiated yourself into the game! Please type !initiate into &game at the next possible convient moment.`,
             "System",
@@ -414,6 +415,7 @@ async function scheckInbox(username) {
         );
         notifiedGameInit = true;
     }
+        */
 }
 
 
@@ -430,6 +432,7 @@ export async function sendMsg(message, writer, color, raw) {
         console.log(message);
         var checkInbox = false;
         if (raw !== true) raw = false;
+        if (message.trim() === "") {return;}
         if (typeof message === 'string') {
             if ((currentRoom !== "/codeinject" && currentRoom !== `${username}`) && writer !== "xkcd" && !checkBannedWords(message)) {
                 console.log(currentRoom);
@@ -1405,21 +1408,20 @@ async function initiateGame() {
         gameInitiated: gameInitiated
     }, { merge: true });
     */
+    var AvailableRaces = gameData.Races;
     var playerSelectedRace = null;
     var playerSelectedClass = null;
-    var raceOptions = (function () {
-        var races = GameData.Races;
-        returnStr = "";
-        for (i = 0; i < races.length; i++) {
-            if (i + 1 != races.length) {
-                returnStr += `${races[i].name}}}, `;
-            } else {
-                returnStr += `and ${races[i].name}}}.`;
-            }
+    var raceOptions = (function () { var races = gameData.Races; var returnStr = ""; for (var i = 0; i < races.length; i++) { if (i + 1 != races.length) { returnStr += `${races[i].name}, `; } else { returnStr += `and ${races[i].name}`; } } return returnStr; }())
+    await Popup.quick(`Welcome to the Grand Game, ${username}. We're glad to see you!`, "ok");
+    var Race = await Popup.quick(`First off, you'll need to choose the race (species), or your character. Your options are ${raceOptions}. To view more information about a race, type it's name into the below box.`, "text");
+    var isRace = (function () { for (var i = 0; i < AvailableRaces.length; i++) { if (AvailableRaces[i].name == Race) { return true } else if (i + 1 == AvailableRaces.length) { return false; } } }())
+    console.log(isRace);
+    if (!isRace) {
+        while (!isRace) {
+            var SelRace = await Popup.quick(`Please input a valid race. Your options are ${raceOptions}. To view more information about a race, type it's name into the below box.`, "text");
+            isRace = (function () { for (var i = 0; i < AvailableRaces.length; i++) { if (AvailableRaces[i].name == SelRace) { return true } else if (i + 1 == AvailableRaces.length) { return false; } } }());
+            Race = SelRace
         }
-        return returnStr;
-    }())
-        Popup.quick(`Welcome to the Grand Game, ${username}. We're glad to see you!`, "ok");
-        var Race = Popup.quick(`First off, you'll need to choose the race (species), or your character. Your options are ${raceOptions()}. To view more information about a race, type it's name into the below box.`, "text");
     }
-    onload();
+}
+onload();

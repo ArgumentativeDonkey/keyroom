@@ -24,22 +24,27 @@ export class Entity {
     }
 }
 export class Player {
-    constructor(name, playerClass, level, stats, skills) {
+    constructor(name, playerClass, level, savingThrows, armorProficiencies, weaponProficiencies, toolProficiencies, stats, skills) {
         this.name = name;
         this.playerClass = playerClass; /*Class name is assigned, then we fecth the class when needed based on the name.*/
         this.level = level; /*Int represting level.*/
+        this.savingThrows = savingThrows;
+        this.armorProficiencies = armorProficiencies;
+        this.weaponProficiencies = weaponProficiencies;
+        this.toolProficiencies = toolProficiencies;
         this.stats = stats; /*Array, in order Strength, Dexterity, Constitution, Wisdom, Intelligence, Charisma.*/
         this.skills = skills; /*Skills should be an array of dictionaries of the use function, name, cooldown, and use chance. E.X:
         [{name: "Fireball", cooldown: 3, useChance: 0.3, use: function(target) {target.damage();}}]*/
     }
 }
 export class Race {
-    constructor(name, description, statBonuses, speed, size, languages) {
+    constructor(name, description, statBonuses, speed, size, toolProficiencies, languages) {
         this.name = name;
         this.description = description;
         this.statBonuses = statBonuses; /*Array, in order Strength, Dexterity, Constitution, Wisdom, Intelligence, Charisma.*/
         this.speed = speed; /*Int representing speed in feet. Standard is 30, should only vary by +- 1 increment of 5.*/
         this.size = size; /*Sizes are an int represented by 0-1, 0 for small, 1 for medium, 2 for large. They of course are displayed in text form in the game.*/
+        this.toolProficiencies = toolProficiencies;
         this.languages = languages; /*Array of strings representing languages known. Strings. */
     }
 }
@@ -62,14 +67,29 @@ export class Class {
 export class GameData {
     constructor() {
         this.Races = [];
-        Races.push(new Race("Human",
+        this.Races.push(new Race("Human",
             "Versatile and ambitious, humans are known for their adaptability and drive.",
-            [1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 0, -1, 2],
             30,
             1,
+            ["Woodworker's Tools"],
+            ["Common", "Dwarvish"]));
+        this.Races.push(new Race("Elf",
+            "Nimble and lithe, the Elves are beings that have sprouted from the forest itself.",
+            [0, 3, -1, 2, 1, 0],
+            35,
+            1,
+            ["Herbologist's Tools"],
+            ["Common", "Elvish"]));
+        this.Races.push(new Race("Dwarf",
+            "Hardy creatures of the stone, the Dwarves are known for their craftsmanship and resilience.",
+            [3, -1, 3, 0, 1, 0],
+            25,
+            1,
+            ["Smith's Tools"],
             ["Common", "Dwarvish"]));
         this.Classes = [];
-        Classes.push(new Class("Warrior",
+        this.Classes.push(new Class("Warrior",
             "A ferocious fighter who relies purely on skill and strength of arms.",
             "Strength",
             ["Strength", "Constitution"],
