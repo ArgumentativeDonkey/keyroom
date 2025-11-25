@@ -4,7 +4,7 @@
         <title>Keyroom Docs</title>
         <meta charset="utf-8" />
         <link rel="stylesheet" href="styles.css" />
-        <link rel="icon" type="image/png" href="../keyroomaf.png" />
+        <link rel="icon" type="image/png" href="../keyroomaf(1).png" />
         <link
             rel="preload"
             href="Outfit.ttf"
@@ -17,13 +17,14 @@
         <main>
             <h1>Keyroom Commands</h1>
             <a href="/">Back to Keyroom</a>
-
+            <p><i>Please do not include the brackets around arguments when using commands.</i></p>
             <h2>Account</h2>
             <p><i>Commands related to user accounts.</i></p>
             <p>
                 <code>!logOut</code> - Logs you out and begins the login prompt
                 again.
             </p>
+            <p><code>!setEmail {email}</code> - Sets your email for summoning.</p>
             <p>
                 <code>!editProfilePic {image url}</code> - Sets your displayed
                 profile picture.
@@ -41,7 +42,7 @@
             </p>
             <p>
                 <code>!summon {username} {message}</code> - Sends the user a
-                push notification with your message.
+                an email with your message. The user must have an email set for this to work.
             </p>
             <p>
                 <code>!inbox</code> - TellBot shows you your inbox, the
@@ -138,7 +139,6 @@
                     support.</i
                 >
             </p>
-            <p><code>!setEmail</code> - Sets your email for summoning.</p>
             <p><code>!code</code> - Give the message code formatting.</p>
             <p>
                 <code>!rainbow {message}</code> - Send the message with a
