@@ -11,9 +11,9 @@ body {
     justify-content: center;
 }
 main {
-    width: 50%;
-    min-width: 400px;
+    width: 600px;
     max-width: 100%;
+    padding: 5px;
 }
 code {
     font-family: "Courier New", monospace;
