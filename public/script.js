@@ -432,7 +432,7 @@ export async function sendMsg(message, writer, color, raw) {
         console.log(message);
         var checkInbox = false;
         if (raw !== true) raw = false;
-        if (message.trim() === "") {return;}
+        if (message.trim() === "") { return; }
         if (typeof message === 'string') {
             if ((currentRoom !== "/codeinject" && currentRoom !== `${username}`) && writer !== "xkcd" && !checkBannedWords(message)) {
                 console.log(currentRoom);
@@ -1413,15 +1413,29 @@ async function initiateGame() {
     var playerSelectedClass = null;
     var raceOptions = (function () { var races = gameData.Races; var returnStr = ""; for (var i = 0; i < races.length; i++) { if (i + 1 != races.length) { returnStr += `${races[i].name}, `; } else { returnStr += `and ${races[i].name}`; } } return returnStr; }())
     await Popup.quick(`Welcome to the Grand Game, ${username}. We're glad to see you!`, "ok");
-    var Race = await Popup.quick(`First off, you'll need to choose the race (species), or your character. Your options are ${raceOptions}. To view more information about a race, type it's name into the below box.`, "text");
-    var isRace = (function () { for (var i = 0; i < AvailableRaces.length; i++) { if (AvailableRaces[i].name == Race) { return true } else if (i + 1 == AvailableRaces.length) { return false; } } }())
-    console.log(isRace);
-    if (!isRace) {
-        while (!isRace) {
-            var SelRace = await Popup.quick(`Please input a valid race. Your options are ${raceOptions}. To view more information about a race, type it's name into the below box.`, "text");
-            isRace = (function () { for (var i = 0; i < AvailableRaces.length; i++) { if (AvailableRaces[i].name == SelRace) { return true } else if (i + 1 == AvailableRaces.length) { return false; } } }());
-            Race = SelRace
+    while (playerSelectedClass == null) {
+        var Race = await Popup.quick(`First off, you'll need to choose the race (species), or your character. Your options are ${raceOptions}. To view more information about a race, type it's name into the below box.`, "text");
+        var rRace = Race.trim().toLowerCase();
+        rRace = rRace.charAt(0).toUpperCase() + rRace.slice(1);
+        var isRace = (function () { for (var i = 0; i < AvailableRaces.length; i++) { if (AvailableRaces[i].name == rRace) { return true } else if (i + 1 == AvailableRaces.length) { return false; } } }())
+        console.log(isRace);
+        if (!isRace) {
+            while (!isRace) {
+                console.log(rRace);
+                var SelRace = await Popup.quick(`Please input a valid race. Your options are ${raceOptions}. To view more information about a race, type it's name into the below box.`, "text");
+                var rRace = SelRace.trim().toLowerCase();
+                rRace = rRace.charAt(0).toUpperCase() + rRace.slice(1);
+                isRace = (function () { for (var i = 0; i < AvailableRaces.length; i++) { if (AvailableRaces[i].name == rRace) { return true } else if (i + 1 == AvailableRaces.length) { return false; } } }());
+                Race = rRace
+            }
+        }
+        if (await Popup.quick(`Blah Blah Blah random s**t`, 'confirm')) {
+            Popup.quick(`Blah Blah Blah random s**t y`)
+            playerSelectedRace = rRace;
+        } else {
+            Popup.quick(`Okay you said no. `)
         }
     }
+
 }
 onload();
