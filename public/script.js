@@ -1397,6 +1397,13 @@ function processGameInput(input) {
         initiateGame();
     }
 }
+function checkIfPositive(num) {
+    if (num > 0) {
+        return "+" + num;
+    } else {
+        return num;
+    }
+}
 async function initiateGame() {
     //This is going to set the initation but i don't wanna do it until its done
     /*gameInitiated = true;
@@ -1413,9 +1420,9 @@ async function initiateGame() {
     var playerSelectedClass = null;
     var raceOptions = (function () { var races = gameData.Races; var returnStr = ""; for (var i = 0; i < races.length; i++) { if (i + 1 != races.length) { returnStr += `${races[i].name}, `; } else { returnStr += `and ${races[i].name}`; } } return returnStr; }())
     await Popup.quick(`Welcome to the Grand Game, ${username}. We're glad to see you!`, "ok");
-    while (playerSelectedClass == null) {
-        var Race = await Popup.quick(`First off, you'll need to choose the race (species), or your character. Your options are ${raceOptions}. To view more information about a race, type it's name into the below box.`, "text");
-        var rRace = Race.trim().toLowerCase();
+    while (playerSelectedRace == null) {
+        var race = await Popup.quick(`First off, you'll need to choose the race (species), or your character. Your options are ${raceOptions}. To view more information about a race, type it's name into the below box.`, "text");
+        var rRace = race.trim().toLowerCase();
         rRace = rRace.charAt(0).toUpperCase() + rRace.slice(1);
         var isRace = (function () { for (var i = 0; i < AvailableRaces.length; i++) { if (AvailableRaces[i].name == rRace) { return true } else if (i + 1 == AvailableRaces.length) { return false; } } }())
         console.log(isRace);
@@ -1426,15 +1433,43 @@ async function initiateGame() {
                 var rRace = SelRace.trim().toLowerCase();
                 rRace = rRace.charAt(0).toUpperCase() + rRace.slice(1);
                 isRace = (function () { for (var i = 0; i < AvailableRaces.length; i++) { if (AvailableRaces[i].name == rRace) { return true } else if (i + 1 == AvailableRaces.length) { return false; } } }());
-                Race = rRace
+                if (isRace) { race = rRace };
             }
         }
-        if (await Popup.quick(`Blah Blah Blah random s**t`, 'confirm')) {
-            Popup.quick(`Blah Blah Blah random s**t y`)
-            playerSelectedRace = rRace;
-        } else {
-            Popup.quick(`Okay you said no. `)
+        race = (function () { for (var i = 0; i < AvailableRaces.length; i++) { if (AvailableRaces[i].name == race) { return AvailableRaces[i] } } }())
+        var RaceStatString = ""
+        var statArray = ["Strength", "Dexterity", "Constitution", "Wisdom", "Intelligence", "Charisma"];
+        for (var i = 0; i < race.statBonuses.length; i++) {
+            var lastNum = 0;
+            var firstNum = null;
+            for (var n = 0; n < race.statBonuses.length; n++) {
+                if (race.statBonuses[n] != 0) {
+                    if (firstNum == null) { firstNum = n }
+                    lastNum = n;
+                }
+            }
+            if (race.statBonuses[i] != 0) {
+                if (i == firstNum) {
+                    RaceStatString += `a ${checkIfPositive(race.statBonuses[i])} modifier to ${statArray[i]}, `
+                } else if (i == lastNum) {
+                    console.log("lastNum: " + lastNum);
+                    console.log("i: " + i)
+                    RaceStatString += ` and a ${checkIfPositive(race.statBonuses[i])} modifier to ${statArray[i]}`
+                } else {
+                    RaceStatString += ` ${checkIfPositive(race.statBonuses[i])} modifier to ${statArray[i]},`
+                }
+            }
         }
+        var LanguageString = `${race.languages[0]} and ${race.languages[1]}`;
+        if (await Popup.quick(`${race.description} Selecting ${race.name} as your race gives ${RaceStatString} alongside proficiency with ${race.toolProficiencies} and the ability to speak the ${LanguageString} tongues. Choose ${race.name} as your character's race?`, 'confirm')) {
+            await Popup.quick(`You have selected ${race.name} as your character's race.`, 'continue')
+            playerSelectedRace = race;
+            playerSelectedRace = true;
+        }
+    }
+    while (playerSelectedClass == null) {
+        var classOptions = (function () { var Classes = gameData.Classes; var returnStr = ""; for (var i = 0; i < Classes.length; i++) { if (i + 1 != Classes.length) { returnStr += `${Classes[i].name}, `; } else { returnStr += `and ${Classes[i].name}`; } } return returnStr; }());
+        var nClass = await Popup.quick(`Next, you need to choose a class for your character. Your class determines your skills, abilities, weapon and armor proficiences, and saving throw proficiencies. Your options are ${classOptions}. To view more information about a class, type it's name into the below box.`, "text");
     }
 
 }

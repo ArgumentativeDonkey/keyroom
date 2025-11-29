@@ -29,6 +29,11 @@ export class Popup {
                     popup.initbar(`<button>OK</button>`);
                     popup.bar.querySelector('button').onclick = () => doResolve();
                     break;
+                case "continue":
+                    defaultResolve = true;
+                    popup.initbar(`<button>Continue</button>`);
+                    popup.bar.querySelector('button').onclick = () => doResolve();
+                    break;
                 case "confirm":
                     defaultResolve = true;
                     popup.initbar(`<button>No</button><button>Yes</button>`);
