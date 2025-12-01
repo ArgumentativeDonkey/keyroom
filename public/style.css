@@ -12,6 +12,7 @@
     --stripe-width: 8em;
     --stripe-calc: calc(var(--stripe-width) * 1.41421356237);
     --anim-time: 8s;
+    --n-themes: 10;
 }
 
 [data-theme="light"] {
@@ -37,6 +38,10 @@
 [data-theme="banana"] {
     --bg: #fff26a;
     --txt: #1c1c1c;
+}
+[data-theme="hacker"] {
+    --bg: black;
+    --txt: lime;
 }
 
 .musicFrame {
@@ -676,7 +681,7 @@ body {
 }
 
 .themesDiv:hover {
-    height: 250px;
+    height: calc(25px * var(--n-themes));
 }
 
 .themesDiv li {
