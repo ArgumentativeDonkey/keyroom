@@ -28,6 +28,9 @@ const themes = [{
 }, {
   key:"banana",
   name:"banana"
+}, {
+    key: "hacker",
+    name: "hacker"
 }];
 
 const wrappers = document.querySelectorAll(".themesDiv");
@@ -40,6 +43,8 @@ export async function themesLoad() {
   } else {
     document.body.setAttribute("data-theme", 'dark');
   }
+  
+    document.documentElement.style.setProperty("--n-themes", themes.length);
   
   for(let i = 0; i < themes.length; i++) {
     for(let z = 0; z < wrappers.length; z++) {
