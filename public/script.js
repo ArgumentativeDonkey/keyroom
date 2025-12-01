@@ -348,7 +348,6 @@ function checkBannedWords(string, banlist) {
 }
 const notifiedInbox = {};
 function replaceWithBossBattle() {
-    console.log("replaced with boss battle");
 }
 async function doBossDamage(damage) {
     const bossRef = collection(db, "bossBattle");
@@ -1330,7 +1329,15 @@ async function onload() {
             document.head.querySelector('title').innerText = `Keyroom - ${currentRoom}`;
         }
     });
-
+    console.log(username);
+    if (username != "Key" && username != "Leif") {
+        console.log("Username is NOT Key or Leif");
+        document.getElementById("&game").style.display = "none";
+        console.log("hid room");
+    } else {
+        console.log("Username IS Key or Leif");
+        console.log("Welcome, "+username+"!");
+    }
     document.getElementById("showUsers").addEventListener("click", () => {
         if (UsersShown) {
             document.getElementById("showUsers").innerHTML = "Show Users";
@@ -1390,6 +1397,7 @@ async function onload() {
     document.getElementById("&general").classList.add('roomActive');
     document.getElementById("&general").classList.remove('room');
     listenToRoom('&general');
+    
 }
 
 function processGameInput(input) {
@@ -1416,6 +1424,7 @@ async function initiateGame() {
     }, { merge: true });
     */
     var AvailableRaces = gameData.Races;
+    var AvailableClasses = gameData.Classes;
     var playerSelectedRace = null;
     var playerSelectedClass = null;
     var raceOptions = (function () { var races = gameData.Races; var returnStr = ""; for (var i = 0; i < races.length; i++) { if (i + 1 != races.length) { returnStr += `${races[i].name}, `; } else { returnStr += `and ${races[i].name}`; } } return returnStr; }())
@@ -1470,6 +1479,18 @@ async function initiateGame() {
     while (playerSelectedClass == null) {
         var classOptions = (function () { var Classes = gameData.Classes; var returnStr = ""; for (var i = 0; i < Classes.length; i++) { if (i + 1 != Classes.length) { returnStr += `${Classes[i].name}, `; } else { returnStr += `and ${Classes[i].name}`; } } return returnStr; }());
         var nClass = await Popup.quick(`Next, you need to choose a class for your character. Your class determines your skills, abilities, weapon and armor proficiences, and saving throw proficiencies. Your options are ${classOptions}. To view more information about a class, type it's name into the below box.`, "text");
+        var cClass = race.trim().toLowerCase();
+        cClass = cClass.charAt(0).toUpperCase() + cClass.slice(1);
+        var isClass = (function () { for (var i = 0; i < AvailableClasses.length; i++) { if (AvailableClasses[i].name == cClass) { return true } else if (i + 1 == AvailableClasses.length) { return false; } } }())
+        if (!isClass) {
+            while (!isClass) {
+                var SelClass = await Popup.quick(`Please input a valid class. Your options are ${classOptions}. To view more information about a class, type it's name into the below box.`, "text");
+                var rRace = SelClass.trim().toLowerCase();
+                rRace = rRace.charAt(0).toUpperCase() + rRace.slice(1);
+                isRace = (function () { for (var i = 0; i < AvailableRaces.length; i++) { if (AvailableRaces[i].name == rRace) { return true } else if (i + 1 == AvailableRaces.length) { return false; } } }());
+                if (isRace) { race = rRace };
+            }
+        }
     }
 
 }

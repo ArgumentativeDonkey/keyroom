@@ -25,6 +25,9 @@ const themes = [{
 },{
   key:"greyscale",
   name:"grayscale"
+}, {
+  key:"banana",
+  name:"banana"
 }];
 
 const wrappers = document.querySelectorAll(".themesDiv");
