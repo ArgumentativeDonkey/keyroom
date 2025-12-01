@@ -219,6 +219,17 @@ body {
     overflow: hidden;
 }
 
+button {
+    font-family: inherit;
+    background-color: var(--bg);
+    border-radius: 0;
+    border-color: var(--txt);
+}
+button:focus {
+    background-color: inherit;
+    outline: 0;
+}
+
 .usernameBg {
     color: var(--txt);
     font-weight: bold;
