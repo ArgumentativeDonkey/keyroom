@@ -224,6 +224,7 @@ button {
     background-color: var(--bg);
     border-radius: 0;
     border-color: var(--txt);
+    color: var(--txt);
 }
 button:focus {
     background-color: inherit;
