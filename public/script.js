@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDocs, deleteDoc, where, getDoc } from 'firebase/firestore';
 import { Class, Entity, Player, Skill, GameData } from "./gameData.js";
+import { hasher } from "./hashutil.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -33,7 +34,6 @@ const firebaseConfig = {
 
 };
 
-import { hasher } from "./hashutil.js";
 
 // Can they send messages?
 let cansendmessages = true;
@@ -547,6 +547,15 @@ export async function sendMsg(message, writer, color, raw) {
             Popup.quick(`<span class="material-symbols-outlined">mail</span><br>Email updated to ${email}`, "ok")
             return;
 
+        } else if (message.split(" ")[0].trim() === "!setPassword") {
+            const newPassword = message.split(" ")[1];
+            const userDocRef = doc(db, "connectedUsers", writer);
+            const hashedPassword = hasher(newPassword);
+            await setDoc(userDocRef, {
+                password: hashedPassword
+            }, { merge: true });
+            Popup.quick(`<span class="material-symbols-outlined">key</span><br>Password updated!`, "ok")
+            return;
         } else if (message.split(" ")[0].trim() === "!delete") {
             try {
                 const targetId = message.split(" ")[1].trim();
@@ -794,21 +803,37 @@ async function sendXkcd(what) {
 }
 
 async function validatePassword(username) {
+    const userRef = collection(db, "connectedUsers");
+    const snapshot = await getDocs(userRef);
+    var passwordF = null;
+    snapshot.forEach(doca => {
+        const data = doca.data();
+        if (data.name == username) {
+            passwordF = data.password;
+            console.log('found password for '+username)
+            console.log(data.password);
+        }
+
+    });
+    
     const res = await fetch("./passwords.json");
     const data = await res.json();
     console.log("validating password");
-    if (data.hasOwnProperty(username)) {
+    if (passwordF != null) {
+        console.log("passwordF is "+passwordF+"not null")
         let storedPassword = localStorage.getItem("password");
         if (storedPassword && hasher(storedPassword) === data[username]) {
             return true;
         }
         let input = await Popup.quick("<span class='material-symbols-outlined'>vpn_key</span><br>Please enter your password.", "password");
-        if (input && hasher(input) === data[username]) {
+        if (input && hasher(input) === passwordF) {
             localStorage.setItem("password", input);
             return true;
         }
         return false;
     } else {
+        console.log("passwordF is "+passwordF)
+
         if (!(localStorage.getItem("seen-pwd-warning") === "true")) {
             await Popup.quick("<span class='material-symbols-outlined'>lock_open</span><br>You don't have a registered password. If you want one, please contact someone with Git access.", "ok");
             localStorage.setItem("seen-pwd-warning", true);
