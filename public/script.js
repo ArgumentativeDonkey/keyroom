@@ -802,46 +802,7 @@ async function sendXkcd(what) {
     }
 }
 
-async function validatePassword(username) {
-    const userRef = collection(db, "connectedUsers");
-    const snapshot = await getDocs(userRef);
-    var passwordF = null;
-    snapshot.forEach(doca => {
-        const data = doca.data();
-        if (data.name == username) {
-            passwordF = data.password;
-            console.log('found password for '+username)
-            console.log(data.password);
-        }
 
-    });
-    
-    const res = await fetch("./passwords.json");
-    const data = await res.json();
-    console.log("validating password");
-    if (passwordF != null) {
-        console.log("passwordF is "+passwordF+"not null")
-        let storedPassword = localStorage.getItem("password");
-        if (storedPassword && hasher(storedPassword) === data[username]) {
-            return true;
-        }
-        let input = await Popup.quick("<span class='material-symbols-outlined'>vpn_key</span><br>Please enter your password.", "password");
-        if (input && hasher(input) === passwordF) {
-            localStorage.setItem("password", input);
-            return true;
-        }
-        return false;
-    } else {
-        console.log("passwordF is "+passwordF)
-
-        if (!(localStorage.getItem("seen-pwd-warning") === "true")) {
-            await Popup.quick("<span class='material-symbols-outlined'>lock_open</span><br>You don't have a registered password. If you want one, please contact someone with Git access.", "ok");
-            localStorage.setItem("seen-pwd-warning", true);
-        }
-        console.log("no password found, authenticating.");
-        return true;
-    }
-}
 
 
 // ANCHOR setUsername function
@@ -907,7 +868,48 @@ async function getUserLastActive(user) {
         Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: user ${user} not found.`);
     }
 }
+async function validatePassword(username) {
+    let snapshot = await getDocs(userRef);
+    let passwordF = null;
+    snapshot.forEach(doca => {
+        const data = doca.data();
+        if (data.name === username) {
+            passwordF = data.password;
+            console.log('found password for '+username)
+            console.log(data.password);
+            console.log(passwordF);
+            console.log(data);
 
+        }
+
+    });
+    
+    const res = await fetch("./passwords.json");
+    const data = await res.json();
+    console.log("validating password");
+    if (passwordF !== null && passwordF !==undefined) {
+        console.log("passwordF is "+passwordF+"not null")
+        let storedPassword = localStorage.getItem("password");
+        if (storedPassword && hasher(storedPassword) === data[username]) {
+            return true;
+        }
+        let input = await Popup.quick("<span class='material-symbols-outlined'>vpn_key</span><br>Please enter your password.", "password");
+        if (input && hasher(input) === passwordF) {
+            localStorage.setItem("password", input);
+            return true;
+        }
+        return false;
+    } else {
+        console.log("passwordF is "+passwordF)
+
+        if (!(localStorage.getItem("seen-pwd-warning") === "true")) {
+            await Popup.quick("<span class='material-symbols-outlined'>lock_open</span><br>You don't have a registered password. If you want one, please contact someone with Git access.", "ok");
+            localStorage.setItem("seen-pwd-warning", true);
+        }
+        console.log("no password found, authenticating.");
+        return true;
+    }
+}
 function processKeydown(e) {
     if (e.keyCode == 13) {
         if (cansendmessages || username === "Key") {
