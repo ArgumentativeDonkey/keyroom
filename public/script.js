@@ -835,7 +835,7 @@ async function validatePassword(username) {
         console.log("passwordF is "+passwordF)
 
         if (!(localStorage.getItem("seen-pwd-warning") === "true")) {
-            await Popup.quick("<span class='material-symbols-outlined'>lock_open</span><br>You don't have a registered password. If you want one, please contact someone with Git access.", "ok");
+            await Popup.quick("<span class='material-symbols-outlined'>lock_open</span><br>You don't have a registered password. If you want one, please use !setPassword {password}.", "ok");
             localStorage.setItem("seen-pwd-warning", true);
         }
         console.log("no password found, authenticating.");
