@@ -916,9 +916,9 @@ async function validatePassword(username) {
     }
 }
 async function addRoomProcessor() {
-    var action = await Popup.quick("Would you like to attempt to create or join a room?", "3options", "Create/Join Private Room", "Create/Join Public Room", "Cancel");
+    var action = await Popup.quick("Which type of room would you like to create/join?", "3options", "Private", "Public", "Cancel");
     if (action === "Cancel") return;
-    if (action === "Create/Join Public Room") {
+    if (action === "Public") {
         var roomName = await Popup.quick("Please enter the public room name you'd like to join or create.", "text");
         if (roomName == null || roomName.trim() === "") {
             Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Invalid room name.", "ok");
@@ -939,7 +939,7 @@ async function addRoomProcessor() {
         currentRoom = `&${roomName.trim()}`;
         switchRoom(currentRoom);
     }
-    if (action === "Create/Join Private Room") {
+    if (action === "Private") {
         var selection = await Popup.quick("Would you like to create a new private room, or join an existing one?", "2options", "Create Private Room", "Join Private Room");
         if (selection === "Create Private Room") {
             var name = await Popup.quick("Please enter a name for your private room. Do not include the &", "text");
