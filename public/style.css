@@ -335,7 +335,7 @@ button:focus {
 }
 
 .messages {
-    scrollbar-color: var(--txt);
+    scrollbar-color: var(--txt) var(--bg);
     scroll-behavior: smooth;
 }
 
