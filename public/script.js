@@ -14,6 +14,9 @@ var messages = 0;
 var nNotify = false;
 var gameInitiated = false;
 var notifiedGameInit = false;
+var additionalRooms = [];
+var additionalRoomNames = [];
+var deletingRooms = false;
 const firebaseConfig = {
 
     apiKey: "AIzaSyDmpLh9AVbQo4XorhNUpwgkZYv8D8USIhI",
@@ -875,7 +878,7 @@ async function validatePassword(username) {
         const data = doca.data();
         if (data.name === username) {
             passwordF = data.password;
-            console.log('found password for '+username)
+            console.log('found password for ' + username)
             console.log(data.password);
             console.log(passwordF);
             console.log(data);
@@ -883,12 +886,12 @@ async function validatePassword(username) {
         }
 
     });
-    
+
     const res = await fetch("./passwords.json");
     const data = await res.json();
     console.log("validating password");
-    if (passwordF !== null && passwordF !==undefined) {
-        console.log("passwordF is "+passwordF+"not null")
+    if (passwordF !== null && passwordF !== undefined) {
+        console.log("passwordF is " + passwordF + "not null")
         let storedPassword = localStorage.getItem("password");
         if (storedPassword && hasher(storedPassword) === data[username]) {
             return true;
@@ -900,7 +903,7 @@ async function validatePassword(username) {
         }
         return false;
     } else {
-        console.log("passwordF is "+passwordF)
+        console.log("passwordF is " + passwordF)
 
         if (!(localStorage.getItem("seen-pwd-warning") === "true")) {
             await Popup.quick("<span class='material-symbols-outlined'>lock_open</span><br>You don't have a registered password. If you want one, please contact someone with Git access.", "ok");
@@ -909,6 +912,32 @@ async function validatePassword(username) {
         console.log("no password found, authenticating.");
         return true;
     }
+}
+async function addRoomProcessor() {
+    var action = await Popup.quick("Would you like to attempt to create or join a room?", "3options", "Create Private Room", "Create/Join Public Room", "Cancel");
+    if (action === "Cancel") return;
+    if (action === "Create/Join Public Room") {
+        var roomName = await Popup.quick("Please enter the public room name you'd like to join or create.", "text");
+        if (roomName == null || roomName.trim() === "") {
+            Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Invalid room name.", "ok");
+            return;
+        }
+        var docsLink = document.getElementById("docsLink");
+        var newRoomLi = document.createElement("li");
+        newRoomLi.classList.add("room");
+        newRoomLi.id = `&${roomName.trim()}`;
+        newRoomLi.innerHTML = `& ${roomName.trim()}`;
+        newRoomLi.addEventListener("click", () => {
+            switchRoom(`${"&" + roomName.trim()}`);
+        })
+        docsLink.insertAdjacentElement("beforebegin", newRoomLi);
+        additionalRooms.push(newRoomLi.id);
+        additionalRoomNames.push("& " + roomName.trim());
+        localStorage.setItem("additionalRooms", JSON.stringify(additionalRoomNames));
+        currentRoom = `&${roomName.trim()}`;
+        switchRoom(currentRoom);
+    }
+
 }
 function processKeydown(e) {
     if (e.keyCode == 13) {
@@ -1246,6 +1275,12 @@ function clearRoomBorders() {
     document.getElementById("&game").classList.add('room');
     document.getElementById("&").classList.add('room');
     document.getElementById("&music").classList.add('room');
+    if (additionalRooms.length > 0) {
+        additionalRooms.forEach(room => {
+            document.getElementById(room).classList.remove('roomActive');
+            document.getElementById(room).classList.add('room');
+        });
+    }
 }
 import { writeBatch } from "firebase/firestore";
 
@@ -1334,6 +1369,26 @@ async function onload() {
             lastActive: serverTimestamp()
         }, { merge: true });
     }, 15000);
+    if (localStorage.getItem("additionalRooms")) {
+        const storedRooms = JSON.parse(localStorage.getItem("additionalRooms"));
+        additionalRooms = [];
+        additionalRoomNames = [];
+        for (var i = 0; i < storedRooms.length; i++) {
+            var roomName = storedRooms[i].substring(2).trim();
+            var docsLink = document.getElementById("docsLink");
+            var newRoomLi = document.createElement("li");
+            newRoomLi.classList.add("room");
+            newRoomLi.id = `&${roomName}`;
+            newRoomLi.innerHTML = `& ${roomName}`;
+            newRoomLi.onclick = (() => {
+                const room = `&${roomName}`;
+                switchRoom(room);
+            });
+            docsLink.insertAdjacentElement("beforebegin", newRoomLi);
+            additionalRooms.push(newRoomLi.id);
+            additionalRoomNames.push(`& ${roomName}`);
+        }
+    }
     onSnapshot(usersQuery, (snapshot) => {
         document.getElementById("connectedUsers").innerHTML = "<p class='userP'><b>Connected Users</b></p>"
         snapshot.forEach((doc) => {
@@ -1363,7 +1418,7 @@ async function onload() {
         console.log("hid room");
     } else {
         console.log("Username IS Key or Leif");
-        console.log("Welcome, "+username+"!");
+        console.log("Welcome, " + username + "!");
     }
     document.getElementById("showUsers").addEventListener("click", () => {
         if (UsersShown) {
@@ -1412,6 +1467,25 @@ async function onload() {
     document.getElementById("&game").addEventListener("click", () => {
         switchRoom("&game");
     })
+    document.getElementById("newroom").addEventListener("click", () => {
+        addRoomProcessor();
+    })
+    document.getElementById("deleteRooms").addEventListener("click", () => {
+        if (!deletingRooms) {
+            deletingRooms = true;
+            document.getElementById("deleteRooms").innerHTML = "Delete: On";
+            document.querySelectorAll('.room').forEach(roomEl => {
+                roomEl.setAttribute("data-theme", "deletion");
+            });
+        } else {
+            deletingRooms = false;
+            document.getElementById("deleteRooms").innerHTML = "-Remove rooms-";
+            document.querySelectorAll('.room').forEach(roomEl => {
+                roomEl.setAttribute("data-theme", "normal");
+            });
+        } 
+
+    });
     document.getElementById("&music").addEventListener("click", () => {
         switchRoom("&music", "music");
         loadYouTubeVideo('YsdaAQzdmpo');
@@ -1424,7 +1498,7 @@ async function onload() {
     document.getElementById("&general").classList.add('roomActive');
     document.getElementById("&general").classList.remove('room');
     listenToRoom('&general');
-    
+
 }
 
 function processGameInput(input) {
