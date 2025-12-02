@@ -40,6 +40,12 @@ export class Popup {
                     popup.bar.querySelectorAll('button')[0].onclick = () => doResolve(false);
                     popup.bar.querySelectorAll('button')[1].onclick = () => doResolve(true);
                     break;
+                case "2options":
+                    defaultResolve = true;
+                    popup.initbar(`<button>${parem1}</button><button>${parem2}</button>`);
+                    popup.bar.querySelectorAll('button')[0].onclick = () => doResolve(parem1);
+                    popup.bar.querySelectorAll('button')[1].onclick = () => doResolve(parem2);
+                    break;
                 case "3options":
                     defaultResolve = true;
                     popup.initbar(`<button>${parem1}</button><button>${parem2}</button><button>${parem3}</button>`);

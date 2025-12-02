@@ -700,6 +700,7 @@ export async function sendMsg(message, writer, color, raw) {
         } else if (message.split(" ")[0].trim() === "!hollow") {
             message = `<span style="color:transparent; -webkit-text-stroke:1px black;">${message.split(" ").slice(1).join(" ")}</span>`;
         }
+        //#region Send Message Code
         const messagesEl = document.getElementById("messages");
         const msgP = document.createElement("p");
         const iden = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -892,6 +893,7 @@ async function validatePassword(username) {
     console.log("validating password");
     if (passwordF !== null && passwordF !== undefined) {
         console.log("passwordF is " + passwordF + "not null")
+        if (localStorage.getItem("password") && hasher(localStorage.getItem("password")) === passwordF) return true;
         let storedPassword = localStorage.getItem("password");
         if (storedPassword && hasher(storedPassword) === data[username]) {
             return true;
@@ -914,7 +916,7 @@ async function validatePassword(username) {
     }
 }
 async function addRoomProcessor() {
-    var action = await Popup.quick("Would you like to attempt to create or join a room?", "3options", "Create Private Room", "Create/Join Public Room", "Cancel");
+    var action = await Popup.quick("Would you like to attempt to create or join a room?", "3options", "Create/Join Private Room", "Create/Join Public Room", "Cancel");
     if (action === "Cancel") return;
     if (action === "Create/Join Public Room") {
         var roomName = await Popup.quick("Please enter the public room name you'd like to join or create.", "text");
@@ -936,6 +938,57 @@ async function addRoomProcessor() {
         localStorage.setItem("additionalRooms", JSON.stringify(additionalRoomNames));
         currentRoom = `&${roomName.trim()}`;
         switchRoom(currentRoom);
+    }
+    if (action === "Create/Join Private Room") {
+        var selection = await Popup.quick("Would you like to create a new private room, or join an existing one?", "2options", "Create Private Room", "Join Private Room");
+        if (selection === "Create Private Room") {
+            var name = await Popup.quick("Please enter a name for your private room. Do not include the &", "text");
+            var password = await Popup.quick("Please enter a password for your private room. Do not include the &", "text");
+            await addDoc(collection(db, "PrivateRooms"), {
+                name: name.trim(),
+                password: hasher(password.trim())
+            });
+        } else if (selection === "Join Private Room") {
+            var name = await Popup.quick("Please enter a name for your private room. Do not include the &", "text");
+            const snapshot = await getDocs(collection(db, "PrivateRooms"));
+            var password = null;
+            var found = false;
+            snapshot.forEach(doca => {
+                const data = doca.data();
+                if (data.name == name) {
+                    found = true;
+                    password = data.password;
+                }
+
+            });
+            if (!found) {
+                Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Error: Private Room not found. Perhaps it is public?", "ok");
+                return;
+            }
+            var inputPassword = await Popup.quick("Please enter the password for this private room.", "password");
+            if (inputPassword == null) {
+                return;
+            }
+            if (hasher(inputPassword) !== password) {
+                Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Error: Incorrect password.", "ok");
+                return;
+            } else {
+                var docsLink = document.getElementById("docsLink");
+                var newRoomLi = document.createElement("li");
+                newRoomLi.classList.add("room");
+                newRoomLi.id = `&${name.trim()}`;
+                newRoomLi.innerHTML = `& ${name.trim()}`;
+                newRoomLi.addEventListener("click", () => {
+                    switchRoom(`${"&" + name.trim()}`);
+                })
+                docsLink.insertAdjacentElement("beforebegin", newRoomLi);
+                additionalRooms.push(newRoomLi.id);
+                additionalRoomNames.push("& " + name.trim());
+                localStorage.setItem("additionalRooms", JSON.stringify(additionalRoomNames));
+                currentRoom = `&${name.trim()}`;
+                switchRoom(currentRoom);
+            }
+        }
     }
 
 }
@@ -1474,7 +1527,7 @@ async function onload() {
     })
     //#region  Delete rooms
     document.getElementById("deleteRooms").addEventListener("click", () => {
-        localStorage.removeItem("additionalRooms");
+        removeRoom();
     });
     document.getElementById("&music").addEventListener("click", () => {
         switchRoom("&music", "music");
@@ -1490,7 +1543,22 @@ async function onload() {
     listenToRoom('&general');
 
 }
-
+async function removeRoom() {
+    var roomToRemove = await Popup.quick("Please enter the name of the room you wish to delete (do not include the & symbol).", "text");
+    var addRooms = localStorage.getItem("additionalRooms");
+    roomToRemove = "& " + roomToRemove.trim();
+    addRooms = JSON.parse(addRooms);
+    for (var i = 0; i < addRooms.length; i++) {
+        if (addRooms[i] == roomToRemove) {
+            addRooms.splice(i, 1);
+            localStorage.setItem("additionalRooms", JSON.stringify(addRooms));
+            additionalRooms.splice(i, 1);
+            additionalRoomNames.splice(i, 1);
+            Popup.quick(`<span class='material-symbols-outlined'>check_circle</span><br>Room ${roomToRemove} has been removed.`, "ok");
+            document.location.reload();
+        }
+    }
+}
 function processGameInput(input) {
     if (input == "!initiate") {
         initiateGame();
