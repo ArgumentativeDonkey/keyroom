@@ -1474,20 +1474,7 @@ async function onload() {
     })
     //#region  Delete rooms
     document.getElementById("deleteRooms").addEventListener("click", () => {
-        if (!deletingRooms) {
-            deletingRooms = true;
-            document.getElementById("deleteRooms").innerHTML = "Delete: On";
-            document.querySelectorAll('.room').forEach(roomEl => {
-                roomEl.setAttribute("data-theme", "deletion");
-            });
-        } else {
-            deletingRooms = false;
-            document.getElementById("deleteRooms").innerHTML = "-Remove rooms-";
-            document.querySelectorAll('.room').forEach(roomEl => {
-                roomEl.setAttribute("data-theme", "normal");
-            });
-        } 
-
+        localStorage.removeItem("additionalRooms");
     });
     document.getElementById("&music").addEventListener("click", () => {
         switchRoom("&music", "music");
