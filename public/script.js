@@ -1335,6 +1335,7 @@ async function switchRoom(room, messageStyling) {
     document.getElementById(room).classList.remove('room');
 }
 async function onload() {
+    //#region Onload hell
     const bossRef = collection(db, "bossBattle");
     const snapshot = await getDocs(bossRef)
     var boss = null;
@@ -1446,6 +1447,7 @@ async function onload() {
             UsersShown = true;
         }
     })
+    //#region Room switching
     document.getElementById("&random").addEventListener("click", () => {
         switchRoom("&random");
     })
@@ -1470,6 +1472,7 @@ async function onload() {
     document.getElementById("newroom").addEventListener("click", () => {
         addRoomProcessor();
     })
+    //#region  Delete rooms
     document.getElementById("deleteRooms").addEventListener("click", () => {
         if (!deletingRooms) {
             deletingRooms = true;
