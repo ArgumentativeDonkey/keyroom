@@ -159,11 +159,15 @@ a:focus {
     align-items: center;
     padding-left: 10px;
 }
-
-.roomsList li:hover {
-    text-decoration: underline;
+.roomsList li:hover[data-theme="deletion"] {
+    text-decoration: underline red;
 }
-
+.roomsList li:hover[data-theme="normal"] {
+    text-decoration: underline var(--txt);
+}
+.roomsList li:hover {
+    text-decoration: underline  var(--txt);
+}
 .roomsListDiv {
     margin-left: 1vw;
 }

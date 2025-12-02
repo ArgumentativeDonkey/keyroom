@@ -1,6 +1,6 @@
 export class Popup {
     static popupList = [];
-    static async quick(text, type) {
+    static async quick(text, type, parem1=null, parem2=null, parem3=null) {
         return new Promise(resolve => {
             const popup = new Popup;
             popup.inittext(text);
@@ -39,6 +39,13 @@ export class Popup {
                     popup.initbar(`<button>No</button><button>Yes</button>`);
                     popup.bar.querySelectorAll('button')[0].onclick = () => doResolve(false);
                     popup.bar.querySelectorAll('button')[1].onclick = () => doResolve(true);
+                    break;
+                case "3options":
+                    defaultResolve = true;
+                    popup.initbar(`<button>${parem1}</button><button>${parem2}</button><button>${parem3}</button>`);
+                    popup.bar.querySelectorAll('button')[0].onclick = () => doResolve(parem1);
+                    popup.bar.querySelectorAll('button')[1].onclick = () => doResolve(parem2);
+                    popup.bar.querySelectorAll('button')[2].onclick = () => doResolve(parem3);
                     break;
                 case "text":
                     popup.initbar(`<input type='text'/><button>Submit</button>`);
