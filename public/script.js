@@ -916,12 +916,12 @@ async function validatePassword(username) {
     }
 }
 async function addRoomProcessor() {
-    var action = await Popup.quick("Would you like to attempt to create or join a room?", "3options", "Create/Join Private Room", "Create/Join Public Room", "Cancel");
+    var action = await Popup.quick("Would you like to attempt to create or join a room?", "3options", "Create Private Room", "Create/Join Public Room", "Cancel");
     if (action === "Cancel") return;
-    if (action === "Create/Join Public Room") {
-        var roomName = await Popup.quick("Please enter the public room name you'd like to join or create.", "text");
+    else if (action === "Public") {
+        var roomName = await Popup.quick("<span class='material-symbols-outlined'>group_search</span><br>Please enter the public room name you'd like to join or create.", "text");
         if (roomName == null || roomName.trim() === "") {
-            Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Invalid room name.", "ok");
+            Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Invalid room name.");
             return;
         }
         var docsLink = document.getElementById("docsLink");
@@ -938,57 +938,6 @@ async function addRoomProcessor() {
         localStorage.setItem("additionalRooms", JSON.stringify(additionalRoomNames));
         currentRoom = `&${roomName.trim()}`;
         switchRoom(currentRoom);
-    }
-    if (action === "Create/Join Private Room") {
-        var selection = await Popup.quick("Would you like to create a new private room, or join an existing one?", "2options", "Create Private Room", "Join Private Room");
-        if (selection === "Create Private Room") {
-            var name = await Popup.quick("Please enter a name for your private room. Do not include the &", "text");
-            var password = await Popup.quick("Please enter a password for your private room. Do not include the &", "text");
-            await addDoc(collection(db, "PrivateRooms"), {
-                name: name.trim(),
-                password: hasher(password.trim())
-            });
-        } else if (selection === "Join Private Room") {
-            var name = await Popup.quick("Please enter a name for your private room. Do not include the &", "text");
-            const snapshot = await getDocs(collection(db, "PrivateRooms"));
-            var password = null;
-            var found = false;
-            snapshot.forEach(doca => {
-                const data = doca.data();
-                if (data.name == name) {
-                    found = true;
-                    password = data.password;
-                }
-
-            });
-            if (!found) {
-                Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Error: Private Room not found. Perhaps it is public?", "ok");
-                return;
-            }
-            var inputPassword = await Popup.quick("Please enter the password for this private room.", "password");
-            if (inputPassword == null) {
-                return;
-            }
-            if (hasher(inputPassword) !== password) {
-                Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Error: Incorrect password.", "ok");
-                return;
-            } else {
-                var docsLink = document.getElementById("docsLink");
-                var newRoomLi = document.createElement("li");
-                newRoomLi.classList.add("room");
-                newRoomLi.id = `&${name.trim()}`;
-                newRoomLi.innerHTML = `& ${name.trim()}`;
-                newRoomLi.addEventListener("click", () => {
-                    switchRoom(`${"&" + name.trim()}`);
-                })
-                docsLink.insertAdjacentElement("beforebegin", newRoomLi);
-                additionalRooms.push(newRoomLi.id);
-                additionalRoomNames.push("& " + name.trim());
-                localStorage.setItem("additionalRooms", JSON.stringify(additionalRoomNames));
-                currentRoom = `&${name.trim()}`;
-                switchRoom(currentRoom);
-            }
-        }
     }
 
 }

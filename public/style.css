@@ -334,6 +334,11 @@ button:focus {
     color: var(--txt);
 }
 
+.messages {
+    scrollbar-color: var(--txt);
+    scroll-behavior: smooth;
+}
+
 .messages::-webkit-scrollbar {
     width: 8px;
 }
