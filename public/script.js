@@ -914,12 +914,12 @@ async function validatePassword(username) {
     }
 }
 async function addRoomProcessor() {
-    var action = await Popup.quick("Would you like to attempt to create or join a room?", "3options", "Create Private Room", "Create/Join Public Room", "Cancel");
+    var action = await Popup.quick("<span class='material-symbols-outlined'>groups_3</span><br>What kind of room would you like to create/join?", "3options", "Private", "Public", "Cancel");
     if (action === "Cancel") return;
-    if (action === "Create/Join Public Room") {
-        var roomName = await Popup.quick("Please enter the public room name you'd like to join or create.", "text");
+    else if (action === "Public") {
+        var roomName = await Popup.quick("<span class='material-symbols-outlined'>group_search</span><br>Please enter the public room name you'd like to join or create.", "text");
         if (roomName == null || roomName.trim() === "") {
-            Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Invalid room name.", "ok");
+            Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Invalid room name.");
             return;
         }
         var docsLink = document.getElementById("docsLink");
@@ -936,6 +936,16 @@ async function addRoomProcessor() {
         localStorage.setItem("additionalRooms", JSON.stringify(additionalRoomNames));
         currentRoom = `&${roomName.trim()}`;
         switchRoom(currentRoom);
+    } else if (action === "Private") {
+        var roomName = await Popup.quick("<span class='material-symbols-outlined'>group_search</span><br>Please enter the private room name you'd like to join or create.", "text");
+        if (roomName == null || roomName.trim() === "") {
+            Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Invalid room name.");
+            return;
+        }
+        //var docsLink = document.getElementById("docsLink");
+        //var newRoomLi = document.createElement("li");
+        
+        Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Sorry, private room's aren't avaliable yet.");
     }
 
 }
