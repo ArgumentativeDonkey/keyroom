@@ -205,10 +205,15 @@ a:focus {
 
 .squareAvatar {
     width: 100px;
-    height: 100px;
+    height: 150px;
     background-position: center center;
+    border: 2px solid var(--txt);
 }
-
+.yourUsername {
+    position: absolute;
+    text-align: left;
+    margin-left: 102px;
+}
 .CharacterProfile {
     visibility: hidden;
     background-color: var(--bg);
