@@ -31,14 +31,17 @@
     --bg: #fff1e6;
     --txt: #1c1c1c;
 }
+
 [data-theme="blue"] {
     --bg: #f0f8ff;
     --txt: #1c1c1c;
 }
+
 [data-theme="banana"] {
     --bg: #fff26a;
     --txt: #1c1c1c;
 }
+
 [data-theme="hacker"] {
     --bg: black;
     --txt: lime;
@@ -110,14 +113,17 @@ a {
     color: var(--txt);
     text-decoration: underline double var(--txt) 1px;
 }
+
 a:hover {
     color: var(--txt);
     text-decoration: underline dashed var(--txt) 1px;
 }
+
 a:visited {
     color: var(--txt);
     text-decoration: underline solid var(--txt) 1px;
 }
+
 a:focus {
     color: var(--txt);
     text-decoration: underline solid var(--txt) 2px;
@@ -135,6 +141,7 @@ a:focus {
     outline: 0;
     color: var(--txt);
 }
+
 .sendput:focus {
     outline: 0;
 }
@@ -149,7 +156,8 @@ a:focus {
     margin-left: 10px;
 }
 
-.roomsList li {
+.roomsList li,
+.you {
     cursor: pointer;
     width: calc(100% - 10px);
     margin-right: 3px;
@@ -159,20 +167,33 @@ a:focus {
     align-items: center;
     padding-left: 10px;
 }
+
 .roomsList li:hover[data-theme="deletion"] {
     text-decoration: underline red;
 }
+
 .roomsList li:hover[data-theme="normal"] {
     text-decoration: underline var(--txt);
 }
-.roomsList li:hover {
-    text-decoration: underline  var(--txt);
+
+.roomsList li:hover,
+.you {
+    text-decoration: underline var(--txt);
 }
-.roomsListDiv {
+
+.roomsListDiv,
+.you {
     margin-left: 1vw;
 }
 
-.room {
+.you {
+    position: absolute;
+    margin-left: 2vw;
+    user-select: none;
+}
+
+.room,
+.you {
     border-radius: 7px;
     padding: 0.5px;
     margin-top: 2px;
@@ -180,6 +201,35 @@ a:focus {
     padding-bottom: 1px;
     font-size: 17px;
     bottom: 4px;
+}
+
+.squareAvatar {
+    width: 100px;
+    height: 100px;
+    background-position: center center;
+}
+
+.CharacterProfile {
+    visibility: hidden;
+    background-color: var(--bg);
+    border-radius: 2px;
+    position: absolute;
+    height: 30rem;
+    width: 30rem;
+    max-height: 100dvh;
+    max-width: 100dvw;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--bg);
+    z-index: 12;
+    padding: 5px;
+    box-sizing: border-box;
+    margin: 0;
+    border: 2px solid var(--txt);
+    border-radius: 1rem;
+    overflow: hidden;
+    color: var(--txt);
 }
 
 .roomActive {
@@ -230,6 +280,7 @@ button {
     border-color: var(--txt);
     color: var(--txt);
 }
+
 button:focus {
     background-color: inherit;
     outline: 0;
@@ -458,6 +509,7 @@ button:focus {
 }
 
 @keyframes shake {
+
     0%,
     100% {
         transform: translateX(0);
@@ -482,6 +534,7 @@ button:focus {
 }
 
 @keyframes bounce {
+
     0%,
     100% {
         transform: translateY(0);
@@ -498,6 +551,7 @@ button:focus {
 }
 
 @keyframes fade {
+
     0%,
     100% {
         opacity: 0;
@@ -513,16 +567,14 @@ button:focus {
 }
 
 .rainbowtext {
-    background: linear-gradient(
-        90deg,
-        red,
-        orange,
-        yellow,
-        green,
-        blue,
-        indigo,
-        violet
-    );
+    background: linear-gradient(90deg,
+            red,
+            orange,
+            yellow,
+            green,
+            blue,
+            indigo,
+            violet);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -550,6 +602,7 @@ button:focus {
 }
 
 @keyframes zoom {
+
     0%,
     100% {
         transform: scale(1);
