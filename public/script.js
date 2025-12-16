@@ -43,7 +43,7 @@ let cansendmessages = true;
 const timeout = 1000;
 async function sendMail(recipient, sender, message) {
     if (recipient === sender) {
-        Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Error: There is no need to summon yourself");
+        Popup.err("There is no need to summon yourself");
         return;
     }
 
@@ -397,7 +397,7 @@ async function doBossDamage(damage) {
         }
     });
     if (!bossRef) {
-        Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Error: There is no active boss battle. Idk how the hell you initiated this function.");
+        Popup.err("There is no active boss battle. Idk how the hell you initiated this function.");
         return;
     }
 
@@ -530,7 +530,7 @@ export async function sendMsg(message, writer, color, raw) {
             }
 
             if (!found) {
-                Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Error: No message found to edit.");
+                Popup.err("No message found to edit.");
             }
             return;
         } else if (message.split(" ")[0].trim() === "!editId") {
@@ -563,7 +563,7 @@ export async function sendMsg(message, writer, color, raw) {
             }
 
             if (!found) {
-                Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Error: No message found to edit.");
+                Popup.err("No message found to edit.");
             }
             return;
         } else if (message.split(" ")[0].trim() === "!editProfilePic") {
@@ -1002,7 +1002,7 @@ async function addRoomProcessor() {
 
             });
             if (!found) {
-                Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Error: Private Room not found. Perhaps it is public?", "ok");
+                Popup.err("Private Room not found. Perhaps it is public?", "ok");
                 return;
             }
             var inputPassword = await Popup.quick("Please enter the password for this private room.", "password");
@@ -1010,7 +1010,7 @@ async function addRoomProcessor() {
                 return;
             }
             if (hasher(inputPassword) !== password) {
-                Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Error: Incorrect password.", "ok");
+                Popup.err("Incorrect password.", "ok");
                 return;
             } else {
                 var docsLink = document.getElementById("docsLink");
@@ -1437,7 +1437,7 @@ async function switchRoom(room, messageStyling) {
     }
     let room = document.getElementById(room);
     if(!room) {
-        Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Error: switching rooms failed.");
+        Popup.err("Switching rooms failed");
     } else {
         room.classList.add('roomActive');
         room.classList.remove('room');

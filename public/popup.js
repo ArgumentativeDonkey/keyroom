@@ -73,6 +73,12 @@ export class Popup {
             }
         });
     }
+
+    static async err(text) {
+        let processed_text = "<span class='material-symbols-outlined'>warning</span><br>Error: " + text;
+        console.log(`Showed error ${text}`);
+        return await Popup.quick(processed_text);
+    }
     constructor() {
         this.popup = document.createElement('div');
         this.popup.classList.add("popup");
