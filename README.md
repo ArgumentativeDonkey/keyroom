@@ -1,5 +1,3 @@
-Welcome to the Keyroom repo! You can access the chatroom at [https://keyroom-5ff86.web.app/](https://keyroom-5ff86.web.app/). <br>
-
 About
 ================
 Keyroom is a small chatroom built for rapid communication on the web. In honesty, it has no true purpose but for the enjoyement and entertainment of it's users. We welcome you to visit us at any of the following: <br>
