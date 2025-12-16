@@ -251,7 +251,35 @@ function scrollToBottom(container) {
         container.scrollTop = container.scrollHeight;
     }
 }
+async function createAvatar(rounded=true) {
+    const avatar = document.createElement("img");
+    if (rounded) avatar.className = "avatar"; else avatar.className = "squareAvatar";
+    getDocs(query(collection(db, "connectedUsers"), where("name", "==", username)))
+        .then(snap => {
+            if (!snap.empty) {
+                const userData = snap.docs[0].data();
+                if (userData.profilePic) {
+                    avatar.src = userData.profilePic;
+                } else {
+                    avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=${getUserColor(username)}&rounded=${rounded}`;
+                }
+            } else if (username === "TellBot") {
+                avatar.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDlzJDyJ_J6vRQmfW4D-ve6PWtLk6XLdu_3w&s";
+            } else {
+                avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=${getUserColor(username, true)}&rounded=${rounded}`;
+            }
+            avatar.alt = username;
+        })
+        .catch(err => {
+            console.error("Error fetching user data:", err);
+            avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=random&rounded=true`;
+            avatar.alt = username;
+        });
+    avatar.src = `https://ui-avatars.com/api/?name=${username}&background=random&rounded=true`;
+    avatar.alt = username;
+    return avatar;
 
+}
 function listenToRoom(roomName) {
     if (unsubscribeMessages) {
         unsubscribeMessages();
@@ -879,10 +907,6 @@ async function validatePassword(username) {
         const data = doca.data();
         if (data.name === username) {
             passwordF = data.password;
-            console.log('found password for ' + username)
-            console.log(data.password);
-            console.log(passwordF);
-            console.log(data);
 
         }
 
@@ -905,7 +929,6 @@ async function validatePassword(username) {
         }
         return false;
     } else {
-        console.log("passwordF is " + passwordF)
 
         if (!(localStorage.getItem("seen-pwd-warning") === "true")) {
             await Popup.quick("<span class='material-symbols-outlined'>lock_open</span><br>You don't have a registered password. If you want one, please contact someone with Git access.", "ok");
@@ -1362,6 +1385,13 @@ async function resetRoomIfKey(message, writer, room) {
         Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: failed to reset room: ${error.message}`);
     }
 }
+async function makeProfile() {
+    document.getElementById("yourUsername").innerText = username;
+    let avatar = await createAvatar(false);
+    document.getElementById("CharacterProfile").append(avatar);
+
+
+}
 async function switchRoom(room, messageStyling) {
     nNotify = false;
     if (!messageStyling) {
@@ -1474,6 +1504,7 @@ async function onload() {
         console.log("Username IS Key or Leif");
         console.log("Welcome, " + username + "!");
     }
+    makeProfile();
     document.getElementById("showUsers").addEventListener("click", () => {
         if (UsersShown) {
             document.getElementById("showUsers").innerHTML = "Show Users";
@@ -1537,6 +1568,15 @@ async function onload() {
     })
     document.getElementById("&").addEventListener("click", () => {
         switchRoom(`&${username}`);
+    })
+    document.getElementById("you").addEventListener("click", () => {
+        if (document.getElementById("CharacterProfile").style.visibility == "hidden") {
+            document.getElementById("CharacterProfile").style.visibility = "visible";
+        } else if (document.getElementById("CharacterProfile").style.visibility == "visible") {
+            document.getElementById("CharacterProfile").style.visibility = "hidden";
+        } else {
+            document.getElementById("CharacterProfile").style.visibility = "visible";
+        }
     })
     document.getElementById("&general").classList.add('roomActive');
     document.getElementById("&general").classList.remove('room');
