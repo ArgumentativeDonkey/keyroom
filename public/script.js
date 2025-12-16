@@ -1522,8 +1522,8 @@ async function onload() {
     document.getElementById("&game").addEventListener("click", () => {
         switchRoom("&game");
     })
-    document.getElementById("newroom").addEventListener("click", () => {
-        addRoomProcessor();
+    document.getElementById("newroom").addEventListener("click", async () => {
+        await addRoomProcessor();
     })
     //#region  Delete rooms
     document.getElementById("deleteRooms").addEventListener("click", () => {
