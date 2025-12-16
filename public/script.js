@@ -336,8 +336,12 @@ function listenToRoom(roomName) {
                     avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(message.writer)}&background=random&rounded=true`;
                     avatar.alt = message.writer;
                 });
+            // ANCHOR Message construction
             avatar.src = `https://ui-avatars.com/api/?name=${message.writer}&background=random&rounded=true`;
             avatar.alt = message.writer;
+            avatar.onclick = function () {
+                makeProfile(message.writer);
+            };
 
             const content = document.createElement("div");
             content.className = "msgContent";
@@ -728,7 +732,7 @@ export async function sendMsg(message, writer, color, raw) {
         } else if (message.split(" ")[0].trim() === "!hollow") {
             message = `<span style="color:transparent; -webkit-text-stroke:1px black;">${message.split(" ").slice(1).join(" ")}</span>`;
         }
-        //#region Send Message Code
+        // ANCHOR Send Message Code
         const messagesEl = document.getElementById("messages");
         const msgP = document.createElement("p");
         const iden = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -1385,8 +1389,8 @@ async function resetRoomIfKey(message, writer, room) {
         Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: failed to reset room: ${error.message}`);
     }
 }
-async function makeProfile() {
-    document.getElementById("yourUsername").innerText = username;
+async function makeProfile(writer) {
+    document.getElementById("yourUsername").innerText = writer;
     let avatar = await createAvatar(false);
     document.getElementById("CharacterProfile").append(avatar);
 
