@@ -631,6 +631,9 @@ export async function sendMsg(message, writer, color, raw) {
         } else if (message.trim() === "!logOut") {
             localStorage.removeItem('username');
             localStorage.removeItem('password');
+            localStorage.removeItem('additionalRooms');
+            localStorage.removeItem('seen-pwd-warning');
+            localStorage.removeItem('deviceId');
             Popup.quick("Reloading...", "_");
             setTimeout(() => {
                 window.location.reload(true);
@@ -1418,8 +1421,13 @@ async function switchRoom(room, messageStyling) {
     if (room == `${"&"}${username}`) {
         document.getElementById("&").classList.add('roomActive');
     }
-    document.getElementById(room).classList.add('roomActive');
-    document.getElementById(room).classList.remove('room');
+    let room = document.getElementById(room);
+    if(!room) {
+        Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Error: switching rooms failed.");
+    } else {
+        room.classList.add('roomActive');
+        room.classList.remove('room');
+    }
 }
 async function onload() {
     //#region Onload hell
