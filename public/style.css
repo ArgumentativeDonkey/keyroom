@@ -212,7 +212,25 @@ a:focus {
 .yourUsername {
     position: absolute;
     text-align: left;
-    margin-left: 102px;
+    margin-left: 105px;
+}
+.yourBio {
+    position: absolute;
+    margin-left: 105px;
+    margin-top: 40px;
+    width: calc(100% - 115px);
+    height: auto;
+    max-height: 100px;
+    overflow-y: auto;
+}
+.closeProfile {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--txt);
 }
 .CharacterProfile {
     visibility: hidden;

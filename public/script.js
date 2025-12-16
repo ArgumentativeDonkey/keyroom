@@ -251,32 +251,32 @@ function scrollToBottom(container) {
         container.scrollTop = container.scrollHeight;
     }
 }
-async function createAvatar(rounded=true) {
+async function createAvatar(rounded=true, writer=username) {
     const avatar = document.createElement("img");
     if (rounded) avatar.className = "avatar"; else avatar.className = "squareAvatar";
-    getDocs(query(collection(db, "connectedUsers"), where("name", "==", username)))
+    getDocs(query(collection(db, "connectedUsers"), where("name", "==", writer)))
         .then(snap => {
             if (!snap.empty) {
                 const userData = snap.docs[0].data();
                 if (userData.profilePic) {
                     avatar.src = userData.profilePic;
                 } else {
-                    avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=${getUserColor(username)}&rounded=${rounded}`;
+                    avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(writer)}&background=${getUserColor(writer)}&rounded=${rounded}`;
                 }
-            } else if (username === "TellBot") {
+            } else if (writer === "TellBot") {
                 avatar.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDlzJDyJ_J6vRQmfW4D-ve6PWtLk6XLdu_3w&s";
             } else {
-                avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=${getUserColor(username, true)}&rounded=${rounded}`;
+                avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(writer)}&background=${getUserColor(writer, true)}&rounded=${rounded}`;
             }
-            avatar.alt = username;
+            avatar.alt = writer;
         })
         .catch(err => {
             console.error("Error fetching user data:", err);
-            avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=random&rounded=true`;
-            avatar.alt = username;
+            avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(writer)}&background=random&rounded=true`;
+            avatar.alt = writer;
         });
-    avatar.src = `https://ui-avatars.com/api/?name=${username}&background=random&rounded=true`;
-    avatar.alt = username;
+    avatar.src = `https://ui-avatars.com/api/?name=${writer}&background=random&rounded=true`;
+    avatar.alt = writer;
     return avatar;
 
 }
@@ -341,6 +341,8 @@ function listenToRoom(roomName) {
             avatar.alt = message.writer;
             avatar.onclick = function () {
                 makeProfile(message.writer);
+                document.getElementById("CharacterProfile").style.visibility = "visible";
+
             };
 
             const content = document.createElement("div");
@@ -580,6 +582,14 @@ export async function sendMsg(message, writer, color, raw) {
                 email: email
             }, { merge: true });
             Popup.quick(`<span class="material-symbols-outlined">mail</span><br>Email updated to ${email}`, "ok")
+            return;
+        } else if (message.split(" ")[0].trim() === "!setBio") {
+            const bio = message.split(" ")[1];
+            const userDocRef = doc(db, "connectedUsers", writer);
+            await setDoc(userDocRef, {
+                bio: bio
+            }, { merge: true });
+            Popup.quick(`<span class="material-symbols-outlined">mail</span><br>Bio updated to ${bio}`, "ok")
             return;
 
         } else if (message.split(" ")[0].trim() === "!setPassword") {
@@ -1390,9 +1400,13 @@ async function resetRoomIfKey(message, writer, room) {
     }
 }
 async function makeProfile(writer) {
+    if (document.getElementById("profileAvatar")) document.getElementById("profileAvatar").remove();
     document.getElementById("yourUsername").innerText = writer;
-    let avatar = await createAvatar(false);
+    let avatar = await createAvatar(false, writer);
+    avatar.id = "profileAvatar";
     document.getElementById("CharacterProfile").append(avatar);
+    
+    
 
 
 }
@@ -1508,7 +1522,7 @@ async function onload() {
         console.log("Username IS Key or Leif");
         console.log("Welcome, " + username + "!");
     }
-    makeProfile();
+    makeProfile(username);
     document.getElementById("showUsers").addEventListener("click", () => {
         if (UsersShown) {
             document.getElementById("showUsers").innerHTML = "Show Users";
@@ -1574,14 +1588,12 @@ async function onload() {
         switchRoom(`&${username}`);
     })
     document.getElementById("you").addEventListener("click", () => {
-        if (document.getElementById("CharacterProfile").style.visibility == "hidden") {
             document.getElementById("CharacterProfile").style.visibility = "visible";
-        } else if (document.getElementById("CharacterProfile").style.visibility == "visible") {
-            document.getElementById("CharacterProfile").style.visibility = "hidden";
-        } else {
-            document.getElementById("CharacterProfile").style.visibility = "visible";
-        }
+            makeProfile(username);
     })
+    document.getElementById("closeProfile").addEventListener("click", () => {
+        document.getElementById("CharacterProfile").style.visibility = "hidden";
+    });
     document.getElementById("&general").classList.add('roomActive');
     document.getElementById("&general").classList.remove('room');
     listenToRoom('&general');
