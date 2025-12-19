@@ -251,7 +251,7 @@ function scrollToBottom(container) {
         container.scrollTop = container.scrollHeight;
     }
 }
-async function createAvatar(rounded=true, writer=username) {
+async function createAvatar(rounded = true, writer = username) {
     const avatar = document.createElement("img");
     if (rounded) avatar.className = "avatar"; else avatar.className = "squareAvatar";
     getDocs(query(collection(db, "connectedUsers"), where("name", "==", writer)))
@@ -584,7 +584,7 @@ export async function sendMsg(message, writer, color, raw) {
             Popup.quick(`<span class="material-symbols-outlined">mail</span><br>Email updated to ${email}`, "ok")
             return;
         } else if (message.split(" ")[0].trim() === "!setBio") {
-            const bio = message.split(" ")[1];
+            const bio = message.substring(message.indexOf(' ') + 1)
             const userDocRef = doc(db, "connectedUsers", writer);
             await setDoc(userDocRef, {
                 bio: bio
@@ -798,6 +798,20 @@ export async function sendMsg(message, writer, color, raw) {
                 sendMail(reciepient, writer, "");
             }
         }
+        var messagesSent = null;
+        const snapshot = await getDocs(userRef);
+        snapshot.forEach(doca => {
+            const data = doca.data();
+            if (data.name == writer) {
+                messagesSent = data.messagesSent;
+            }
+
+        });
+        if (messagesSent === null || messagesSent === undefined) {messagesSent = 1} else {messagesSent+=1};
+        const userDocRef = doc(db, "connectedUsers", writer);
+        await setDoc(userDocRef, {
+            messagesSent: messagesSent
+        }, { merge: true });
         if (writer !== "TellBot") {
             scheckInbox(username);
         }
@@ -933,7 +947,6 @@ async function validatePassword(username) {
     const data = await res.json();
     console.log("validating password");
     if (passwordF !== null && passwordF !== undefined) {
-        console.log("passwordF is " + passwordF + "not null")
         if (localStorage.getItem("password") && hasher(localStorage.getItem("password")) === passwordF) return true;
         let storedPassword = localStorage.getItem("password");
         if (storedPassword && hasher(storedPassword) === data[username]) {
@@ -1403,13 +1416,26 @@ async function resetRoomIfKey(message, writer, room) {
     }
 }
 async function makeProfile(writer) {
+    var bio = "This user has not yet set a bio";
+    var messagesSent = 0;
+    const snapshot = await getDocs(userRef);
+    snapshot.forEach(doca => {
+        const data = doca.data();
+        if (data.name == writer) {
+            bio = data.bio;
+            messagesSent = data.messagesSent || 0;
+        }
+
+    });
+
+    document.getElementById("yourBio").innerHTML = bio + "<br>" + `<br><b>Messages Sent:</b> ${messagesSent}`;
     if (document.getElementById("profileAvatar")) document.getElementById("profileAvatar").remove();
     document.getElementById("yourUsername").innerText = writer;
     let avatar = await createAvatar(false, writer);
     avatar.id = "profileAvatar";
     document.getElementById("CharacterProfile").append(avatar);
-    
-    
+
+
 
 
 }
@@ -1435,12 +1461,12 @@ async function switchRoom(room, messageStyling) {
     if (room == `${"&"}${username}`) {
         document.getElementById("&").classList.add('roomActive');
     }
-    let room = document.getElementById(room);
-    if(!room) {
+    let the_room = document.getElementById(room);
+    if (!the_room) {
         Popup.err("Switching rooms failed");
     } else {
-        room.classList.add('roomActive');
-        room.classList.remove('room');
+        the_room.classList.add('roomActive');
+        the_room.classList.remove('room');
     }
 }
 async function onload() {
@@ -1596,8 +1622,8 @@ async function onload() {
         switchRoom(`&${username}`);
     })
     document.getElementById("you").addEventListener("click", () => {
-            document.getElementById("CharacterProfile").style.visibility = "visible";
-            makeProfile(username);
+        document.getElementById("CharacterProfile").style.visibility = "visible";
+        makeProfile(username);
     })
     document.getElementById("closeProfile").addEventListener("click", () => {
         document.getElementById("CharacterProfile").style.visibility = "hidden";

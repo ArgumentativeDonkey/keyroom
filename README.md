@@ -24,6 +24,8 @@ _Commands related to user accounts._
 
 `!editProfilePic {image url}` - Sets your displayed profile picture.
 
+`!setBio {your bio}` - Sets your displayed bio in your profile.
+
 `!lastactive {username}` - The LastActive bot will tell you when the specified user was last seen on Keyroom.
 
 `!setEmail` - Sets your email for summoning.

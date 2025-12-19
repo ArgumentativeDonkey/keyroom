@@ -205,18 +205,20 @@ a:focus {
 
 .squareAvatar {
     width: 100px;
-    height: 150px;
+    height: 100px;
     background-position: center center;
     border: 2px solid var(--txt);
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 .yourUsername {
     position: absolute;
     text-align: left;
-    margin-left: 105px;
+    margin-left: 110px;
 }
 .yourBio {
     position: absolute;
-    margin-left: 105px;
+    margin-left: 110px;
     margin-top: 40px;
     width: calc(100% - 115px);
     height: auto;
