@@ -807,7 +807,7 @@ export async function sendMsg(message, writer, color, raw) {
             }
 
         });
-        if (messagesSent === null || messagesSent === undefined) {messagesSent = 1} else {messagesSent+=1};
+        if (messagesSent === null || messagesSent === undefined) { messagesSent = 1 } else { messagesSent += 1 };
         const userDocRef = doc(db, "connectedUsers", writer);
         await setDoc(userDocRef, {
             messagesSent: messagesSent
@@ -977,7 +977,7 @@ async function addRoomProcessor() {
             Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Invalid room name.", "ok");
             return;
         }
-        var docsLink = document.getElementById("docsLink");
+        var roomsList = document.getElementById("roomsList");
         var newRoomLi = document.createElement("li");
         newRoomLi.classList.add("room");
         newRoomLi.id = `&${roomName.trim()}`;
@@ -985,7 +985,7 @@ async function addRoomProcessor() {
         newRoomLi.addEventListener("click", () => {
             switchRoom(`${"&" + roomName.trim()}`);
         })
-        docsLink.insertAdjacentElement("beforebegin", newRoomLi);
+        roomsList.append(newRoomLi);
         additionalRooms.push(newRoomLi.id);
         additionalRoomNames.push("& " + roomName.trim());
         localStorage.setItem("additionalRooms", JSON.stringify(additionalRoomNames));
@@ -1026,7 +1026,7 @@ async function addRoomProcessor() {
                 Popup.err("Incorrect password.", "ok");
                 return;
             } else {
-                var docsLink = document.getElementById("docsLink");
+                var roomsList = document.getElementById("roomsList");
                 var newRoomLi = document.createElement("li");
                 newRoomLi.classList.add("room");
                 newRoomLi.id = `&${name.trim()}`;
@@ -1034,7 +1034,7 @@ async function addRoomProcessor() {
                 newRoomLi.addEventListener("click", () => {
                     switchRoom(`${"&" + name.trim()}`);
                 })
-                docsLink.insertAdjacentElement("beforebegin", newRoomLi);
+                roomsList.append(newRoomLi);
                 additionalRooms.push(newRoomLi.id);
                 additionalRoomNames.push("& " + name.trim());
                 localStorage.setItem("additionalRooms", JSON.stringify(additionalRoomNames));
@@ -1043,6 +1043,7 @@ async function addRoomProcessor() {
             }
         }
     }
+    document.documentElement.style.setProperty("--n-rooms", document.getElementById("roomsList").childElementCount - 2);
 
 }
 function processKeydown(e) {
@@ -1463,7 +1464,8 @@ async function switchRoom(room, messageStyling) {
     }
     let the_room = document.getElementById(room);
     if (!the_room) {
-        Popup.err("Switching rooms failed");
+        //Popup.err("Switching rooms failed");
+        //This smhow only happens when you (succesfully) switch to your private room so I'm commenting 
     } else {
         the_room.classList.add('roomActive');
         the_room.classList.remove('room');
@@ -1510,18 +1512,19 @@ async function onload() {
         additionalRooms = [];
         additionalRoomNames = [];
         for (var i = 0; i < storedRooms.length; i++) {
-            var roomName = storedRooms[i].substring(2).trim();
-            var docsLink = document.getElementById("docsLink");
+            let roomName = storedRooms[i].substring(2).trim();
+            var docsLink = document.getElementById("&");
             var newRoomLi = document.createElement("li");
             newRoomLi.classList.add("room");
             newRoomLi.id = `&${roomName}`;
             newRoomLi.innerHTML = `& ${roomName}`;
-            newRoomLi.onclick = (() => {
-                const room = `&${roomName}`;
-                switchRoom(room);
-            });
             docsLink.insertAdjacentElement("beforebegin", newRoomLi);
             additionalRooms.push(newRoomLi.id);
+            newRoomLi.addEventListener("click", () => {
+                const room = `&${roomName}`;
+                switchRoom(room);
+                console.log("switched to room: " + room);
+            });
             additionalRoomNames.push(`& ${roomName}`);
         }
     }
@@ -1631,6 +1634,7 @@ async function onload() {
     document.getElementById("&general").classList.add('roomActive');
     document.getElementById("&general").classList.remove('room');
     listenToRoom('&general');
+    document.documentElement.style.setProperty("--n-rooms", document.getElementById("roomsList").childElementCount - 2);
 
 }
 async function removeRoom() {

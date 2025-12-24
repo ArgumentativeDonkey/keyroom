@@ -30,7 +30,7 @@
     </div>
     <div class="rooms" id="rooms">
       <div class="roomsListDiv">
-        <h4 class="roomsTitle">Rooms</h4>
+        <p class="roomsTitle">rooms.</p>
         <ul class="roomsList" id="roomsList">
           <li class="room" id="newroom" class="roomControls">+ Add room</li>
           <li class="room" id="deleteRooms" class="roomControls">- Remove room</li>
@@ -43,14 +43,8 @@
           <li class="room" id="&boom">& boom</li>
           <li class="room" id="&music">& music</li>
           <li class="room" id="&">& private</li>
-          <li class="room" id ="docsLink"><a href="docs"
-              style="text-decoration: none; color: inherit;" target="_self">Command Help</a></li>
-          <li class="room"><a href="https://github.com/ArgumentativeDonkey/keyroom/" 
-              style="text-decoration: none; color: inherit;"
-              target="_blank">Github</a></li>
         </ul>
       </div>
-      <p class="you" id="you">You</p>
     </div>
     <div class="messages" id="messages"></div>
     <div class="send"></div>
@@ -59,8 +53,11 @@
       <p class="userP"><b>Connected Users</b></p>
     </div>
     <div class="themesDiv">
-      <li class="themes">themes</li>
+      <li class="themes">themes.</li>
     </div>
+    <p class="github"><a href="https://github.com/ArgumentativeDonkey/keyroom/" target="_blank">github.</a></p>
+    <p class="docs" id="docsLink"><a href="docs" target="_self">command help.</a></p>
+    <p class="you" id="you" style="color:var(--txt)">you.</p>
     <div class="CharacterProfile" id="CharacterProfile">
       <button class="closeProfile" id="closeProfile">X</button>
       <h3 id="yourUsername" class="yourUsername">Username</h3>
@@ -70,15 +67,15 @@
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
       try {
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      OneSignalDeferred.push(async function (OneSignal) {
-        await OneSignal.init({
-          appId: "8d285783-0e1e-4efa-bc48-768d7f6bae26",
+        window.OneSignalDeferred = window.OneSignalDeferred || [];
+        OneSignalDeferred.push(async function (OneSignal) {
+          await OneSignal.init({
+            appId: "8d285783-0e1e-4efa-bc48-768d7f6bae26",
+          });
         });
-      });
-    } catch (e) {
-      console.error("OneSignal init failed: "+ e);
-    }
+      } catch (e) {
+        console.error("OneSignal init failed: " + e);
+      }
     </script>
     <script type="module" src="script.js"></script>
     <script type="module" src="themes.js"></script>

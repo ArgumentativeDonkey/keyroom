@@ -31,6 +31,9 @@ const themes = [{
 }, {
     key: "hacker",
     name: "hacker"
+}, {
+    key: "black",
+    name: "black"
 }];
 
 const wrappers = document.querySelectorAll(".themesDiv");

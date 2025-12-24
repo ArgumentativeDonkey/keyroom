@@ -13,11 +13,17 @@
     --stripe-calc: calc(var(--stripe-width) * 1.41421356237);
     --anim-time: 8s;
     --n-themes: 10;
+    --n-rooms: 10;
 }
 
 [data-theme="light"] {
     --bg: #ffffff;
     --txt: #1c1c1c;
+}
+
+[data-theme="black"] {
+    --bg: black;
+    --txt: #ffffff;
 }
 
 *::selection {
@@ -67,7 +73,7 @@ body[data-format="music"] .musicFrame {
     display: block;
     height: 30vh;
     width: 70vw;
-    left: 20vw;
+    left: 3vw;
     position: absolute;
 }
 
@@ -137,7 +143,7 @@ a:focus {
     bottom: 5px;
     width: 20%;
     min-width: 200px;
-    left: calc(15vw + 50px);
+    left: calc(3vw + 50px);
     outline: 0;
     color: var(--txt);
 }
@@ -156,8 +162,7 @@ a:focus {
     margin-left: 10px;
 }
 
-.roomsList li,
-.you {
+.roomsList li {
     cursor: pointer;
     width: calc(100% - 10px);
     margin-right: 3px;
@@ -176,30 +181,21 @@ a:focus {
     text-decoration: underline var(--txt);
 }
 
-.roomsList li:hover,
-.you {
+.roomsList li:hover {
     text-decoration: underline var(--txt);
 }
 
-.roomsListDiv,
-.you {
+.roomsListDiv {
     margin-left: 1vw;
 }
 
-.you {
-    position: absolute;
-    margin-left: 2vw;
-    user-select: none;
-}
 
-.room,
-.you {
+.room {
     border-radius: 7px;
     padding: 0.5px;
     margin-top: 2px;
     padding-top: 1px;
     padding-bottom: 1px;
-    font-size: 17px;
     bottom: 4px;
 }
 
@@ -210,12 +206,15 @@ a:focus {
     border: 2px solid var(--txt);
     background-repeat: no-repeat;
     background-size: cover;
+    margin-top: 18px;
 }
+
 .yourUsername {
     position: absolute;
     text-align: left;
     margin-left: 110px;
 }
+
 .yourBio {
     position: absolute;
     margin-left: 110px;
@@ -225,6 +224,7 @@ a:focus {
     max-height: 100px;
     overflow-y: auto;
 }
+
 .closeProfile {
     position: absolute;
     top: 5px;
@@ -234,6 +234,7 @@ a:focus {
     font-weight: bold;
     color: var(--txt);
 }
+
 .CharacterProfile {
     visibility: hidden;
     background-color: var(--bg);
@@ -271,16 +272,30 @@ a:focus {
 }
 
 .rooms {
-    top: 0px;
-    height: 100vh;
+    height: 40px;
     width: 13vw;
     color: var(--txt);
     overflow: hidden;
-    background-color: var(--bg);
+    background-color: transparent;
     margin: 0px;
     position: absolute;
-    left: 0px;
+    left: calc(75% + 195px);
     border-right: 2px var(--txt) solid;
+    z-index: 1000;
+    bottom: 3px;
+    padding: 0px;
+    transition: height 0.7s;
+    pointer-events: none;
+}
+
+.rooms:hover {
+    height: calc(41px * var(--n-rooms));
+    overflow-y: hidden;
+    pointer-events: auto;
+}
+
+.rooms * {
+    pointer-events: auto;
 }
 
 .messages[data-theme="normal"] {
@@ -364,6 +379,16 @@ button:focus {
         top: 5px;
     }
 
+    .roomsListDiv {
+        position: relative;
+        width: 100%;
+        height: auto;
+    }
+
+    .rooms {
+        border-right: none;
+    }
+
     .showUsersMobile,
     .showRoomsMobile {
         display: none;
@@ -372,12 +397,12 @@ button:focus {
     .messages {
         height: 85vh;
         position: absolute;
-        left: 15vw;
+        left: 3vw;
         top: 80px;
     }
 
     .sendput {
-        left: calc(15vw + 50px);
+        left: calc(3vw + 50px);
     }
 }
 
@@ -394,6 +419,7 @@ button:focus {
     margin-right: 10px;
     flex-shrink: 0;
     border: 2px solid var(--txt);
+    cursor: pointer;
 }
 
 .msgContent {
@@ -764,19 +790,73 @@ button:focus {
     position: absolute;
     bottom: 20px;
     padding: 0px;
-    left: 75%;
+    left: calc(75% + 90px);
     width: fit-content;
     height: 10px;
     transition: height 0.5s;
 }
 
+.github {
+    color: var(--txt);
+    position: absolute;
+    bottom: 0px;
+    padding: 0px;
+    left: calc(75% - 30px);
+    width: fit-content;
+    height: 10px;
+    color: inherit;
+    text-decoration: none;
+}
+
+.docs {
+    color: var(--txt);
+    position: absolute;
+    bottom: 0px;
+    padding: 0px;
+    left: calc(75% - 310px);
+    width: fit-content;
+    height: 10px;
+    color: inherit;
+    text-decoration: none;
+}
+
+.you {
+    color: var(--txt);
+    position: absolute;
+    bottom: 0px;
+    padding: 0px;
+    left: calc(75% - 125px);
+    width: fit-content;
+    height: 10px;
+    color: inherit;
+    cursor: pointer;
+}
+
+.you:hover,
+.docs:hover,
+.github:hover,
+.themes:hover {
+    text-decoration: underline var(--txt);
+}
+
+
+
 .themes {
     color: inherit;
-    text-decoration: underline;
+    text-decoration: none;
+}
+
+.docs a,
+.github a {
+    text-decoration: none;
 }
 
 .themesDiv li {
     font-size: inherit + 4px;
+}
+
+.themesDiv li:hover {
+    text-decoration: underline var(--txt);
 }
 
 .themesDiv:hover {
@@ -793,7 +873,6 @@ button:focus {
 }
 
 /* SECTION special theme modifiers */
-
 [data-theme="greyscale"] img {
     filter: grayscale(1);
 }
