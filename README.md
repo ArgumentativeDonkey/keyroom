@@ -86,7 +86,7 @@ _Send messages with multimedia or special effects._
 
 `!image {url}` - Sends the image at the specified URL.
 
-`!link {url}` - Hyperlinks the given url. Does not append https:// to the front.
+`!link {url}` - Hyperlinks the given url. Does not append https:// to the front (unless you wish to link to a subpage of keyroom, you'll have to add this).
 
 `!grow {message}` - Makes a message bigger than usual.
 
