@@ -281,6 +281,8 @@ async function createAvatar(rounded = true, writer = username) {
 
 }
 function listenToRoom(roomName) {
+    document.getElementById("header").innerHTML = "& " + roomName.split("&").join("");
+    localStorage.setItem("lastRoom", roomName);
     if (unsubscribeMessages) {
         unsubscribeMessages();
     }
@@ -463,6 +465,7 @@ function rndList(list) {
     let random = Math.floor(Math.random() * list.length);
     return list[random];
 }
+//#region function sendMsg()
 export async function sendMsg(message, writer, color, raw) {
     try {
         console.log(message);
@@ -825,7 +828,7 @@ export async function sendMsg(message, writer, color, raw) {
 }
 
 const allowedPingAll = ["Leif", "Key"];
-
+//#endregion
 async function tell(message, writer, reciepient) {
     try {
         if (reciepient == writer) {
@@ -969,80 +972,25 @@ async function validatePassword(username) {
     }
 }
 async function addRoomProcessor() {
-    var action = await Popup.quick("Which type of room would you like to create/join?", "3options", "Private", "Public", "Cancel");
-    if (action === "Cancel") return;
-    if (action === "Public") {
-        var roomName = await Popup.quick("Please enter the public room name you'd like to join or create.", "text");
-        if (roomName == null || roomName.trim() === "") {
-            Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Invalid room name.", "ok");
-            return;
-        }
-        var roomsList = document.getElementById("roomsList");
-        var newRoomLi = document.createElement("li");
-        newRoomLi.classList.add("room");
-        newRoomLi.id = `&${roomName.trim()}`;
-        newRoomLi.innerHTML = `& ${roomName.trim()}`;
-        newRoomLi.addEventListener("click", () => {
-            switchRoom(`${"&" + roomName.trim()}`);
-        })
-        roomsList.append(newRoomLi);
-        additionalRooms.push(newRoomLi.id);
-        additionalRoomNames.push("& " + roomName.trim());
-        localStorage.setItem("additionalRooms", JSON.stringify(additionalRoomNames));
-        currentRoom = `&${roomName.trim()}`;
-        switchRoom(currentRoom);
+    var roomName = await Popup.quick("Please enter the room name you'd like to join or create.", "text");
+    if (roomName == null || roomName.trim() === "") {
+        Popup.quick("<span class='material-symbols-outlined'>warning</span><br>Invalid room name.", "ok");
+        return;
     }
-    if (action === "Private") {
-        var selection = await Popup.quick("Would you like to create a new private room, or join an existing one?", "2options", "Create Private Room", "Join Private Room");
-        if (selection === "Create Private Room") {
-            var name = await Popup.quick("Please enter a name for your private room. Do not include the &", "text");
-            var password = await Popup.quick("Please enter a password for your private room. Do not include the &", "text");
-            await addDoc(collection(db, "PrivateRooms"), {
-                name: name.trim(),
-                password: hasher(password.trim())
-            });
-        } else if (selection === "Join Private Room") {
-            var name = await Popup.quick("Please enter a name for your private room. Do not include the &", "text");
-            const snapshot = await getDocs(collection(db, "PrivateRooms"));
-            var password = null;
-            var found = false;
-            snapshot.forEach(doca => {
-                const data = doca.data();
-                if (data.name == name) {
-                    found = true;
-                    password = data.password;
-                }
-
-            });
-            if (!found) {
-                Popup.err("Private Room not found. Perhaps it is public?", "ok");
-                return;
-            }
-            var inputPassword = await Popup.quick("Please enter the password for this private room.", "password");
-            if (inputPassword == null) {
-                return;
-            }
-            if (hasher(inputPassword) !== password) {
-                Popup.err("Incorrect password.", "ok");
-                return;
-            } else {
-                var roomsList = document.getElementById("roomsList");
-                var newRoomLi = document.createElement("li");
-                newRoomLi.classList.add("room");
-                newRoomLi.id = `&${name.trim()}`;
-                newRoomLi.innerHTML = `& ${name.trim()}`;
-                newRoomLi.addEventListener("click", () => {
-                    switchRoom(`${"&" + name.trim()}`);
-                })
-                roomsList.append(newRoomLi);
-                additionalRooms.push(newRoomLi.id);
-                additionalRoomNames.push("& " + name.trim());
-                localStorage.setItem("additionalRooms", JSON.stringify(additionalRoomNames));
-                currentRoom = `&${name.trim()}`;
-                switchRoom(currentRoom);
-            }
-        }
-    }
+    var roomsList = document.getElementById("roomsList");
+    var newRoomLi = document.createElement("li");
+    newRoomLi.classList.add("room");
+    newRoomLi.id = `&${roomName.trim()}`;
+    newRoomLi.innerHTML = `& ${roomName.trim()}`;
+    newRoomLi.addEventListener("click", () => {
+        switchRoom(`${"&" + roomName.trim()}`);
+    })
+    roomsList.append(newRoomLi);
+    additionalRooms.push(newRoomLi.id);
+    additionalRoomNames.push("& " + roomName.trim());
+    localStorage.setItem("additionalRooms", JSON.stringify(additionalRoomNames));
+    currentRoom = `&${roomName.trim()}`;
+    switchRoom(currentRoom);
     document.documentElement.style.setProperty("--n-rooms", document.getElementById("roomsList").childElementCount - 2);
 
 }
@@ -1073,6 +1021,7 @@ function processKeydown(e) {
         document.getElementById("message-input").value = "";
     }
 }
+//#region Youtube Sync
 let currentVideoId = null;
 let player;
 let isSyncing = false;
@@ -1360,7 +1309,7 @@ function getCurrentTime() {
     }
     return 0;
 }
-
+//#endregion
 const messagesEl = document.getElementById("messages");
 
 function clearRoomBorders() {
@@ -1390,7 +1339,22 @@ function clearRoomBorders() {
     }
 }
 import { writeBatch } from "firebase/firestore";
-
+async function addCustomCSSHandler(loadingFromStorage = false) {
+    var css;
+    if (!loadingFromStorage) {
+        css = await Popup.quick("Please paste/enter your custom CSS below, or leave blank to cancel. We highly recommend writing the css in an external editor.", "textarea");
+        if (css == null || css.trim() === "") {
+            return;
+        }
+        localStorage.setItem("customCSS", css);
+    } else if (localStorage.getItem("customCSS")) { css = localStorage.getItem("customCSS"); }
+    var newStyles = document.createElement('style');
+    newStyles.id = "customCSSStyles";
+    newStyles.innerHTML = css;
+    if (document.getElementById("customCSSStyles")) { document.getElementById("customCSSStyles").remove(); }
+    newStyles.innerHTML = css.replace(/;/g, ' !important;');
+    document.head.appendChild(newStyles);
+}
 async function resetRoomIfKey(message, writer, room) {
     try {
         const parts = message.trim().split(" ");
@@ -1473,15 +1437,6 @@ async function switchRoom(room, messageStyling) {
 }
 async function onload() {
     //#region Onload hell
-    const bossRef = collection(db, "bossBattle");
-    const snapshot = await getDocs(bossRef)
-    var boss = null;
-    snapshot.forEach(doca => {
-        const data = doca.data();
-        if (data.active) {
-            replaceWithBossBattle();
-        }
-    });
 
     userDocRef = null;
     username = null;
@@ -1608,12 +1563,24 @@ async function onload() {
     document.getElementById("&game").addEventListener("click", () => {
         switchRoom("&game");
     })
+
     document.getElementById("newroom").addEventListener("click", async () => {
         await addRoomProcessor();
     })
-    //#region  Delete rooms
     document.getElementById("deleteRooms").addEventListener("click", () => {
         removeRoom();
+    });
+    document.getElementById("customCSS").addEventListener("click", () => {
+        addCustomCSSHandler();
+    })
+    document.getElementById("removeCustomCSS").addEventListener("click", () => {
+        if (document.getElementById("customCSSStyles")) {
+            document.getElementById("customCSSStyles").remove();
+            localStorage.removeItem("customCSS");
+            Popup.quick("<span class='material-symbols-outlined'>check_circle</span><br>Custom CSS removed.", "ok");
+        } else {
+            Popup.quick("<span class='material-symbols-outlined'>warning</span><br>No custom CSS to remove.", "ok");
+        }
     });
     document.getElementById("&music").addEventListener("click", () => {
         switchRoom("&music", "music");
@@ -1631,10 +1598,20 @@ async function onload() {
     document.getElementById("closeProfile").addEventListener("click", () => {
         document.getElementById("CharacterProfile").style.visibility = "hidden";
     });
-    document.getElementById("&general").classList.add('roomActive');
-    document.getElementById("&general").classList.remove('room');
-    listenToRoom('&general');
+
+    if (localStorage.getItem("lastRoom")) {
+        var oldRoom = localStorage.getItem("lastRoom")
+        listenToRoom(oldRoom);
+        document.getElementById(oldRoom).classList.add('roomActive');
+        document.getElementById(oldRoom).classList.remove('room');
+    } else {
+        listenToRoom('&general');
+        document.getElementById("&general").classList.add('roomActive');
+        document.getElementById("&general").classList.remove('room');
+    };
     document.documentElement.style.setProperty("--n-rooms", document.getElementById("roomsList").childElementCount - 2);
+    await addCustomCSSHandler(true);
+    //#endregion
 
 }
 async function removeRoom() {
@@ -1666,6 +1643,7 @@ function checkIfPositive(num) {
     }
 }
 async function initiateGame() {
+    //#region The game I swear is going to exist sometime
     //This is going to set the initation but i don't wanna do it until its done
     /*gameInitiated = true;
     userDocRef = doc(db, "connectedUsers", username)

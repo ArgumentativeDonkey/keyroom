@@ -47,7 +47,7 @@ export async function themesLoad() {
     document.body.setAttribute("data-theme", 'dark');
   }
   
-    document.documentElement.style.setProperty("--n-themes", themes.length);
+    document.documentElement.style.setProperty("--n-themes", themes.length+2);
   
   for(let i = 0; i < themes.length; i++) {
     for(let z = 0; z < wrappers.length; z++) {

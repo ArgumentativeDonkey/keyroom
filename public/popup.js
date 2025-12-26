@@ -1,21 +1,21 @@
 export class Popup {
     static popupList = [];
-    static async quick(text, type, parem1=null, parem2=null, parem3=null) {
+    static async quick(text, type, parem1 = null, parem2 = null, parem3 = null) {
         return new Promise(resolve => {
             const popup = new Popup;
             popup.inittext(text);
             let defaultResolve = false;
             function enterListener(e) {
-                if(e.key === "Enter") {
+                if (e.key === "Enter") {
                     doResolve();
                 }
             }
-            document.addEventListener('keydown', (e) => {enterListener(e)});
+            if (type != "textarea") document.addEventListener('keydown', (e) => { enterListener(e) });
             function doResolve(variable) {
-                document.removeEventListener('keydown', (e) => {enterListener(e)});
+                document.removeEventListener('keydown', (e) => { enterListener(e) });
                 popup.hide();
-                if(variable === undefined || variable === null) {
-                    if(typeof defaultResolve === "function") {
+                if (variable === undefined || variable === null) {
+                    if (typeof defaultResolve === "function") {
                         variable = defaultResolve();
                     } else {
                         variable = defaultResolve;
@@ -56,13 +56,20 @@ export class Popup {
                 case "text":
                     popup.initbar(`<input type='text'/><button>Submit</button>`);
                     popup.bar.querySelector('button').onclick = () => doResolve();
-                    popup.bar.querySelector('input').addEventListener('keypress', (e) => {enterListener(e)});
+                    popup.bar.querySelector('input').addEventListener('keypress', (e) => { enterListener(e) });
                     defaultResolve = () => popup.bar.querySelector('input').value;
+                    break;
+                case "textarea":
+                    console.log("Textarea popup shown");
+                    popup.initbar(`<textarea id="input3934"></textarea><button>Submit</button>`);
+                    popup.bar.querySelector('button').onclick = () => doResolve();
+                    //popup.bar.querySelector('input').addEventListener('keypress', (e) => {enterListener(e)}); we don't want to submit when they try to newline
+                    defaultResolve = () => document.getElementById("input3934").value;
                     break;
                 case "password":
                     popup.initbar(`<input type='password'/><button>Submit</button>`);
                     popup.bar.querySelector('button').onclick = () => doResolve();
-                    popup.bar.querySelector('input').addEventListener('keypress', (e) => {enterListener(e)});
+                    popup.bar.querySelector('input').addEventListener('keypress', (e) => { enterListener(e) });
                     defaultResolve = () => popup.bar.querySelector('input').value;
                     break;
                 default:

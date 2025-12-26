@@ -236,26 +236,26 @@ a:focus {
 }
 
 .CharacterProfile {
-    visibility: hidden;
     background-color: var(--bg);
+    background-color: var(--bg);
+    border-radius: 1rem;
     border-radius: 2px;
-    position: absolute;
+    border: 2px solid var(--txt);
+    box-sizing: border-box;
+    color: var(--txt);
     height: 30rem;
-    width: 30rem;
+    left: 50%;
+    margin: 0;
     max-height: 100dvh;
     max-width: 100dvw;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: var(--bg);
-    z-index: 12;
-    padding: 5px;
-    box-sizing: border-box;
-    margin: 0;
-    border: 2px solid var(--txt);
-    border-radius: 1rem;
     overflow: hidden;
-    color: var(--txt);
+    padding: 5px;
+    position: absolute;
+    top: 40%;
+    transform: translate(-50%, -50%);
+    visibility: hidden;
+    width: 30rem;
+    z-index: 12;
 }
 
 .roomActive {
@@ -328,10 +328,12 @@ button:focus {
 
 .usernameBg {
     color: var(--txt);
-    font-weight: bold;
     margin-bottom: 2px;
 }
-
+.header {
+    color:var(--txt);
+    margin-left: 3vw;
+}
 @media (max-width: 500px) {
     .desktopDiv {
         display: none;
@@ -399,6 +401,7 @@ button:focus {
         position: absolute;
         left: 3vw;
         top: 80px;
+
     }
 
     .sendput {
@@ -424,7 +427,6 @@ button:focus {
 
 .msgContent {
     display: flex;
-    flex-direction: column;
     /*background-color: var(--bg-accent);*/
     padding: 5px 10px;
     border-radius: 5px;
@@ -437,14 +439,14 @@ button:focus {
 }
 
 .messages {
-    scrollbar-color: var(--txt) var(--bg);
+    scrollbar-color: var(--bg) transparent;
     scroll-behavior: smooth;
+
 }
 
 .messages::-webkit-scrollbar {
     width: 8px;
 }
-
 .messages::-webkit-scrollbar-thumb {
     background-color: var(--txt);
     border-radius: 4px;
@@ -465,6 +467,10 @@ button:focus {
 .iden {
     display: none;
 }
+.message {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-in forwards;
+}
 
 #messages.showIden .iden {
     display: inline;
@@ -475,7 +481,10 @@ button:focus {
     text-decoration: underline;
     font-size: 0.8em;
 }
-
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
 @keyframes spin {
     from {
         transform: rotate(0deg);

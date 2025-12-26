@@ -1,170 +1,159 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <title>Keyroom Docs</title>
-        <meta charset="utf-8" />
-        <link rel="stylesheet" href="styles.css" />
-        <link rel="icon" type="image/png" href="../keyroomaf(1).png" />
-        <link
-            rel="preload"
-            href="Outfit.ttf"
-            as="font"
-            type="font/ttf"
-            crossorigin
-        />
-    </head>
-    <body>
-        <main>
-            <h1>Keyroom Commands</h1>
-            <a href="/">Back to Keyroom</a>
-            <p>
-                <i
-                    >Please do not include the brackets around arguments when
-                    using commands.</i
-                >
-            </p>
-            <h2>Account</h2>
-            <p><i>Commands related to user accounts.</i></p>
-            <p>
-                <code>!setPassword {password}</code> - Sets your password. This
-                message will not show up publicly.
-            </p>
-            <p>
-                <code>!logOut</code> - Logs you out and begins the login prompt
-                again.
-            </p>
-            <p>
-                <code>!setEmail {email}</code> - Sets your email for summoning.
-            </p>
-            <p>
-                <code>!editProfilePic {image url}</code> - Sets your displayed
-                profile picture.
-            </p>
-            <p>
-                <code>!setBio {your bio}</code> - Sets your displayed
-                bio in your profile.
-            </p>
-            <p>
-                <code>!lastactive {username}</code> - The LastActive bot will
-                tell you when the specified user was last seen on Keyroom.
-            </p>
-            <p><code>!setEmail</code> - Sets your email for summoning.</p>
 
-            <h2>TellBot</h2>
-            <p><i>A bot for sending messages to users.</i></p>
-            <p>
-                <code>!tell {username} {message} </code> - Puts a message into a
-                user's inbox.
-            </p>
-            <p>
-                <code>!summon {username} {message}</code> - Sends the user a an
-                email with your message. The user must have an email set for
-                this to work.
-            </p>
-            <p>
-                <code>!inbox</code> - TellBot shows you your inbox, the
-                collection of messages people have !tell'd you.
-            </p>
+<head>
+    <title>Keyroom Docs</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" type="image/png" href="../keyroomaf(1).png" />
+    <link rel="preload" href="Outfit.ttf" as="font" type="font/ttf" crossorigin />
+</head>
 
-            <h2>Xkcd</h2>
-            <p>
-                <i
-                    >Commands that work inside the Xkcd room, carried out by
-                    xkcdBot.</i
-                >
-            </p>
-            <p><code>!xkcd latest</code> - View the most recent xkcd.</p>
-            <p><code>!xkcd {number}</code> - View a specific xkcd by number.</p>
+<body>
+    <main>
+        <h1>Keyroom Commands</h1>
+        <a href="/">Back to Keyroom</a>
+        <p>
+            <i>Please do not include the brackets around arguments when
+                using commands.</i>
+        </p>
+        <h2>Account</h2>
+        <p><i>Commands related to user accounts.</i></p>
+        <p>
+            <code>!setPassword {password}</code> - Sets your password. This
+            message will not show up publicly.
+        </p>
+        <p>
+            <code>!logOut</code> - Logs you out and begins the login prompt
+            again.
+        </p>
+        <p>
+            <code>!setEmail {email}</code> - Sets your email for summoning.
+        </p>
+        <p>
+            <code>!editProfilePic {image url}</code> - Sets your displayed
+            profile picture.
+        </p>
+        <p>
+            <code>!setBio {your bio}</code> - Sets your displayed
+            bio in your profile.
+        </p>
+        <p>
+            <code>!lastactive {username}</code> - The LastActive bot will
+            tell you when the specified user was last seen on Keyroom.
+        </p>
+        <p><code>!setEmail</code> - Sets your email for summoning.</p>
 
-            <h2>CodeInject</h2>
-            <p>
-                <i
-                    >These commands are limited to &codeinject because they are
-                    disruptive to normal rooms.</i
-                >
-            </p>
-            <p>
-                <code>!spin {message}</code> - Spins your entire message
-                constantly.
-            </p>
-            <p>
-                <code>!rotate {degrees} {message}</code> - Rotate your message a
-                certain number of degrees.
-            </p>
+        <h2>TellBot</h2>
+        <p><i>A bot for sending messages to users.</i></p>
+        <p>
+            <code>!tell {username} {message} </code> - Puts a message into a
+            user's inbox.
+        </p>
+        <p>
+            <code>!summon {username} {message}</code> - Sends the user a an
+            email with your message. The user must have an email set for
+            this to work.
+        </p>
+        <p>
+            <code>!inbox</code> - TellBot shows you your inbox, the
+            collection of messages people have !tell'd you.
+        </p>
 
-            <h2>Music</h2>
-            <p>
-                <i>Manage the &music room.</i>
-            </p>
-            <p>
-                <code>!video {youtube video code}</code> - Set the video in the
-                &music room to a YouTube video. The YouTube video code is the
-                string of numbers and letters in the url, e.g. the code for
-                "Never Gonna Give You Up" is dQw4w9WgXcQ.
-            </p>
+        <h2>Xkcd</h2>
+        <p>
+            <i>Commands that work inside the Xkcd room, carried out by
+                xkcdBot.</i>
+        </p>
+        <p><code>!xkcd latest</code> - View the most recent xkcd.</p>
+        <p><code>!xkcd {number}</code> - View a specific xkcd by number.</p>
 
-            <h2>Message Utilities</h2>
-            <p>
-                <i>Commands meant for managing messages.</i>
-            </p>
-            <p>
-                <code>!edit {text}</code> - Edits your last sent message to a
-                different one.
-            </p>
-            <p>
-                <code>!delete {iden}</code> - Deletes a specific message that
-                you have sent.
-            </p>
-            <p>
-                <code>!showIden</code> - Shows message identifiers and
-                timestamps.
-            </p>
-            <p>
-                <code>!hideIden</code> - Hides message identifiers and
-                timestamps.
-            </p>
+        <h2>CodeInject</h2>
+        <p>
+            <i>These commands are limited to &codeinject because they are
+                disruptive to normal rooms.</i>
+        </p>
+        <p>
+            <code>!spin {message}</code> - Spins your entire message
+            constantly.
+        </p>
+        <p>
+            <code>!rotate {degrees} {message}</code> - Rotate your message a
+            certain number of degrees.
+        </p>
 
-            <h2>Special Messages</h2>
-            <p>
-                <i>Send messages with multimedia or special effects.</i>
-            </p>
-            <p>
-                <code>!image {url}</code> - Sends the image at the specified
-                URL.
-            </p>
-            <p>
-                <code>!link {url}</code> - Hyperlinks the given url. Does not
-                append https:// to the front.
-            </p>
-            <p>
-                <code>!grow {message}</code> - Makes a message bigger than
-                usual.
-            </p>
-            <p>
-                <code>!shrink {message}</code> - Makes a message smaller than
-                usual.
-            </p>
-            <p>
-                <code>!shrug</code> - Sends the shrug emoticon &mdash;
-                ¯\_(ツ)_/¯
-            </p>
+        <h2>Music</h2>
+        <p>
+            <i>Manage the &music room.</i>
+        </p>
+        <p>
+            <code>!video {youtube video code}</code> - Set the video in the
+            &music room to a YouTube video. The YouTube video code is the
+            string of numbers and letters in the url, e.g. the code for
+            "Never Gonna Give You Up" is dQw4w9WgXcQ.
+        </p>
 
-            <h2>Deprecated</h2>
-            <p>
-                <i
-                    >These commands are not in use any more or no longer have
-                    support.</i
-                >
-            </p>
-            <p><code>!code</code> - Give the message code formatting.</p>
-            <p>
-                <code>!rainbow {message}</code> - Send the message with a
-                rainbow badge.
-            </p>
-            <p>
-                <code>!unrainbow {message}</code> - Send the message with an
-                unrainbowed badge.
-            </p>
-        </main>
-    </body>
+        <h2>Message Utilities</h2>
+        <p>
+            <i>Commands meant for managing messages.</i>
+        </p>
+        <p>
+            <code>!edit {text}</code> - Edits your last sent message to a
+            different one.
+        </p>
+        <p>
+            <code>!delete {iden}</code> - Deletes a specific message that
+            you have sent.
+        </p>
+        <p>
+            <code>!showIden</code> - Shows message identifiers and
+            timestamps.
+        </p>
+        <p>
+            <code>!hideIden</code> - Hides message identifiers and
+            timestamps.
+        </p>
+
+        <h2>Special Messages</h2>
+        <p>
+            <i>Send messages with multimedia or special effects.</i>
+        </p>
+        <p>
+            <code>!image {url}</code> - Sends the image at the specified
+            URL.
+        </p>
+        <p>
+            <code>!link {url}</code> - Hyperlinks the given url. Does not
+            append https:// to the front (unless you wish to link to a subpage of keyroom, you'll have to add this).
+        </p>
+        <p>
+            <code>!grow {message}</code> - Makes a message bigger than
+            usual.
+        </p>
+        <p>
+            <code>!shrink {message}</code> - Makes a message smaller than
+            usual.
+        </p>
+        <p>
+            <code>!shrug</code> - Sends the shrug emoticon &mdash;
+            ¯\_(ツ)_/¯
+        </p>
+
+        <h2>Deprecated</h2>
+        <p>
+            <i>These commands are not in use any more or no longer have
+                support.</i>
+        </p>
+        <p><code>!code</code> - Give the message code formatting.</p>
+        <p>
+            <code>!rainbow {message}</code> - Send the message with a
+            rainbow badge.
+        </p>
+        <p>
+            <code>!unrainbow {message}</code> - Send the message with an
+            unrainbowed badge.
+        </p>
+    </main>
+</body>
+
 </html>
