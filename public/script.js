@@ -923,7 +923,7 @@ const actionsMap = {
     "message.jump": (async () => {
         document.getElementById("message-input").focus();
     }),
-    "message.send": (async () => {
+    "message.send.global": (async () => {
         sendMsg(document.getElementById("message-input").value, username);
     }),
     "profile.open.self": (async () => {

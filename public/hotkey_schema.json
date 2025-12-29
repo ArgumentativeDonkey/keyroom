@@ -11,6 +11,7 @@
     "enum": [
       "$schema",
       "message.jump",
+      "message.send.global",
       "profile.open.self",
       "profile.open"
     ]
