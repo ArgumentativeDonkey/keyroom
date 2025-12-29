@@ -1,5 +1,15 @@
 export class Popup {
+    /** @type {Popup[]} */
     static popupList = [];
+    /**
+     * Quickly make a new popup from a set of templates
+     * @param {string} text - The html / text to be displayed
+     * @param {"ok"|"continue"|"confirm"|"2options"|"3options"|"textarea"|"password"|null} type - The type of message to be sent
+     * @param {string|null} parem1
+     * @param {string|null} parem2 
+     * @param {string|null} parem3 
+     * @returns {Promise<any>}
+     */
     static async quick(text, type, parem1 = null, parem2 = null, parem3 = null) {
         return new Promise(resolve => {
             const popup = new Popup;
@@ -121,5 +131,15 @@ export class Popup {
     }
     hide() {
         this.popup.dataset.shown = "false"
+    }
+    shown() {
+        switch (this.popup.dataset.shown) {
+            case "true":
+                return true;
+            case  "false":
+                return false;        
+            default:
+                return true;
+        }
     }
 }
