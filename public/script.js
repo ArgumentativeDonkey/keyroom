@@ -947,8 +947,6 @@ async function validatePassword(username) {
 
     });
 
-    const res = await fetch("./passwords.json");
-    const data = await res.json();
     console.log("validating password");
     if (passwordF !== null && passwordF !== undefined) {
         if (localStorage.getItem("password") && hasher(localStorage.getItem("password")) === passwordF) return true;
