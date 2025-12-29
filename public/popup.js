@@ -4,10 +4,10 @@ export class Popup {
     /**
      * Quickly make a new popup from a set of templates
      * @param {string} text - The html / text to be displayed
-     * @param {"ok"|"continue"|"confirm"|"2options"|"3options"|"textarea"|"password"|null} type - The type of message to be sent
-     * @param {string|null} parem1
-     * @param {string|null} parem2 
-     * @param {string|null} parem3 
+     * @param {"ok"|"continue"|"confirm"|"2options"|"3options"|"textarea"|"password"} [type] - The type of message to be sent
+     * @param {string} [parem1=null]
+     * @param {string} [parem2=null] 
+     * @param {string} [parem3=null] 
      * @returns {Promise<any>}
      */
     static async quick(text, type, parem1 = null, parem2 = null, parem3 = null) {
@@ -91,6 +91,11 @@ export class Popup {
         });
     }
 
+    /**
+     * Quickly makes and displays a popup that has the error symbol.
+     * @param {string} text - Error text to display
+     * @returns {Promise<boolean>}
+     */
     static async err(text) {
         let processed_text = "<span class='material-symbols-outlined'>warning</span><br>Error: " + text;
         console.log(`Showed error ${text}`);
