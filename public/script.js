@@ -933,6 +933,7 @@ const actionsMap = {
             makeProfile(username);
             document.getElementById("CharacterProfile").style.visibility = "visible";
         }
+        document.getElementById("closeProfile").focus();
     }),
     "profile.open": (
         /**
@@ -946,6 +947,7 @@ const actionsMap = {
                 makeProfile(username);
                 document.getElementById("CharacterProfile").style.visibility = "visible";
             }
+            document.getElementById("closeProfile").focus();
         }
     )
 };
