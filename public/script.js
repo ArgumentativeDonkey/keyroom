@@ -827,7 +827,42 @@ export async function sendMsg(message, writer, color, raw) {
         console.error(e);
     }
 }
+async function addHotkeyListeners (){
+    const response = await fetch("hotkeys.json");
+    var keybinds = await response.json();
+    var actions = Object.keys(keybinds);
+    for (let i = 0; i < actions.length; i++) {
+        const action = actions[i];
+        const bind = keybinds[action];
+        const binds = bind.split("+");
+        if (binds.length > 3) {
+            console.warn(`Keybind ${bind} for action ${action} has more than 3 keys, which is not supported.`);
+            continue;
+        }
+        document.addEventListener('keydown', function(event) {
+            if((!binds.includes("ctrl")||event.ctrlKey)&&(!binds.includes("shift")||event.shiftKey)&&(!binds.includes("alt")||event.altKey)&&binds.includes(event.key.toLowerCase())){
+                event.preventDefault();
+                switch(action){
+                    case "jumpToInput":
+                        document.getElementById("message-input").focus();
+                        break;
+                    case "sendMessage":
+                        sendMsg(document.getElementById("message-input").value, username);
+                        break;
+                    case "openProfile":
+                        makeProfile(username);
+                        document.getElementById("CharacterProfile").style.visibility = "visible";
+                        break;
+                    default:
+                        console.warn(`Could not find action "${action}".`);
+                }
 
+            }
+        }); 
+        
+    }
+    
+}
 const allowedPingAll = ["Leif", "Key"];
 //#endregion
 async function tell(message, writer, reciepient) {
@@ -1539,6 +1574,7 @@ async function onload() {
             UsersShown = true;
         }
     })
+    addHotkeyListeners();
     //#region Room switching
     document.getElementById("&random").addEventListener("click", () => {
         switchRoom("&random");
