@@ -279,7 +279,7 @@ a:focus {
     background-color: transparent;
     margin: 0px;
     position: absolute;
-    left: calc(75% + 195px);
+    right: 0px;
     border-right: 2px var(--txt) solid;
     z-index: 1000;
     bottom: 3px;
@@ -336,7 +336,7 @@ button:focus {
     margin-left: 3vw;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 300px) {
     .desktopDiv {
         display: none;
         color: var(--txt);
@@ -805,7 +805,7 @@ button:focus {
     position: absolute;
     bottom: 20px;
     padding: 0px;
-    left: calc(75% + 90px);
+    right: 130px;
     width: fit-content;
     height: 10px;
     transition: height 0.5s;
@@ -816,7 +816,7 @@ button:focus {
     position: absolute;
     bottom: 0px;
     padding: 0px;
-    left: calc(75% - 30px);
+    right: 360px;
     width: fit-content;
     height: 10px;
     color: inherit;
@@ -828,7 +828,7 @@ button:focus {
     position: absolute;
     bottom: 0px;
     padding: 0px;
-    left: calc(75% - 310px);
+    right: 487px;
     width: fit-content;
     height: 10px;
     color: inherit;
@@ -840,7 +840,7 @@ button:focus {
     position: absolute;
     bottom: 0px;
     padding: 0px;
-    left: calc(75% - 125px);
+    right: 676px;
     width: fit-content;
     height: 10px;
     color: inherit;
