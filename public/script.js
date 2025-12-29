@@ -827,7 +827,7 @@ export async function sendMsg(message, writer, color, raw) {
         console.error(e);
     }
 }
-async function addHotkeyListeners (){
+async function addHotkeyListeners() {
     const response = await fetch("hotkeys.json");
     var keybinds = await response.json();
     var actions = Object.keys(keybinds);
@@ -839,10 +839,10 @@ async function addHotkeyListeners (){
             console.warn(`Keybind ${bind} for action ${action} has more than 3 keys, which is not supported.`);
             continue;
         }
-        document.addEventListener('keydown', function(event) {
-            if((!binds.includes("ctrl")||event.ctrlKey)&&(!binds.includes("shift")||event.shiftKey)&&(!binds.includes("alt")||event.altKey)&&binds.includes(event.key.toLowerCase())){
+        document.addEventListener('keydown', function (event) {
+            if ((!binds.includes("ctrl") || event.ctrlKey) && (!binds.includes("shift") || event.shiftKey) && (!binds.includes("alt") || event.altKey) && binds.includes(event.key.toLowerCase())) {
                 event.preventDefault();
-                switch(action){
+                switch (action) {
                     case "jumpToInput":
                         document.getElementById("message-input").focus();
                         break;
@@ -850,18 +850,22 @@ async function addHotkeyListeners (){
                         sendMsg(document.getElementById("message-input").value, username);
                         break;
                     case "openProfile":
-                        makeProfile(username);
-                        document.getElementById("CharacterProfile").style.visibility = "visible";
+                        if (document.getElementById("CharacterProfile").style.visibility == "visible") {
+                            document.getElementById("CharacterProfile").style.visibility = "hidden";
+                        } else {
+                            makeProfile(username);
+                            document.getElementById("CharacterProfile").style.visibility = "visible";
+                        }
                         break;
                     default:
                         console.warn(`Could not find action "${action}".`);
                 }
 
             }
-        }); 
-        
+        });
+
     }
-    
+
 }
 const allowedPingAll = ["Leif", "Key"];
 //#endregion
@@ -1425,7 +1429,7 @@ async function makeProfile(writer) {
         }
 
     });
-    if (bio == null || bio == undefined || bio.trim() === "") {bio="This user has not yet set a bio";}
+    if (bio == null || bio == undefined || bio.trim() === "") { bio = "This user has not yet set a bio"; }
     document.getElementById("yourBio").innerHTML = bio + "<br>" + `<br><b>Messages Sent:</b> ${messagesSent}`;
     if (document.getElementById("profileAvatar")) document.getElementById("profileAvatar").remove();
     document.getElementById("yourUsername").innerText = writer;
