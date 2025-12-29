@@ -193,6 +193,7 @@ function getUserColor(username, hashe) {
         hash = username.charCodeAt(i) + ((hash << 5) - hash);
     }
     const index = Math.abs(hash) % palette.length;
+    console.log(`got color ${palette[index]} for user ${username}`);
     return palette[index];
 }
 
@@ -261,12 +262,12 @@ async function createAvatar(rounded = true, writer = username) {
                 if (userData.profilePic) {
                     avatar.src = userData.profilePic;
                 } else {
-                    avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(writer)}&background=${getUserColor(writer)}&rounded=${rounded}`;
+                    avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(writer)}&background=${getUserColor(writer).split("#").join('')}&rounded=${rounded}`;
                 }
             } else if (writer === "TellBot") {
                 avatar.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDlzJDyJ_J6vRQmfW4D-ve6PWtLk6XLdu_3w&s";
             } else {
-                avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(writer)}&background=${getUserColor(writer, true)}&rounded=${rounded}`;
+                avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(writer)}&background=${getUserColor(writer, true).split("#").join('')}&rounded=${rounded}`;
             }
             avatar.alt = writer;
         })
@@ -292,7 +293,7 @@ function listenToRoom(roomName) {
     const messagesQuery = query(messagesRef, orderBy("timestamp", "asc"));
 
     unsubscribeMessages = onSnapshot(messagesQuery, (snapshot) => {
-        document.head.querySelector('title').innerText = `Keyroom - ${currentRoom}`;
+        document.head.querySelector('title').innerText = `Keyroom Chat - ${currentRoom}`;
         if (!nNotify) {
             messages = snapshot.size;
             nNotify = true;
@@ -324,12 +325,12 @@ function listenToRoom(roomName) {
                         if (userData.profilePic) {
                             avatar.src = userData.profilePic;
                         } else {
-                            avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(message.writer)}&background=${getUserColor(message.writer)}&rounded=true`;
+                            avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(message.writer)}&background=${getUserColor(message.writer).split("#").join('')}&rounded=true`;
                         }
                     } else if (message.writer === "TellBot") {
                         avatar.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDlzJDyJ_J6vRQmfW4D-ve6PWtLk6XLdu_3w&s";
                     } else {
-                        avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(message.writer)}&background=${getUserColor(message.writer, true)}&rounded=true`;
+                        avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(message.writer)}&background=${getUserColor(message.writer, true).split("#").join('')}&rounded=true`;
                     }
                     avatar.alt = message.writer;
                 })
@@ -1318,7 +1319,6 @@ function clearRoomBorders() {
     document.getElementById("&spam").classList.remove('roomActive');
     document.getElementById("&general").classList.remove('roomActive');
     document.getElementById("/codeinject").classList.remove('roomActive');
-    document.getElementById("&boom").classList.remove('roomActive');
     document.getElementById("&game").classList.remove('roomActive');
     document.getElementById("&music").classList.remove('roomActive');
     document.getElementById("&").classList.remove('roomActive');
@@ -1327,7 +1327,6 @@ function clearRoomBorders() {
     document.getElementById("&spam").classList.add('room');
     document.getElementById("&general").classList.add('room');
     document.getElementById("/codeinject").classList.add('room');
-    document.getElementById("&boom").classList.add('room');
     document.getElementById("&game").classList.add('room');
     document.getElementById("&").classList.add('room');
     document.getElementById("&music").classList.add('room');
@@ -1352,6 +1351,7 @@ async function addCustomCSSHandler(loadingFromStorage = false) {
     newStyles.id = "customCSSStyles";
     newStyles.innerHTML = css;
     if (document.getElementById("customCSSStyles")) { document.getElementById("customCSSStyles").remove(); }
+    if (css == null || css.trim() === "" || css === undefined) { return; }
     newStyles.innerHTML = css.replace(/;/g, ' !important;');
     document.head.appendChild(newStyles);
 }
@@ -1392,7 +1392,7 @@ async function makeProfile(writer) {
         }
 
     });
-
+    if (bio == null || bio == undefined || bio.trim() === "") {bio="This user has not yet set a bio";}
     document.getElementById("yourBio").innerHTML = bio + "<br>" + `<br><b>Messages Sent:</b> ${messagesSent}`;
     if (document.getElementById("profileAvatar")) document.getElementById("profileAvatar").remove();
     document.getElementById("yourUsername").innerText = writer;
@@ -1557,13 +1557,6 @@ async function onload() {
     document.getElementById("/codeinject").addEventListener("click", () => {
         switchRoom("/codeinject");
     })
-    document.getElementById("&boom").addEventListener("click", () => {
-        switchRoom("&boom");
-    })
-    document.getElementById("&game").addEventListener("click", () => {
-        switchRoom("&game");
-    })
-
     document.getElementById("newroom").addEventListener("click", async () => {
         await addRoomProcessor();
     })

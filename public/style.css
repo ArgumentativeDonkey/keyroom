@@ -289,7 +289,7 @@ a:focus {
 }
 
 .rooms:hover {
-    height: calc(41px * var(--n-rooms));
+    height: calc(42px * var(--n-rooms));
     overflow-y: hidden;
     pointer-events: auto;
 }
@@ -330,10 +330,12 @@ button:focus {
     color: var(--txt);
     margin-bottom: 2px;
 }
+
 .header {
-    color:var(--txt);
+    color: var(--txt);
     margin-left: 3vw;
 }
+
 @media (max-width: 500px) {
     .desktopDiv {
         display: none;
@@ -447,6 +449,7 @@ button:focus {
 .messages::-webkit-scrollbar {
     width: 8px;
 }
+
 .messages::-webkit-scrollbar-thumb {
     background-color: var(--txt);
     border-radius: 4px;
@@ -467,10 +470,6 @@ button:focus {
 .iden {
     display: none;
 }
-.message {
-    opacity: 0;
-    animation: fadeIn 0.5s ease-in forwards;
-}
 
 #messages.showIden .iden {
     display: inline;
@@ -481,10 +480,17 @@ button:focus {
     text-decoration: underline;
     font-size: 0.8em;
 }
+
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
+
 @keyframes spin {
     from {
         transform: rotate(0deg);
@@ -881,6 +887,7 @@ button:focus {
     width: fit-content;
 }
 
+/* #region special theme modifiers */
 /* SECTION special theme modifiers */
 [data-theme="greyscale"] img {
     filter: grayscale(1);
