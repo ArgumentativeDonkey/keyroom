@@ -1559,9 +1559,11 @@ async function onload() {
     })
     document.getElementById("newroom").addEventListener("click", async () => {
         await addRoomProcessor();
+        document.documentElement.style.setProperty("--n-rooms", document.getElementById("roomsList").childElementCount - 2);
     })
     document.getElementById("deleteRooms").addEventListener("click", () => {
         removeRoom();
+        document.documentElement.style.setProperty("--n-rooms", document.getElementById("roomsList").childElementCount - 2);
     });
     document.getElementById("customCSS").addEventListener("click", () => {
         addCustomCSSHandler();

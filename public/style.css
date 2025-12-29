@@ -289,7 +289,7 @@ a:focus {
 }
 
 .rooms:hover {
-    height: calc(42px * var(--n-rooms));
+    height: calc(43px * var(--n-rooms));
     overflow-y: hidden;
     pointer-events: auto;
 }
