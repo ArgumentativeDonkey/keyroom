@@ -1,4 +1,5 @@
 {
-    "jumpToInput":"ctrl+t",
-    "openProfile":"ctrl+p"
+    "$schema": "./hotkey_schema.json",
+    "message.jump":"ctrl+t",
+    "profile.open.self":"ctrl+p"
 }

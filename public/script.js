@@ -915,6 +915,40 @@ export async function sendMsg(message, writer, color, raw) {
         console.error(e);
     }
 }
+/**
+ * ANCHOR The action map
+ * @type {{ [key: string]: (...args: unknown[]) => Promise<void> }}
+ */
+const actionsMap = {
+    "message.jump": (async () => {
+        document.getElementById("message-input").focus();
+    }),
+    "message.send": (async () => {
+        sendMsg(document.getElementById("message-input").value, username);
+    }),
+    "profile.open.self": (async () => {
+        if (document.getElementById("CharacterProfile").style.visibility == "visible") {
+            document.getElementById("CharacterProfile").style.visibility = "hidden";
+        } else {
+            makeProfile(username);
+            document.getElementById("CharacterProfile").style.visibility = "visible";
+        }
+    }),
+    "profile.open": (
+        /**
+         * Open specified profile
+         * @param {string} username 
+         */
+        async (username) => {
+            if (document.getElementById("CharacterProfile").style.visibility == "visible") {
+                document.getElementById("CharacterProfile").style.visibility = "hidden";
+            } else {
+                makeProfile(username);
+                document.getElementById("CharacterProfile").style.visibility = "visible";
+            }
+        }
+    )
+};
 async function addHotkeyListeners() {
     const response = await fetch("hotkeys.json");
     var keybinds = await response.json();
@@ -927,28 +961,15 @@ async function addHotkeyListeners() {
             console.warn(`Keybind ${bind} for action ${action} has more than 3 keys, which is not supported.`);
             continue;
         }
-        document.addEventListener('keydown', function (event) {
+        document.addEventListener('keydown', async function (event) {
             if ((!binds.includes("ctrl") || event.ctrlKey) && (!binds.includes("shift") || event.shiftKey) && (!binds.includes("alt") || event.altKey) && binds.includes(event.key.toLowerCase())) {
                 event.preventDefault();
-                switch (action) {
-                    case "jumpToInput":
-                        document.getElementById("message-input").focus();
-                        break;
-                    case "sendMessage":
-                        sendMsg(document.getElementById("message-input").value, username);
-                        break;
-                    case "openProfile":
-                        if (document.getElementById("CharacterProfile").style.visibility == "visible") {
-                            document.getElementById("CharacterProfile").style.visibility = "hidden";
-                        } else {
-                            makeProfile(username);
-                            document.getElementById("CharacterProfile").style.visibility = "visible";
-                        }
-                        break;
-                    default:
-                        console.warn(`Could not find action "${action}".`);
+                let theActionThatWillBePerformed = actionsMap[action];
+                if(theActionThatWillBePerformed === undefined || theActionThatWillBePerformed === null) {
+                    console.warn(`Could not find action "${action}".`);
+                } else {
+                    await theActionThatWillBePerformed();
                 }
-
             }
         });
 

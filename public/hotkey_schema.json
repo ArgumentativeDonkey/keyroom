@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "title": "Path to the hotkey schema"
+    }
+  },
+  "propertyNames": {
+    "enum": [
+      "$schema",
+      "message.jump",
+      "profile.open.self",
+      "profile.open"
+    ]
+  },
+  "additionalProperties": {
+    "type": "string",
+    "title": "Command",
+    "description": "This is the command that will be bound to the specific action. Keys should be seperated by a `+`. For example, pressing the control key plus the 'p' key would be represented as `ctrl+p`. Up to three keys are supported."
+  }
+}
