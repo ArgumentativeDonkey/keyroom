@@ -273,7 +273,7 @@ a:focus {
 
 .rooms {
     height: 40px;
-    width: 13vw;
+    width: 200px;
     color: var(--txt);
     overflow: hidden;
     background-color: transparent;

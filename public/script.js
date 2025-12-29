@@ -539,7 +539,7 @@ async function rndList(list) {
     }
     let random = Math.floor(Math.random() * list.length);
     let theRandomListElement = list[random];
-    if(typeof(theRandomListElement) == "function") {
+    if (typeof (theRandomListElement) == "function") {
         return await theRandomListElement();
     } else {
         return theRandomListElement;
@@ -556,6 +556,7 @@ async function rndList(list) {
  * @returns {null} - I don't think it returns anything at least
  */
 export async function sendMsg(message, writer, color, raw) {
+    document.documentElement.style.setProperty("--n-rooms", document.getElementById("roomsList").childElementCount - 1);
     try {
         console.log(message);
         var checkInbox = false;
@@ -967,7 +968,7 @@ async function addHotkeyListeners() {
             if ((!binds.includes("ctrl") || event.ctrlKey) && (!binds.includes("shift") || event.shiftKey) && (!binds.includes("alt") || event.altKey) && binds.includes(event.key.toLowerCase())) {
                 event.preventDefault();
                 let theActionThatWillBePerformed = actionsMap[action];
-                if(theActionThatWillBePerformed === undefined || theActionThatWillBePerformed === null) {
+                if (theActionThatWillBePerformed === undefined || theActionThatWillBePerformed === null) {
                     console.warn(`Could not find action "${action}".`);
                 } else {
                     await theActionThatWillBePerformed();
@@ -1101,9 +1102,6 @@ async function validatePassword(username) {
     if (passwordF !== null && passwordF !== undefined) {
         if (localStorage.getItem("password") && hasher(localStorage.getItem("password")) === passwordF) return true;
         let storedPassword = localStorage.getItem("password");
-        if (storedPassword && hasher(storedPassword) === data[username]) {
-            return true;
-        }
         let input = await Popup.quick("<span class='material-symbols-outlined'>vpn_key</span><br>Please enter your password.", "password");
         if (input && hasher(input) === passwordF) {
             localStorage.setItem("password", input);
@@ -1140,13 +1138,13 @@ async function addRoomProcessor() {
     localStorage.setItem("additionalRooms", JSON.stringify(additionalRoomNames));
     currentRoom = `&${roomName.trim()}`;
     switchRoom(currentRoom);
-    document.documentElement.style.setProperty("--n-rooms", document.getElementById("roomsList").childElementCount - 2);
+    document.documentElement.style.setProperty("--n-rooms", document.getElementById("roomsList").childElementCount - 1);
 
 }
 
 function areThereAnyPopupsThatAreNotCurrentlyHiddenAtTheTimeThisFunctionIsCalled() {
-    for(let i = 0; i < Popup.popupList.length; i++) {
-        if(Popup.popupList.at(i).shown()) {
+    for (let i = 0; i < Popup.popupList.length; i++) {
+        if (Popup.popupList.at(i).shown()) {
             return true;
         }
     }
@@ -1718,11 +1716,11 @@ async function onload() {
     })
     document.getElementById("newroom").addEventListener("click", async () => {
         await addRoomProcessor();
-        document.documentElement.style.setProperty("--n-rooms", document.getElementById("roomsList").childElementCount - 2);
+        document.documentElement.style.setProperty("--n-rooms", document.getElementById("roomsList").childElementCount - 1);
     })
     document.getElementById("deleteRooms").addEventListener("click", () => {
         removeRoom();
-        document.documentElement.style.setProperty("--n-rooms", document.getElementById("roomsList").childElementCount - 2);
+        document.documentElement.style.setProperty("--n-rooms", document.getElementById("roomsList").childElementCount - 1);
     });
     document.getElementById("customCSS").addEventListener("click", () => {
         addCustomCSSHandler();
@@ -1771,8 +1769,9 @@ async function onload() {
         document.getElementById("&general").classList.add('roomActive');
         document.getElementById("&general").classList.remove('room');
     };
-    document.documentElement.style.setProperty("--n-rooms", document.getElementById("roomsList").childElementCount - 2);
+    document.documentElement.style.setProperty("--n-rooms", document.getElementById("roomsList").childElementCount - 1);
     await addCustomCSSHandler(true);
+    document.documentElement.style.setProperty("--n-rooms", document.getElementById("roomsList").childElementCount - 1);
     //#endregion
 
 }
@@ -1781,7 +1780,7 @@ async function removeRoom() {
     var addRooms = localStorage.getItem("additionalRooms");
     roomToRemove = "& " + roomToRemove.trim();
     addRooms = JSON.parse(addRooms);
-    let yesIBeleiveIDidRemoveARoomToday = false;
+    let yesIBelieveIDidRemoveARoomToday = false;
     for (var i = 0; i < addRooms.length; i++) {
         if (addRooms[i] == roomToRemove) {
             addRooms.splice(i, 1);
@@ -1789,10 +1788,11 @@ async function removeRoom() {
             additionalRooms.splice(i, 1);
             additionalRoomNames.splice(i, 1);
             Popup.quick(`<span class='material-symbols-outlined'>check_circle</span><br>Room ${roomToRemove} has been removed.`, "ok");
-            yesIBeleiveIDidRemoveARoomToday = true;
+            yesIBelieveIDidRemoveARoomToday = true;
         }
     }
-    if (yesIBeleiveIDidRemoveARoomToday) {
+    document.documentElement.style.setProperty("--n-rooms", document.getElementById("roomsList").childElementCount - 1);
+    if (yesIBelieveIDidRemoveARoomToday) {
         localStorage.setItem("lastRoom", "&general");
         document.location.reload();
     } else {

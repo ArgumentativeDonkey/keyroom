@@ -1,5 +1,5 @@
 {
     "$schema": "./hotkey_schema.json",
-    "message.jump":"ctrl+t",
+    "message.jump":"ctrl+m",
     "profile.open.self":"ctrl+p"
 }
