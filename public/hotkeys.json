@@ -1,5 +1,5 @@
 {
-    "$schema": "./hotkey_schema.json",
+    "$schema": "https://keyroom-5ff86.web.app/hotkey_schema.json",
     "message.jump":"ctrl+m",
     "profile.open.self":"ctrl+p"
 }
