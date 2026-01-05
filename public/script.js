@@ -618,6 +618,7 @@ export async function sendMsg(message, writer, color, raw) {
                 if (docFound) {
                     found = true;
                 } else {
+                    message = "";
                     Popup.quick(`<span class="material-symbols-outlined">warning</span><br>Error: No message found with ID ${targetId}.`);
                     return;
                 }
@@ -654,6 +655,7 @@ export async function sendMsg(message, writer, color, raw) {
                 return;
             } else {
                 Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: No message found with ID ${targetId}.`);
+                return;
             }
 
             if (!found) {
@@ -714,6 +716,7 @@ export async function sendMsg(message, writer, color, raw) {
                     return;
                 } else {
                     Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: No message found with ID ${targetId}.`);
+                    return;
                 }
             } catch (err) {
                 console.error("Error deleting message:", err);
@@ -859,6 +862,15 @@ export async function sendMsg(message, writer, color, raw) {
             timestamp: serverTimestamp(),
             raw: raw,
             iden: iden
+        });
+        await addDoc(collection(db, "allMsgs"), {
+            text: message,
+            writer: writer,
+            color: color,
+            timestamp: serverTimestamp(),
+            raw: raw,
+            iden: iden,
+            room: currentRoom
         });
         if (checkInbox) {
             const snapshot = await getDocs(tellRef);
