@@ -1665,8 +1665,6 @@ async function onload() {
     console.log(username);
     if (username != "Key" && username != "Leif") {
         console.log("Username is NOT Key or Leif");
-        document.getElementById("&game").style.display = "none";
-        console.log("hid room");
     } else {
         console.log("Username IS Key or Leif");
         console.log("Welcome, " + username + "!");
