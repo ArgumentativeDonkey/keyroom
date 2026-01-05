@@ -67,6 +67,10 @@ node_modules/
 
 # dataconnect generated files
 .dataconnect
+
 #ignore onesignal files
 /public/OneSignalSDKWorker.js
 /public/OneSignalSDKUpdaterWorker.js
+
+#ignore config file
+./public/config.js

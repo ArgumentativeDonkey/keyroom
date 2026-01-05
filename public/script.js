@@ -11,6 +11,7 @@
 
 import { Popup } from "./popup.js"
 import { initializeApp } from "firebase/app";
+import {config} from './config.js';
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDocs, deleteDoc, where, getDoc } from 'firebase/firestore';
 import { Class, Entity, Player, Skill, GameData } from "./gameData.js";
@@ -30,21 +31,21 @@ var additionalRoomNames = [];
 var deletingRooms = false;
 const firebaseConfig = {
 
-    apiKey: "AIzaSyDmpLh9AVbQo4XorhNUpwgkZYv8D8USIhI",
+    apiKey: config.firebase.apiKey,
 
-    authDomain: "keyroom-5ff86.firebaseapp.com",
+    authDomain: config.firebase.authDomain,
 
-    databaseURL: "https://keyroom-5ff86-default-rtdb.firebaseio.com",
+    databaseURL: config.firebase.databaseURL,
 
-    projectId: "keyroom-5ff86",
+    projectId: config.firebase.projectId,
 
-    storageBucket: "keyroom-5ff86.firebasestorage.app",
+    storageBucket: config.firebase.storageBucket,
 
-    messagingSenderId: "1018869008518",
+    messagingSenderId: config.firebase.messagingSenderId,
 
-    appId: "1:1018869008518:web:f905e1823b56efb5e36907",
+    appId: config.firebase.appId,
 
-    measurementId: "G-XSVCBN7EDG"
+    measurementId: config.firebase.measurementId
 
 };
 
@@ -66,8 +67,8 @@ const timeout = 1000;
  * @param {string} message - The message being sent
  * @returns {null}
  */
-async function sendMail(recipient, sender, message) {
-    if (recipient === sender) {
+async function sendMail(recipient, sender, message) { //this is the summoning function, which allows users to summon each other via email
+    if (recipient === sender) { 
         Popup.err("There is no need to summon yourself");
         return;
     }
@@ -85,8 +86,8 @@ async function sendMail(recipient, sender, message) {
         const userDoc = snap.docs[0];
         const userData = userDoc.data();
 
-        if ((elapsedSecondsSince(userData.lastSummoned) < 360) && userData.lastSummoned) {
-            console.log("elapsedSecs:" + elapsedSecondsSince(userData.lastSummoned) < 360);
+        if ((elapsedSecondsSince(userData.lastSummoned) < config.emailJs.summonCooldown) && userData.lastSummoned) { //cooldown on summons, in seconds
+            console.log("elapsedSecs:" + elapsedSecondsSince(userData.lastSummoned) < config.emailJs.summonCooldown);
             Popup.quick(`<span class='material-symbols-outlined'>warning</span><br>Error: ${recipient} was summoned less than 6 minutes ago.`);
             return;
         }
@@ -104,7 +105,7 @@ async function sendMail(recipient, sender, message) {
             message: "You have been summoned! From " + sender + ": " + message
         };
 
-        await emailjs.send("service_sam1rgy", "template_107udmm", templateParams);
+        await emailjs.send(config.emailJs.serviceId, config.emailJs.templateId, templateParams);
 
         await setDoc(userDoc.ref, { lastSummoned: serverTimestamp() }, { merge: true });
         sendMsg(`${recipient} has been summoned by ${sender}.`, "System", "#4c5b8c");
@@ -124,7 +125,7 @@ function doDelay() {
     }, timeout);
 }
 (function () {
-    emailjs.init("qTMLE2J7_unL-JsP0");
+    emailjs.init(config.emailJs.key);
 })();
 let currentRoom = "&general"
 document.getElementById("messages").setAttribute("data-theme", "normal");
@@ -155,12 +156,12 @@ function parseTimestamp(input) {
 
     if (!date) return "??:?? ?/??/??";
 
-    const opts = { timeZone: "America/Denver", hour: "2-digit", minute: "2-digit" };
+    const opts = { timeZone: config.keyroom.timezone, hour: "2-digit", minute: "2-digit" };
     const time = new Intl.DateTimeFormat("en-US", opts).format(date);
 
-    const m = date.toLocaleDateString("en-US", { timeZone: "America/Denver", month: "numeric" });
-    const d = date.toLocaleDateString("en-US", { timeZone: "America/Denver", day: "numeric" });
-    const yr = date.toLocaleDateString("en-US", { timeZone: "America/Denver", year: "2-digit" });
+    const m = date.toLocaleDateString("en-US", { timeZone: config.keyroom.timezone, month: "numeric" });
+    const d = date.toLocaleDateString("en-US", { timeZone: config.keyroom.timezone, day: "numeric" });
+    const yr = date.toLocaleDateString("en-US", { timeZone: config.keyroom.timezone, year: "2-digit" });
 
     return `${time} ${m}/${d}/${yr}`;
 }
@@ -548,11 +549,11 @@ async function rndList(list) {
 //#region function sendMsg()
 // TODO: Remove the whole `color` thing from this.
 /**
- * 
+ * xx
  * @param {string} message - the message to be sent
  * @param {string} writer - the writer writing the message
  * @param {string} color - the color (only used for the default avatar at this point)
- * @param {boolean} raw - is it raw? (idk what this is)
+ * @param {boolean} raw - is it raw? a useless parameter that I implemented and should probably remove
  * @returns {null} - I don't think it returns anything at least
  */
 export async function sendMsg(message, writer, color, raw) {
@@ -979,7 +980,7 @@ async function addHotkeyListeners() {
     }
 
 }
-const allowedPingAll = ["Leif", "Key"];
+const allowedPingAll = config.keyroom.allowedPingAll;
 //#endregion
 async function tell(message, writer, reciepient) {
     try {
