@@ -73,5 +73,5 @@ node_modules/
 /public/OneSignalSDKUpdaterWorker.js
 
 #ignore config file
-/public/config.js
+public/config.js
 .firebaserc
