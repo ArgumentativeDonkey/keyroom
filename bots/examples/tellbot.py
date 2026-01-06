@@ -48,13 +48,6 @@ def on_snapshot(room):
                 text = doc.get('text', '')
                 onNewMessage(text, writer, doc.get('timestamp'), roomIn)
                 print(f"{text}")
-            elif change.type.name == 'MODIFIED':
-                doc = change.document.to_dict()
-                #print(f"[EDITED] {doc.get('writer', 'Unknown')}: {doc.get('text', '')}")
-                pass
-            elif change.type.name == 'REMOVED':
-                #print(f"[DELETED] Message removed")
-                pass
     return callback
 def listenToRoom(room):
     listenersFirst[room] = True

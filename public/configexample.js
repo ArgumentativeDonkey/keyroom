@@ -14,7 +14,7 @@ export const config = {
         "key": "yourEmailJSKey",
         "serviceId": "yourEmailJSServiceId",
         "templateId": "yourEmailJSTemplateId",
-        "summonCooldown": 360
+        "summonCooldown": 360 //the summon cooldown, in seconds.
     },
     "keyroom": {
         "pageTitle": "Keyroom Chat", //this will be your webpage title

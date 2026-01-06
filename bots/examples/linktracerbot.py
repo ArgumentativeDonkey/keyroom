@@ -15,19 +15,19 @@ listenersFirst = {}
 def getRoomMessages(room):
     roomRef = db.collection(room)
     return roomRef.order_by('timestamp').stream()
-def sendMsg(message, color, room):
+def sendMsg(message, color, room, username=botname):
     roomRef = db.collection(room)
     allroomref = db.collection("allMsgs")
     roomRef.add({
         'text': message,
-        'writer': botname,
+        'writer': username,
         'color': color,
         'timestamp': SERVER_TIMESTAMP,
         'iden': secrets.token_hex(16)
     })
     allroomref.add({
         'text': message,
-        'writer': botname,
+        'writer': username,
         'color': color,
         'timestamp': SERVER_TIMESTAMP,
         'iden': secrets.token_hex(16),
@@ -49,13 +49,6 @@ def on_snapshot(room):
                 text = doc.get('text', '')
                 onNewMessage(text, writer, doc.get('timestamp'), roomIn)
                 print(f"{text}")
-            elif change.type.name == 'MODIFIED':
-                doc = change.document.to_dict()
-                #print(f"[EDITED] {doc.get('writer', 'Unknown')}: {doc.get('text', '')}")
-                pass
-            elif change.type.name == 'REMOVED':
-                #print(f"[DELETED] Message removed")
-                pass
     return callback
 def listenToRoom(room):
     listenersFirst[room] = True

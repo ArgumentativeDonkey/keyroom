@@ -9,15 +9,9 @@ import { initializeApp } from "firebase/app";
 import {config} from './config.js'; //import config files. make sure your config file is named config.js and has the same structure as configexample.js!
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDocs, deleteDoc, where, getDoc } from 'firebase/firestore';
-import { Class, Entity, Player, Skill, GameData } from "./gameData.js";
 import { hasher } from "./hashutil.js"; //import the hasher function for password hashing
-
-
-
-var gameData = new GameData(); //Import data for the game. the game is not complete. the game never will be complete.
-var messages = 0;
+var messages = 0; //number of messages currently displayed
 var nNotify = false;
-var gameInitiated = false;
 var additionalRooms = []; //list of  additional rooms the user has joined. this is updated automatically from local storage and the add rooms menu.
 var additionalRoomNames = []; //list of the names additional rooms the user has joined.
 const firebaseConfig = { //firebase configuration object. automatically filled from config.js.
@@ -549,9 +543,6 @@ export async function sendMsg(message, writer, color, raw) {
                 changeVideo(videoId, writer);
                 return;
             }
-        }
-        if (currentRoom == "&game") {
-            processGameInput(message, writer);
         }
         if (message.split(" ")[0].trim() == "!link") {
             message = `<a href="${message.split(" ")[1]}" target="_blank" rel="noopener noreferrer">${message.split(" ")[1]}</a>`;
@@ -1592,7 +1583,6 @@ async function onload() { //this function runs when the page loads and handles a
         name: username,
         color: getUserColor(username),
         lastActive: serverTimestamp(),
-        gameInitiated: gameInitiated
     }, { merge: true });
     setInterval(async () => {
         await setDoc(userDocRef, {
@@ -1630,9 +1620,6 @@ async function onload() { //this function runs when the page loads and handles a
                 const userP = document.createElement("p");
                 userP.innerHTML = `<span style="color: "black";" class="usernameBg">${user.name}</span>`;
                 document.getElementById("connectedUsers").appendChild(userP);
-            }
-            if (user.name == username && user.gameInitiated && !gameInitiated) {
-                gameInitiated = true;
             }
         })
         const messagesEl = document.getElementById("messages");
@@ -1779,100 +1766,5 @@ async function removeRoom() {
     } else {
         Popup.err(`No room found with the specified name ${roomToRemove}`);
     }
-}
-function processGameInput(input) {
-    if (input == "!initiate") {
-        initiateGame();
-    }
-}
-function checkIfPositive(num) {
-    if (num > 0) {
-        return "+" + num;
-    } else {
-        return num;
-    }
-}
-async function initiateGame() {
-    //#region The game I swear is going to exist sometime
-    //This is going to set the initation but i don't wanna do it until its done
-    /*gameInitiated = true;
-    userDocRef = doc(db, "connectedUsers", username)
-    setDoc(userDocRef, {
-        name: username,
-        color: getUserColor(username),
-        lastActive: serverTimestamp(),
-        gameInitiated: gameInitiated
-    }, { merge: true });
-    */
-    var AvailableRaces = gameData.Races;
-    var AvailableClasses = gameData.Classes;
-    var playerSelectedRace = null;
-    var playerSelectedClass = null;
-    var raceOptions = (function () { var races = gameData.Races; var returnStr = ""; for (var i = 0; i < races.length; i++) { if (i + 1 != races.length) { returnStr += `${races[i].name}, `; } else { returnStr += `and ${races[i].name}`; } } return returnStr; }())
-    await Popup.quick(`Welcome to the Grand Game, ${username}. We're glad to see you!`, "ok");
-    while (playerSelectedRace == null) {
-        var race = await Popup.quick(`First off, you'll need to choose the race (species), or your character. Your options are ${raceOptions}. To view more information about a race, type it's name into the below box.`, "text");
-        var rRace = race.trim().toLowerCase();
-        rRace = rRace.charAt(0).toUpperCase() + rRace.slice(1);
-        var isRace = (function () { for (var i = 0; i < AvailableRaces.length; i++) { if (AvailableRaces[i].name == rRace) { return true } else if (i + 1 == AvailableRaces.length) { return false; } } }())
-        console.log(isRace);
-        if (!isRace) {
-            while (!isRace) {
-                console.log(rRace);
-                var SelRace = await Popup.quick(`Please input a valid race. Your options are ${raceOptions}. To view more information about a race, type it's name into the below box.`, "text");
-                var rRace = SelRace.trim().toLowerCase();
-                rRace = rRace.charAt(0).toUpperCase() + rRace.slice(1);
-                isRace = (function () { for (var i = 0; i < AvailableRaces.length; i++) { if (AvailableRaces[i].name == rRace) { return true } else if (i + 1 == AvailableRaces.length) { return false; } } }());
-                if (isRace) { race = rRace };
-            }
-        }
-        race = (function () { for (var i = 0; i < AvailableRaces.length; i++) { if (AvailableRaces[i].name == race) { return AvailableRaces[i] } } }())
-        var RaceStatString = ""
-        var statArray = ["Strength", "Dexterity", "Constitution", "Wisdom", "Intelligence", "Charisma"];
-        for (var i = 0; i < race.statBonuses.length; i++) {
-            var lastNum = 0;
-            var firstNum = null;
-            for (var n = 0; n < race.statBonuses.length; n++) {
-                if (race.statBonuses[n] != 0) {
-                    if (firstNum == null) { firstNum = n }
-                    lastNum = n;
-                }
-            }
-            if (race.statBonuses[i] != 0) {
-                if (i == firstNum) {
-                    RaceStatString += `a ${checkIfPositive(race.statBonuses[i])} modifier to ${statArray[i]}, `
-                } else if (i == lastNum) {
-                    console.log("lastNum: " + lastNum);
-                    console.log("i: " + i)
-                    RaceStatString += ` and a ${checkIfPositive(race.statBonuses[i])} modifier to ${statArray[i]}`
-                } else {
-                    RaceStatString += ` ${checkIfPositive(race.statBonuses[i])} modifier to ${statArray[i]},`
-                }
-            }
-        }
-        var LanguageString = `${race.languages[0]} and ${race.languages[1]}`;
-        if (await Popup.quick(`${race.description} Selecting ${race.name} as your race gives ${RaceStatString} alongside proficiency with ${race.toolProficiencies} and the ability to speak the ${LanguageString} tongues. Choose ${race.name} as your character's race?`, 'confirm')) {
-            await Popup.quick(`You have selected ${race.name} as your character's race.`, 'continue')
-            playerSelectedRace = race;
-            playerSelectedRace = true;
-        }
-    }
-    while (playerSelectedClass == null) {
-        var classOptions = (function () { var Classes = gameData.Classes; var returnStr = ""; for (var i = 0; i < Classes.length; i++) { if (i + 1 != Classes.length) { returnStr += `${Classes[i].name}, `; } else { returnStr += `and ${Classes[i].name}`; } } return returnStr; }());
-        var nClass = await Popup.quick(`Next, you need to choose a class for your character. Your class determines your skills, abilities, weapon and armor proficiences, and saving throw proficiencies. Your options are ${classOptions}. To view more information about a class, type it's name into the below box.`, "text");
-        var cClass = race.trim().toLowerCase();
-        cClass = cClass.charAt(0).toUpperCase() + cClass.slice(1);
-        var isClass = (function () { for (var i = 0; i < AvailableClasses.length; i++) { if (AvailableClasses[i].name == cClass) { return true } else if (i + 1 == AvailableClasses.length) { return false; } } }())
-        if (!isClass) {
-            while (!isClass) {
-                var SelClass = await Popup.quick(`Please input a valid class. Your options are ${classOptions}. To view more information about a class, type it's name into the below box.`, "text");
-                var rRace = SelClass.trim().toLowerCase();
-                rRace = rRace.charAt(0).toUpperCase() + rRace.slice(1);
-                isRace = (function () { for (var i = 0; i < AvailableRaces.length; i++) { if (AvailableRaces[i].name == rRace) { return true } else if (i + 1 == AvailableRaces.length) { return false; } } }());
-                if (isRace) { race = rRace };
-            }
-        }
-    }
-
 }
 onload();
