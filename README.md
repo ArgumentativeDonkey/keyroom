@@ -1,11 +1,10 @@
 About
 ================
-Keyroom is a small chatroom built for rapid communication on the web. In honesty, it has no true purpose but for the enjoyement and entertainment of it's users. We welcome you to visit us at any of the following: <br>
+Keyroom is a small cozy web chatroom created as a small, fun project where anybody can create their own instance and host it for free using Google Firebase. We welcome you to visit us at any of the following or create their own instance using the instructions found in setup.md: <br>
 [https://keyroom-5ff86.web.app/](https://keyroom-5ff86.web.app/) <br>
 [https://keyroom.xyz](https://keyroom.xyz) <br>
 [https://keyroom.cc](https://keyroom.cc) <br>
 <br>
-If you'd like to set up your own instance of Keyroom as a personal chatroom, please follow the instructions located in setup.md.
 
 Keyroom Commands
 ================
