@@ -7,8 +7,8 @@ from google.cloud.firestore import SERVER_TIMESTAMP
 from urllib.request import urlopen
 from lxml.html import parse
 botname = "Link Tracer Bot"
+cred = credentials.Certificate("yourcredentialsfilename.json")
 #region setup code
-cred = credentials.Certificate("keyroom-5ff86-firebase-adminsdk-fbsvc-becc9b3702.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 listenersFirst = {}
