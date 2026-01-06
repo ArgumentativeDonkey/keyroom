@@ -5,9 +5,9 @@ import secrets
 import time
 from google.cloud.firestore import SERVER_TIMESTAMP
 botname = "DefaultBot"
+cred = credentials.Certificate("yourcredentialsfilename.json")
 #the below code in the region is standard setup code and typically does not need to be modified
 #region setup code 
-cred = credentials.Certificate("keyroom-5ff86-firebase-adminsdk-fbsvc-becc9b3702.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 listenersFirst = {}

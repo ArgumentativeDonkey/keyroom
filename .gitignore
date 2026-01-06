@@ -67,3 +67,6 @@ node_modules/
 public/config.js
 .firebaserc
 bots/examples/keyroom-5ff86-firebase-adminsdk-fbsvc-becc9b3702.json
+
+#ignore blank template for keyroom bot with prefilled config
+bots/emptykeyroombot.py
