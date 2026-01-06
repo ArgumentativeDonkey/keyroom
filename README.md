@@ -5,4 +5,5 @@ Keyroom is a small cozy web chatroom created as a small, fun project where anybo
 [https://keyroom.xyz](https://keyroom.xyz) <br>
 [https://keyroom.cc](https://keyroom.cc) <br>
 <br>
-For a list of commands that can be used in Keyroom chatrooms, please see [commands.md](commands.md)
+For a list of commands that can be used in Keyroom chatrooms, please see [commands.md](commands.md)<br>
+Please note that Keyroom and other instances of it are not designed for secure communication and have minimal security. Do not send personal information including but not limited to passwords, private contact information or addresses over Keyroom.
