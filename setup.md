@@ -40,7 +40,14 @@ The following will walk you through setting up a private keyroom instance.
 
 
 1. Rename configexample.js to config.js, then replace the information in the "Firebase" section with the information found in settings \-\> general in the Firebase console.   
-2. Replace the name field with the name you wish to be displayed as the title of the chatroom’s webpage.  
-3. Once all the information is replaced in config.js, your Keyroom instance should be able to launch. To test this, type `firebase deploy` into your terminal while in the keyroom folder.   
-4. Follow the link it outputs after the process completes and verify that the chatroom is working correctly.
+2. Replace the name field with the name you wish to be displayed as the title of the chatroom’s webpage.
+3. Change the timezone value to the one you wish your chatroom to use.
+4. Once all the information is replaced in config.js, your Keyroom instance should be able to launch. To test this, type `firebase deploy` into your terminal while in the keyroom folder.
+5. Change the enabled value of EmailJS to false or follow the steps below to set up summoning emails.
+6. Follow the link it outputs after the process completes and verify that the chatroom is working correctly — you should be able to send and recieve messages.
+
+## EmailJS Setup
+The following instructions are only needed if you would like to use Keyroom's email summoning feature, which allows users to ping each other via email with the `!summon` command.
+
+
 
