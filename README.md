@@ -5,6 +5,7 @@ Keyroom is a small chatroom built for rapid communication on the web. In honesty
 [https://keyroom.xyz](https://keyroom.xyz) <br>
 [https://keyroom.cc](https://keyroom.cc) <br>
 <br>
+If you'd like to set up your own instance of Keyroom as a personal chatroom, please follow the instructions located in setup.md.
 
 Keyroom Commands
 ================
