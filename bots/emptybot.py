@@ -5,7 +5,8 @@ import secrets
 import time
 from google.cloud.firestore import SERVER_TIMESTAMP
 botname = "DefaultBot"
-#region setup code
+#the below code in the region is standard setup code and typically does not need to be modified
+#region setup code 
 cred = credentials.Certificate("keyroom-5ff86-firebase-adminsdk-fbsvc-becc9b3702.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
@@ -63,7 +64,7 @@ def listenToRoom(room):
 listener = listenToRoom("allMsgs")
 #endregion setup code
 def onNewMessage(message, writer, timestamp, roomIn):
-    pass
+    pass #this function is called whenever a new message is received. You can add your bot's logic here.
 try:
     while True:
         time.sleep(1)

@@ -10,16 +10,16 @@ export const config = {
         "measurementId": "yourFirebaseMeasurementId"
     },
     "emailJs": {
-        "enabled": false,
-        "key": "yourEmailJSKey — only fill these in if you need the summoning feature",
+        "enabled": false, //enable this only if you plan to use the summon feature
+        "key": "yourEmailJSKey",
         "serviceId": "yourEmailJSServiceId",
         "templateId": "yourEmailJSTemplateId",
         "summonCooldown": 360
     },
     "keyroom": {
-        "pageTitle": "Keyroom Chat",
-        "timezone": "America/Denver",
-        "allowedPingAll": ["Array of usernames allowed to ping everyone"]
+        "pageTitle": "Keyroom Chat", //this will be your webpage title
+        "timezone": "America/Denver", //time zone of your chatroom
+        "admin": ["Array of usernames with admin permissions"] //example: ["User1", "User2"]. These users can ping all and reset rooms.
     }
 
 }

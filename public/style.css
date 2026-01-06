@@ -58,10 +58,10 @@
 }
 
 body[data-format="music"] .messages {
-    height: 65vh;
+    height: 59vh;
     position: absolute;
-    left: 15vw;
-    top: 30vh;
+    left: 3vw;
+    top: 37.5vh;
     overflow-y: scroll;
     overflow-x: hidden;
     overflow-wrap: break-word;
