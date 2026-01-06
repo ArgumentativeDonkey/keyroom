@@ -70,3 +70,4 @@ node_modules/
 #ignore config file
 public/config.js
 .firebaserc
+bots/examples/keyroom-5ff86-firebase-adminsdk-fbsvc-becc9b3702.json
