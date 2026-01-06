@@ -46,7 +46,7 @@ The following will walk you through setting up a private keyroom instance.
 5. Change the enabled value of EmailJS to false or follow the steps below to set up summoning emails.
 6. If you wish to change the logo of your chatroom, delete the existing keyroomlogo.png and upload a new image, which you then must rename as keyroomlogo.png. Ensure that the new logo is in the /public folder.
 7. Follow the link it outputs after the process completes and verify that the chatroom is working correctly — you should be able to send and recieve messages.
-8. If you wish, you can visit [bots.md](bots.md) to learn more about created modular self-hosted chatroom functions with the Bots feature.
+8. If you wish, you can visit [botsetup.md](botsetup.md) to learn more about created modular self-hosted chatroom functions with the Bots feature.
 
 ## EmailJS Setup
 The following instructions are only needed if you would like to use Keyroom's email summoning feature, which allows users to ping each other via email with the `!summon` command.
