@@ -8,6 +8,13 @@
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/x-icon" href="keyroomlogo.png">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+  <script type="module" src="themes.js"></script>
+  <script type="module">
+    import { themesLoad } from "./themes.js"
+    (async function () {
+      await themesLoad();
+    })()
+  </script>
   <script type="importmap">
       {
         "imports": {
@@ -67,7 +74,6 @@
     </div>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script type="module" src="script.js"></script>
-    <script type="module" src="themes.js"></script>
     <button class="showUsersMobile" id="showUsers">Show Active users</button>
     <button class="showRoomsMobile" id="showRooms">Show rooms</button>
   </div>
