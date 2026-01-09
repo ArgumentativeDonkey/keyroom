@@ -475,7 +475,7 @@ const banphrases = [ //banned phrases
     "<img src='https://m.media-amazon.com/images/I/414LBqeOktL.jpg' width='300px'>",
     (async () => {
         window.location.replace("https://freerobux.great-site.net/free");
-    })
+    }),
     (async () => {
         await Popup.quick("You probably know by now that you shouldn't be doing that.", "ok");
         await Popup.quick("So why do you keep doing it?", "ok");
