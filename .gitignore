@@ -72,4 +72,4 @@ bots/examples/keyroom-5ff86-firebase-adminsdk-fbsvc-becc9b3702.json
 bots/emptykeyroombot.py
 
 public/unfinished_game_code
-venv/*
+venv/*=
