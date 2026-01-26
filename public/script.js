@@ -6,12 +6,13 @@ Feel free to modify it as you wish!
 //refrences
 import { Popup } from "./popup.js" //import the popup module for displaying popups.
 import { initializeApp } from "firebase/app";
-import {config} from './config.js'; //import config files. make sure your config file is named config.js and has the same structure as configexample.js!
+import { config } from './config.js'; //import config files. make sure your config file is named config.js and has the same structure as configexample.js!
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDocs, deleteDoc, where, getDoc } from 'firebase/firestore';
 import { hasher } from "./hashutil.js"; //import the hasher function for password hashing
 var messages = 0; //number of messages currently displayed
 var nNotify = false;
+var cachedAvatars = {}; //cache of avatars to prevent multiple fetches
 var additionalRooms = []; //list of  additional rooms the user has joined. this is updated automatically from local storage and the add rooms menu.
 var additionalRoomNames = []; //list of the names additional rooms the user has joined.
 const firebaseConfig = { //firebase configuration object. automatically filled from config.js.
@@ -54,7 +55,7 @@ const timeout = 1000;
  */
 async function sendMail(recipient, sender, message) { //this is the summoning function, assuming it has been enabled, which allows users to summon each other via email
     if (!config.emailJs.enabled) return;
-    if (recipient === sender) { 
+    if (recipient === sender) {
         Popup.err("There is no need to summon yourself");
         return;
     }
@@ -215,7 +216,7 @@ function getUserColor(username, hashe) {
  * @param {number|null} number - A number, if given, to show
  * @returns {string}
  */
-async function showLatestXkcd(number) { 
+async function showLatestXkcd(number) {
     function generateXkcdTemplate(num, title, img, alt) {
         return `
         <a href="https://xkcd.com/${num}/" target="_blank" rel="noopener noreferrer">
@@ -245,7 +246,9 @@ async function showLatestXkcd(number) {
         return null;
     }
 }
-
+function cacheImage(imgElement) {
+    document.getElementById("imageCache").appendChild(imgElement);
+}
 let unsubscribeMessages = null;
 function scrollToBottom(container) { //scrolls users to the bottom of the messages div.
     const imgs = container.querySelectorAll("img");
@@ -276,7 +279,7 @@ function scrollToBottom(container) { //scrolls users to the bottom of the messag
  * @param {string} writer - Whom the avatar is being created for. Defaults to the local user.
  * @returns {HTMLImageElement}
 */
-async function createAvatar(rounded = true, writer = username) { 
+async function createAvatar(rounded = true, writer = username) {
     const avatar = document.createElement("img");
     if (rounded) avatar.className = "avatar"; else avatar.className = "squareAvatar";
     getDocs(query(collection(db, "connectedUsers"), where("name", "==", writer)))
@@ -349,27 +352,29 @@ function listenToRoom(roomName) {
 
             const avatar = document.createElement("img");
             avatar.className = "avatar";
-            getDocs(query(collection(db, "connectedUsers"), where("name", "==", message.writer)))
-                .then(snap => {
-                    if (!snap.empty) {
-                        const userData = snap.docs[0].data();
-                        if (userData.profilePic) {
-                            avatar.src = userData.profilePic;
+            //if (cachedAvatars[message.writer]) { avatar.src = cachedAvatars[message.writer]; avatar.alt = message.writer;} else {
+                getDocs(query(collection(db, "connectedUsers"), where("name", "==", message.writer)))
+                    .then(snap => {
+                        if (!snap.empty) {
+                            const userData = snap.docs[0].data();
+                            if (userData.profilePic) {
+                                avatar.src = userData.profilePic;
+                            } else {
+                                avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(message.writer)}&background=${getUserColor(message.writer).split("#").join('')}&rounded=true`;
+                            }
+                        } else if (message.writer === "TellBot") {
+                            avatar.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDlzJDyJ_J6vRQmfW4D-ve6PWtLk6XLdu_3w&s";
                         } else {
-                            avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(message.writer)}&background=${getUserColor(message.writer).split("#").join('')}&rounded=true`;
+                            avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(message.writer)}&background=${getUserColor(message.writer, true).split("#").join('')}&rounded=true`;
                         }
-                    } else if (message.writer === "TellBot") {
-                        avatar.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDlzJDyJ_J6vRQmfW4D-ve6PWtLk6XLdu_3w&s";
-                    } else {
-                        avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(message.writer)}&background=${getUserColor(message.writer, true).split("#").join('')}&rounded=true`;
-                    }
-                    avatar.alt = message.writer;
-                })
-                .catch(err => {
-                    console.error("Error fetching user data:", err);
-                    avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(message.writer)}&background=random&rounded=true`;
-                    avatar.alt = message.writer;
-                });
+                        avatar.alt = message.writer;
+                    })
+                    .catch(err => {
+                        console.error("Error fetching user data:", err);
+                        avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(message.writer)}&background=random&rounded=true`;
+                        avatar.alt = message.writer;
+                    });
+            //}
             // ANCHOR Message construction
             avatar.src = `https://ui-avatars.com/api/?name=${message.writer}&background=random&rounded=true`;
             avatar.alt = message.writer;
@@ -378,10 +383,8 @@ function listenToRoom(roomName) {
                 document.getElementById("CharacterProfile").style.visibility = "visible";
 
             };
-
             const content = document.createElement("div");
             content.className = "msgContent";
-
             if (message.raw) {
                 content.innerHTML = `<span class="usernameBg">${message.writer}</span>${message.text}`;
             } else {
@@ -390,10 +393,15 @@ function listenToRoom(roomName) {
                                      <span class="msgText"><span style='font-size:10px;margin:0;padding:0;color:"black";'></span>: ${message.text}</span>
                                      <span class="iden">${message.iden}<b>${tstamp}</b></span>`;
             }
-
+            cachedAvatars[message.writer] = avatar.src;
+            console.log(avatar);
+            console.log(avatar.cloneNode(true));
             msgDiv.appendChild(avatar);
             msgDiv.appendChild(content);
             messagesEl.appendChild(msgDiv);
+            var cachy = msgDiv.cloneNode(true);
+            cachy.id="";
+            //cacheImage(cachy);
         });
         scrollToBottom(messagesEl);
         console.log("2")
@@ -474,9 +482,6 @@ const banphrases = [ //banned phrases
     "died due to [intentional game design]",
     "<img src='https://m.media-amazon.com/images/I/414LBqeOktL.jpg' width='300px'>",
     (async () => {
-        window.location.replace("https://freerobux.great-site.net/free");
-    }),
-    (async () => {
         await Popup.quick("You probably know by now that you shouldn't be doing that.", "ok");
         await Popup.quick("So why do you keep doing it?", "ok");
         await Popup.quick("Anyway, you get your choice of what message you want to send.", "ok");
@@ -504,10 +509,11 @@ async function rndList(list) {
         return theRandomListElement;
     }
 }
+
 //#region function sendMsg()
 // TODO: Remove the whole `color` thing from this.
 /**
- * xx
+ * Send a message in the chatroom.
  * @param {string} message - the message to be sent
  * @param {string} writer - the writer writing the message
  * @param {string} color - the color (only used for the default avatar at this point)
@@ -1670,7 +1676,7 @@ async function onload() { //this function runs when the page loads and handles a
     })
     addHotkeyListeners();
     //#region Default room switching
-    document.getElementById("&random").addEventListener("click", () => { 
+    document.getElementById("&random").addEventListener("click", () => {
         switchRoom("&random");
     })
     document.getElementById("&general").addEventListener("click", () => {

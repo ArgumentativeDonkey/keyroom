@@ -8,6 +8,15 @@
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/x-icon" href="keyroomlogo.png">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+  <script type="importmap">
+    {
+      "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+        "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js",
+        "firebase/analytics": "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js"
+      }
+    }
+</script>
   <script type="module" src="themes.js"></script>
   <script type="module">
     import { themesLoad } from "./themes.js"
@@ -15,20 +24,12 @@
       await themesLoad();
     })()
   </script>
-  <script type="importmap">
-      {
-        "imports": {
-          "firebase/app": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
-          "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js",
-          "firebase/analytics": "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js"
-        }
-      }
-    </script>
   <script type="module" src="./popup.js"></script>
 
 </head>
 
 <body>
+  <div style="display: none;" id="imageCache"></div>
   <div class="fullWrapper">
     <h3 class="header" id="header">loading...</h3>
     <div class="musicFrame" id="player"></div>
@@ -49,13 +50,12 @@
           <li class="room" id="/codeinject">& codeinject</li>
           <li class="room" id="&music">& music</li>
           <li class="room" id="&">& private</li>
-          <li class="room" id="&">& donkeys</li>
         </ul>
       </div>
     </div>
     <div class="messages" id="messages"></div>
     <div class="send"></div>
-    <input class="sendput" type="text" id="message-input" placeholder="Wow, what a boring box...">
+    <input class="sendput" type="text" id="message-input" placeholder="Wow, what a interesting box...">
     <div class="desktopDiv" id="connectedUsers">
       <p class="userP"><b>Connected Users</b></p>
     </div>
