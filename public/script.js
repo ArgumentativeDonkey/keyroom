@@ -455,17 +455,7 @@ async function scheckInbox(username) {
         );
         notifiedInbox[username] = inboxCounter;
     }
-    /*if (!gameInitiated && !notifiedGameInit) {
-        sendMsg(
-            `Welcome! It seems you have not yet initiated yourself into the game! Please type !initiate into &game at the next possible convient moment.`,
-            "System",
-            "#4c5b8c",
-            false,
-            true
-        );
-        notifiedGameInit = true;
-    }
-        */
+    
 }
 
 
@@ -1449,12 +1439,12 @@ function getCurrentTime() {
 const messagesEl = document.getElementById("messages");
 
 function clearRoomBorders() {
+    //this whole block is stupid but i've been too lazy to make this part dynamic.
     document.getElementById("&random").classList.remove('roomActive');
     document.getElementById("&xkcd").classList.remove('roomActive');
     document.getElementById("&spam").classList.remove('roomActive');
     document.getElementById("&general").classList.remove('roomActive');
     document.getElementById("/codeinject").classList.remove('roomActive');
-    document.getElementById("&game").classList.remove('roomActive');
     document.getElementById("&music").classList.remove('roomActive');
     document.getElementById("&").classList.remove('roomActive');
     document.getElementById("&random").classList.add('room');
@@ -1462,7 +1452,6 @@ function clearRoomBorders() {
     document.getElementById("&spam").classList.add('room');
     document.getElementById("&general").classList.add('room');
     document.getElementById("/codeinject").classList.add('room');
-    document.getElementById("&game").classList.add('room');
     document.getElementById("&").classList.add('room');
     document.getElementById("&music").classList.add('room');
     if (additionalRooms.length > 0) {
