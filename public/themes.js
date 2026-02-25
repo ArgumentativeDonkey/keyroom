@@ -43,11 +43,12 @@ export async function themesLoad() {
   
   if (localStorage.getItem("theme") != null) {
     document.body.setAttribute("data-theme", localStorage.getItem("theme"));
+  } else if (window.getComputedStyle(document.querySelector('html')).getPropertyValue('--prefers-light') != '') {
+    document.body.setAttribute("data-theme", 'light');
   } else {
     document.body.setAttribute("data-theme", 'dark');
   }
-  
-    document.documentElement.style.setProperty("--n-themes", themes.length+2);
+  document.documentElement.style.setProperty("--n-themes", themes.length+2);
   
   for(let i = 0; i < themes.length; i++) {
     for(let z = 0; z < wrappers.length; z++) {

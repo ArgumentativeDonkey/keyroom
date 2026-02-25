@@ -411,6 +411,12 @@ button:focus {
     }
 }
 
+@media (prefers-color-scheme: light) {
+    html {
+        --prefers-light: 1;
+    }
+}
+
 .messages div {
     display: flex;
     align-items: flex-start;

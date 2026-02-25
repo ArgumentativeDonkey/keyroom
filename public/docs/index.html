@@ -4,7 +4,7 @@
     <title>Keyroom Docs</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="styles.css" />
-    <link rel="icon" type="image/png" href="../keyroomaf(1).png" />
+    <link rel="icon" type="image/png" href="/keyroomlogo.png" />
     <link
       rel="preload"
       href="Outfit.ttf"
@@ -12,15 +12,15 @@
       type="font/ttf"
       crossorigin
     />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" type="text/css"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+    <meta name="description" content="Guide to using Keyroom, a portable, lightweight web chatroom." />
+    <meta name="keywords" content="portable, lightweight, online, web, chatroom, chat, keyroom, documentation, docs" />
   </head>
-
   <body>
     <main>
-      <ul>
-        <li><a href="#commands">Keyroom Commands</a></li>
-        <li><a href="#aboutcss">Keyroom CSS</a></li>
-      </ul>
-        <a href="/">Back to Keyroom</a>
+      <a href="/" id="back-to-keyroom"><span class="material-symbols-outlined">arrow_back</span>Back to Keyroom</a>
       <h1 id="commands">Keyroom Commands</h1>
       <p>
         <i
@@ -160,14 +160,14 @@
         background and <code>--txt</code> controls the text elements as well as
         many of the borders around elements.<br />
         An example custom CSS might look like<br />
-        <code>
-          body {<br />
-          &Tab;--bg: #0E1116<br />
-          &Tab;--txt: #E6EDF3<br />
-          } </code
-        ><br />
+        <pre><code>body {<br />
+&Tab;--bg: #0E1116;<br />
+&Tab;--txt: #E6EDF3;<br />
+} </code
+        >
+        </pre>
         <h2>Modifying Other CSS</h2>
-        <p>You can find the Keyroom's CSS styling at <a href="/style.css"><code>/style.css</code></a>. There is no other styling applied except in the case of dynamic styling by Javascript files. To find <code>id</code>s dynamically assigned and not in the <code>style.css</code> file, you will have to use your browsers Web Developer Tools to pinpoint an element&rsquo;s identifiers.</p>
+        <p>You can find the Keyroom's CSS styling at <a href="/style.css"><code>/style.css</code></a>. There is no other styling applied except in the case of dynamic styling by Javascript files. To find <code>id</code>s dynamically assigned and not in the <code>style.css</code> file, you will have to use your browser&rsquo;s Web Developer Tools to pinpoint an element&rsquo;s identifiers.</p>
       </p>
     </main>
   </body>

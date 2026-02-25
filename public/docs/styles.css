@@ -14,7 +14,15 @@ main {
     width: 600px;
     max-width: 100%;
     padding: 5px;
+    margin-bottom: 40px;
 }
 code {
     font-family: "Courier New", monospace;
+}
+#back-to-keyroom {
+    display: flex;
+    vertical-align:middle;
+    text-decoration: none;
+    color: initial;
+    margin-top: 10px;
 }
