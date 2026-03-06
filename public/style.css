@@ -13,7 +13,7 @@
     --stripe-calc: calc(var(--stripe-width) * 1.41421356237);
     --anim-time: 8s;
     --n-themes: 10;
-    --n-rooms: 10;
+    --n-rooms: 10px;
 }
 
 [data-theme="light"] {
@@ -284,14 +284,15 @@ a:focus {
     z-index: 1000;
     bottom: 3px;
     padding: 0px;
-    transition: height 0.7s;
+    transition: height 0.7s !important;
+
+}
+.rooms:not(:hover) * {
     pointer-events: none;
 }
-
 .rooms:hover {
-    height: calc(43px * var(--n-rooms));
+    height: calc(var(--n-rooms));
     overflow-y: hidden;
-    pointer-events: auto;
 }
 
 .rooms * {
