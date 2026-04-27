@@ -523,7 +523,7 @@ export async function sendMsg(message, writer, color, raw) {
                 message = await rndList();
             }
             if (message.split(" ")[0].trim() == "!image") {
-                message = `<img src="${message.split(" ")[1]}" alt="Image" style="max-width:1200px; max-height:200px;">`;
+                message = `<a href="${message.split(" ")[1]}"><img src="${message.split(" ")[1]}" alt="Image" style="max-width:1200px; max-height:200px;"></a>`;
             } else if (message.split(" ")[0].trim() === "!video") {
                 const input = message.split(" ").slice(1).join(" ");
                 if (!input) {
