@@ -7,7 +7,6 @@ Feel free to modify it as you wish!
 import { Popup } from "./popup.js"; //import the popup module for displaying popups.
 import { initializeApp } from "firebase/app";
 import { config } from "./config.js"; //import config files. make sure your config file is named config.js and has the same structure as configexample.js!
-import { getAnalytics } from "firebase/analytics";
 import {
     getFirestore,
     collection,
@@ -120,6 +119,7 @@ async function sendMail(recipient, sender, message) {
             message: "You have been summoned! From " + sender + ": " + message,
         };
 
+        // eslint-disable-next-line no-undef
         await emailjs.send(
             config.emailJs.serviceId,
             config.emailJs.templateId,
@@ -151,6 +151,7 @@ function doDelay() {
     }, timeout);
 }
 (function () {
+    // eslint-disable-next-line no-undef
     if (config.emailJs.enabled) emailjs.init(config.emailJs.key);
 })();
 let currentRoom = "&general";
@@ -311,7 +312,7 @@ async function showLatestXkcd(number) {
                 newdata.alt,
             );
         } else if (Number.isInteger(number)) {
-            return "<p>That xkcd doesn\'t exists yet!</p>";
+            return "<p>That xkcd doesn't exists yet!</p>";
         } else {
             return generateXkcdTemplate(data.num, data.title, data.img, data.alt);
         }
@@ -322,9 +323,6 @@ async function showLatestXkcd(number) {
         );
         return null;
     }
-}
-function cacheImage(imgElement) {
-    document.getElementById("imageCache").appendChild(imgElement);
 }
 let unsubscribeMessages = null;
 function scrollToBottom(container) {
@@ -664,12 +662,12 @@ export async function sendMsg(message, writer, color, raw) {
         if (message.split(" ")[0].trim() == "!link") {
             message = `<a href="${message.split(" ")[1]}" target="_blank" rel="noopener noreferrer">${message.split(" ")[1]}</a>`;
         } else if (message.split(" ")[0].trim() === "!edit") {
+            /** The text that will be replacing the message */
             const newText = message.replace("!edit ", "") + " (<i>edited</i>)";
             const snapshot = await getDocs(
                 query(collection(db, currentRoom), orderBy("timestamp", "desc")),
             );
             let found = false;
-
             for (const doca of snapshot.docs) {
                 const data = doca.data();
                 if (data.writer === writer) {
@@ -688,16 +686,11 @@ export async function sendMsg(message, writer, color, raw) {
                     found = true;
                     break;
                 }
-
-                if (docFound) {
-                    found = true;
-                } else {
-                    message = "";
-                    Popup.quick(
-                        `<span class="material-symbols-outlined">warning</span><br>Error: No message found with ID ${targetId}.`,
-                    );
-                    return;
-                }
+                message = "";
+                Popup.quick(
+                    `<span class="material-symbols-outlined">warning</span><br>Error: you haven't sent any messages yet.`,
+                );
+                
             }
 
             if (!found) {
@@ -741,11 +734,6 @@ export async function sendMsg(message, writer, color, raw) {
                 );
                 return;
             }
-
-            if (!found) {
-                Popup.err("No message found to edit.");
-            }
-            return;
         } else if (message.split(" ")[0].trim() === "!editProfilePic") {
             const newPicUrl = message.split(" ")[1];
             const userDocRef = doc(db, "connectedUsers", writer);
@@ -839,7 +827,6 @@ export async function sendMsg(message, writer, color, raw) {
         } else if (message.trim() === "!imbox" || message.trim() === "!inboxx") {
             window.alert("I think you mispelled !inbox.");
         }else if (message.trim() === "!clearInbox") {
-            const targetId = message.split(" ")[1].trim();
             const snapshot = await getDocs(
                 query(collection(db, "tellMsgs"), orderBy("timestamp", "desc")),
             );
@@ -1198,8 +1185,8 @@ async function sendXkcd(what) {
         sendMsg(msg, "xkcd", "#516b94", true);
     } else if (Number.isInteger(Number(what))) {
         console.log(Number(what));
-        var msg = await showLatestXkcd(parseInt(what));
-        sendMsg(msg, "xkcd", "#516b94", true);
+        var specific_msg = await showLatestXkcd(parseInt(what));
+        sendMsg(specific_msg, "xkcd", "#516b94", true);
     }
 }
 
@@ -1306,7 +1293,6 @@ async function validatePassword(username) {
             hasher(localStorage.getItem("password")) === passwordF
         )
             return true;
-        let storedPassword = localStorage.getItem("password");
         let input = await Popup.quick(
             "<span class='material-symbols-outlined'>vpn_key</span><br>Please enter your password.",
             "password",
@@ -1340,7 +1326,6 @@ async function addRoomProcessor() {
         );
         return;
     }
-    var alreadyExistingRooms = ["general, random, xkcd, "];
     var roomsList = document.getElementById("roomsList");
     var newRoomLi = document.createElement("li");
     newRoomLi.classList.add("room");
@@ -1407,8 +1392,8 @@ function processKeydown(e) {
                 if (!interpreter) {
                     interpreter = jsPython();
                 }
-                for (var i = 2; i < (split.length); i++) {
-                    interpreted += ` ${split[i]}`;
+                for (var pyarg = 2; pyarg < (split.length); pyarg++) {
+                    interpreted += ` ${split[pyarg]}`;
                 }
                 interpreted = interpreted.slice(0, 1);
                 interpreter.evaluate(interpreted).then(res => {
@@ -1416,12 +1401,14 @@ function processKeydown(e) {
                     sendMsg(res, "PyBot", "#FFFF00");
                 });
             } else if (command == "!js") {
-                var interpreted = "";
-                for (var i = 2; i < (split.length); i++) {
-                    interpreted += ` ${split[i]}`;
+                if (currentRoom == "&codeinject") {
+                    var interpretedJs = "";
+                    for (var arg = 2; arg < (split.length); arg++) {
+                        interpretedJs += ` ${split[arg]}`;
+                    }
+                    let res = eval(interpretedJs);
+                    sendMsg(res, "JSBot", "#68A063");
                 }
-                let res = eval(interpreted);
-                sendMsg(res, "JSBot", "#68A063");
             } else if (command == "!givemeaselfplug1") {
                 sendMsg("https://gradyblackwell.dev", "SelfPlugBot", "#6863a0");
             } else if (command == "!givemeaselfplug2") {
@@ -1475,6 +1462,7 @@ function loadYouTubeVideo(videoId, autoInit = true) {
                     player.destroy();
                 }
 
+                // eslint-disable-next-line no-undef
                 player = new YT.Player("player", {
                     height: "315",
                     width: "560",
@@ -1576,6 +1564,7 @@ async function manageMusic() {
         }
         if (data.paused !== undefined && player) {
             const currentState = player.getPlayerState();
+            // eslint-disable-next-line no-undef
             const isCurrentlyPlaying = currentState === YT.PlayerState.PLAYING;
 
             if (data.paused && isCurrentlyPlaying) {
@@ -1603,6 +1592,7 @@ async function manageMusic() {
         }
     });
 }
+// eslint-disable-next-line no-unused-vars
 async function onPlayerReady(event) {
     console.log("Player ready");
     playerReady = true;
@@ -1703,6 +1693,7 @@ async function onPlayerStateChange(event) {
 
     const currentTime = getCurrentTime();
 
+    // eslint-disable-next-line no-undef
     if (state === YT.PlayerState.PLAYING) {
         console.log("Video is playing");
         lastPosition = currentTime;
@@ -1719,6 +1710,7 @@ async function onPlayerStateChange(event) {
             },
             { merge: true },
         );
+    // eslint-disable-next-line no-undef
     } else if (state === YT.PlayerState.PAUSED) {
         console.log("Video is paused");
 
