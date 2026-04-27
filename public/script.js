@@ -1163,7 +1163,7 @@ async function tell(message, writer, reciepient) {
     try {
         if (reciepient == writer) {
             Popup.quick(
-                `<span class='material-symbols-outlined'>warning</span><br>Error: There is no need to message yourself`,
+                `<span class='material-symbols-outlined'>warning</span><br>Error: There is no need to message yourself. Keyroom is not a reminder app. That and messaging yourself breaks keyroom. Thank you and have a nice day.`,
             );
             return;
         }
@@ -1415,6 +1415,17 @@ function processKeydown(e) {
                     console.log(res);
                     sendMsg(res, "PyBot", "#FFFF00");
                 });
+            } else if (command == "!js") {
+                var interpreted = "";
+                for (var i = 2; i < (split.length); i++) {
+                    interpreted += ` ${split[i]}`;
+                }
+                let res = eval(interpreted);
+                sendMsg(res, "JSBot", "#68A063");
+            } else if (command == "!givemeaselfplug1") {
+                sendMsg("https://gradyblackwell.dev", "SelfPlugBot", "#6863a0");
+            } else if (command == "!givemeaselfplug2") {
+                sendMsg("https://leifbarton.dev", "SelfPlugBot", "#6863a0");
             }
             doDelay();
         } else {
