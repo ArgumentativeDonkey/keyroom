@@ -675,7 +675,9 @@ export async function sendMsg(message, writer, color, raw) {
 
         } else if (message.trim() === "!inbox") {
             checkInbox = true;
-        } else if (message.trim() === "!clearInbox") {
+        } else if (message.trim() === "!imbox" || message.trim() === "!inboxx") {
+            window.alert("I think you mispelled !inbox.");
+        }else if (message.trim() === "!clearInbox") {
             const targetId = message.split(" ")[1].trim();
             const snapshot = await getDocs(query(collection(db, "tellMsgs"), orderBy("timestamp", "desc")));
             let docFound = null;
@@ -1119,6 +1121,8 @@ function areThereAnyPopupsThatAreNotCurrentlyHiddenAtTheTimeThisFunctionIsCalled
     return false;
 }
 
+var interpreter = null;
+
 function processKeydown(e) {
     if (e.keyCode == 13 && !areThereAnyPopupsThatAreNotCurrentlyHiddenAtTheTimeThisFunctionIsCalled()) {
         if (cansendmessages || username === "Key") {
@@ -1138,6 +1142,20 @@ function processKeydown(e) {
                 tell(messagestring, username, split[1])
             } else if (command == "!lastactive") {
                 getUserLastActive(split[1]);
+            } else if (command == "!py") {
+                const jsPython = window.jspython.jsPython;
+                var interpreted = "";
+                if (!interpreter) {
+                    interpreter = jsPython();
+                }
+                for (var i = 2; i < (split.length); i++) {
+                    interpreted += ` ${split[i]}`;
+                }
+                interpreted = interpreted.slice(0, 1);
+                interpreter.evaluate(interpreted).then(res => {
+                    console.log(res);
+                    sendMsg(res, "PyBot", "#FFFF00");
+                });
             }
             doDelay();
         } else {
