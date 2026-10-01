@@ -75,3 +75,5 @@ bots/emptykeyroombot.py
 
 public/unfinished_game_code
 venv/*=
+
+node_modules/

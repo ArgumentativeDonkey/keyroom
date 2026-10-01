@@ -1305,7 +1305,7 @@ async function validatePassword(username) {
     } else {
         if (!(localStorage.getItem("seen-pwd-warning") === "true")) {
             await Popup.quick(
-                "<span class='material-symbols-outlined'>lock_open</span><br>You don't have a registered password. If you want one, please contact someone with Git access.",
+                "<span class='material-symbols-outlined'>lock_open</span><br>You don't have a registered password. If you want one, please use !setPassword to set one.",
                 "ok",
             );
             localStorage.setItem("seen-pwd-warning", true);
@@ -1726,6 +1726,7 @@ async function onPlayerStateChange(event) {
             },
             { merge: true },
         );
+    // eslint-disable-next-line no-undef
     } else if (state === YT.PlayerState.ENDED) {
         console.log("Video ended");
         sendMsg(`Video ended`, "MusicBot", "#9b59b6");
