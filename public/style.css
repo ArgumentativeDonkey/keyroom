@@ -8,49 +8,87 @@
     }
 }
 
+*::selection {
+    background-color: var(--txt);
+    color: var(--bg);
+}
 :root {
     --stripe-width: 8em;
     --stripe-calc: calc(var(--stripe-width) * 1.41421356237);
     --anim-time: 8s;
     --n-themes: 10;
     --n-rooms: 10px;
-}
 
-[data-theme="light"] {
-    --bg: #ffffff;
-    --txt: #1c1c1c;
-}
+    [data-theme="light"] {
+        --bg: #ffffff;
+        --txt: #1c1c1c;
+        color-scheme: light;
+    }
 
-[data-theme="black"] {
-    --bg: black;
-    --txt: #ffffff;
-}
+    [data-theme="black"] {
+        --bg: black;
+        --txt: #ffffff;
+        color-scheme: dark;
+    }
 
-*::selection {
-    background-color: var(--txt);
-    color: var(--bg);
-}
+    [data-theme="grapefruit"] {
+        --bg: #fff1e6;
+        --txt: #1c1c1c;
+        color-scheme: light;
+    }
 
+    [data-theme="blue"] {
+        --bg: #f0f8ff;
+        --txt: #1c1c1c;
+        color-scheme: light;
+    }
 
+    [data-theme="banana"] {
+        --bg: #fff26a;
+        --txt: #1c1c1c;
+        color-scheme: light;
+    }
 
-[data-theme="grapefruit"] {
-    --bg: #fff1e6;
-    --txt: #1c1c1c;
-}
-
-[data-theme="blue"] {
-    --bg: #f0f8ff;
-    --txt: #1c1c1c;
-}
-
-[data-theme="banana"] {
-    --bg: #fff26a;
-    --txt: #1c1c1c;
-}
-
-[data-theme="hacker"] {
-    --bg: black;
-    --txt: lime;
+    [data-theme="hacker"] {
+        --bg: black;
+        --txt: lime;
+        color-scheme: dark;
+    }
+    [data-theme="dark"] {
+        --bg: #1a1a1e;
+        --txt: white;
+        color-scheme: dark;
+    }
+    
+    [data-theme="forest"] {
+        --bg: #f1f8f1;
+        --txt: #1c1c1c;
+        color-scheme: light;
+    }
+    
+    [data-theme="sunset"] {
+        --bg: #fff3e0;
+        --txt: #1c1c1c;
+        color-scheme: light;
+    }
+    
+    [data-theme="amethyst"] {
+        --bg: #f3e5f5;
+        --txt: #1c1c1c;
+        color-scheme: light;
+    }
+    
+    [data-theme="greyscale"] {
+        --bg: #f5f5f5;
+        --txt: #212121;
+        color-scheme: light;
+    }
+    
+    [data-theme="mint"] {
+        --bg: #e0f2f1;
+        --txt: #1c1c1c;
+        color-scheme: light;
+    }
 }
 
 .musicFrame {
@@ -81,35 +119,6 @@ body[data-format="normal"] .musicFrame {
     display: none;
 }
 
-[data-theme="dark"] {
-    --bg: #1a1a1e;
-    --txt: white;
-}
-
-[data-theme="forest"] {
-    --bg: #f1f8f1;
-    --txt: #1c1c1c;
-}
-
-[data-theme="sunset"] {
-    --bg: #fff3e0;
-    --txt: #1c1c1c;
-}
-
-[data-theme="amethyst"] {
-    --bg: #f3e5f5;
-    --txt: #1c1c1c;
-}
-
-[data-theme="greyscale"] {
-    --bg: #f5f5f5;
-    --txt: #212121;
-}
-
-[data-theme="mint"] {
-    --bg: #e0f2f1;
-    --txt: #1c1c1c;
-}
 
 h1 {
     color: var(--txt);
@@ -188,7 +197,6 @@ a:focus {
 .roomsListDiv {
     margin-left: 1vw;
 }
-
 
 .room {
     border-radius: 7px;
@@ -285,7 +293,6 @@ a:focus {
     bottom: 3px;
     padding: 0px;
     transition: height 0.7s !important;
-
 }
 .rooms:not(:hover) * {
     pointer-events: none;
@@ -404,7 +411,6 @@ button:focus {
         position: absolute;
         left: 3vw;
         top: 80px;
-
     }
 
     .sendput {
@@ -450,7 +456,6 @@ button:focus {
 .messages {
     scrollbar-color: var(--bg) transparent;
     scroll-behavior: smooth;
-
 }
 
 .messages::-webkit-scrollbar {
@@ -582,7 +587,6 @@ button:focus {
 }
 
 @keyframes shake {
-
     0%,
     100% {
         transform: translateX(0);
@@ -607,7 +611,6 @@ button:focus {
 }
 
 @keyframes bounce {
-
     0%,
     100% {
         transform: translateY(0);
@@ -624,7 +627,6 @@ button:focus {
 }
 
 @keyframes fade {
-
     0%,
     100% {
         opacity: 0;
@@ -640,14 +642,16 @@ button:focus {
 }
 
 .rainbowtext {
-    background: linear-gradient(90deg,
-            red,
-            orange,
-            yellow,
-            green,
-            blue,
-            indigo,
-            violet);
+    background: linear-gradient(
+        90deg,
+        red,
+        orange,
+        yellow,
+        green,
+        blue,
+        indigo,
+        violet
+    );
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -675,7 +679,6 @@ button:focus {
 }
 
 @keyframes zoom {
-
     0%,
     100% {
         transform: scale(1);
@@ -861,8 +864,6 @@ button:focus {
     text-decoration: underline var(--txt);
 }
 
-
-
 .themes {
     color: inherit;
     text-decoration: none;
@@ -899,6 +900,5 @@ button:focus {
 [data-theme="greyscale"] img {
     filter: grayscale(1);
 }
-
 
 /* !SECTION */
