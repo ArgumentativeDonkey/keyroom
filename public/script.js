@@ -4,7 +4,7 @@ Feel free to modify it as you wish!
 */
 
 //refrences
-import { Popup } from "./popup.js"; //import the popup module for displaying popups.
+import Popup from "./popup.js"; //import the popup module for displaying popups.
 import { initializeApp } from "firebase/app";
 import { config } from "./config.js"; //import config files. make sure your config file is named config.js and has the same structure as configexample.js!
 import {
@@ -76,7 +76,10 @@ async function sendMail(recipient, sender, message) {
 
     try {
         const snap = await getDocs(
-            query(collection(db, "connectedUsers"), where("name", "==", recipient)),
+            query(
+                collection(db, "connectedUsers"),
+                where("name", "==", recipient),
+            ),
         );
 
         if (snap.empty) {
@@ -91,13 +94,13 @@ async function sendMail(recipient, sender, message) {
 
         if (
             elapsedSecondsSince(userData.lastSummoned) <
-            config.emailJs.summonCooldown &&
+                config.emailJs.summonCooldown &&
             userData.lastSummoned
         ) {
             //cooldown on summons, in seconds
             console.log(
                 "elapsedSecs:" + elapsedSecondsSince(userData.lastSummoned) <
-                config.emailJs.summonCooldown,
+                    config.emailJs.summonCooldown,
             );
             Popup.quick(
                 `<span class='material-symbols-outlined'>warning</span><br>Error: ${recipient} was summoned less than 6 minutes ago.`,
@@ -147,7 +150,8 @@ function doDelay() {
     cansendmessages = false;
     setTimeout(() => {
         cansendmessages = true;
-        document.getElementById("message-input").placeholder = "Type a message...";
+        document.getElementById("message-input").placeholder =
+            "Type a message...";
     }, timeout);
 }
 (function () {
@@ -303,7 +307,9 @@ async function showLatestXkcd(number) {
         console.log(number);
         if (Number.isInteger(number) && number <= data.num) {
             console.log("numver");
-            const response = await fetch(`https://xkcd.vercel.app/?comic=${number}`);
+            const response = await fetch(
+                `https://xkcd.vercel.app/?comic=${number}`,
+            );
             const newdata = await response.json();
             return generateXkcdTemplate(
                 newdata.num,
@@ -314,7 +320,12 @@ async function showLatestXkcd(number) {
         } else if (Number.isInteger(number)) {
             return "<p>That xkcd doesn't exists yet!</p>";
         } else {
-            return generateXkcdTemplate(data.num, data.title, data.img, data.alt);
+            return generateXkcdTemplate(
+                data.num,
+                data.title,
+                data.img,
+                data.alt,
+            );
         }
     } catch (err) {
         console.error("Error fetching xkcd:", err);
@@ -359,7 +370,9 @@ async function createAvatar(rounded = true, writer = username) {
     const avatar = document.createElement("img");
     if (rounded) avatar.className = "avatar";
     else avatar.className = "squareAvatar";
-    getDocs(query(collection(db, "connectedUsers"), where("name", "==", writer)))
+    getDocs(
+        query(collection(db, "connectedUsers"), where("name", "==", writer)),
+    )
         .then((snap) => {
             if (!snap.empty) {
                 const userData = snap.docs[0].data();
@@ -475,7 +488,7 @@ function listenToRoom(roomName) {
                 content.style.display = "inline-block";
                 content.innerHTML = `<span class="usernameBg">${message.writer}</span>
                                      <span class="msgText"><span style='font-size:10px;margin:0;padding:0;color:"black";'></span>: ${message.text}</span>
-                                     <span class="iden">${message.iden}<b>${tstamp}</b></span>`;
+                                     <span class="iden"><span onclick="(async () => { await navigator.clipboard.writeText('${message.iden}'); })()" class="inneriden">${message.iden}</span><span>&nbsp;</span><i>${tstamp}</i></span>`;
             }
             cachedAvatars[message.writer] = avatar.src;
             console.trace(avatar);
@@ -665,7 +678,10 @@ export async function sendMsg(message, writer, color, raw) {
             /** The text that will be replacing the message */
             const newText = message.replace("!edit ", "") + " (<i>edited</i>)";
             const snapshot = await getDocs(
-                query(collection(db, currentRoom), orderBy("timestamp", "desc")),
+                query(
+                    collection(db, currentRoom),
+                    orderBy("timestamp", "desc"),
+                ),
             );
             let found = false;
             for (const doca of snapshot.docs) {
@@ -690,7 +706,6 @@ export async function sendMsg(message, writer, color, raw) {
                 Popup.quick(
                     `<span class="material-symbols-outlined">warning</span><br>Error: you haven't sent any messages yet.`,
                 );
-                
             }
 
             if (!found) {
@@ -700,13 +715,19 @@ export async function sendMsg(message, writer, color, raw) {
         } else if (message.split(" ")[0].trim() === "!editId") {
             const targetId = message.split(" ")[1].trim();
             const snapshot = await getDocs(
-                query(collection(db, currentRoom), orderBy("timestamp", "desc")),
+                query(
+                    collection(db, currentRoom),
+                    orderBy("timestamp", "desc"),
+                ),
             );
             let docFound = null;
             const newText = message.split(" ").slice(2).join(" ");
 
             for (const doca of snapshot.docs) {
-                if (doca.data().iden === targetId && doca.data().writer === writer) {
+                if (
+                    doca.data().iden === targetId &&
+                    doca.data().writer === writer
+                ) {
                     docFound = doca;
                     break;
                 }
@@ -798,12 +819,18 @@ export async function sendMsg(message, writer, color, raw) {
             try {
                 const targetId = message.split(" ")[1].trim();
                 const snapshot = await getDocs(
-                    query(collection(db, currentRoom), orderBy("timestamp", "desc")),
+                    query(
+                        collection(db, currentRoom),
+                        orderBy("timestamp", "desc"),
+                    ),
                 );
                 let docFound = null;
 
                 for (const doca of snapshot.docs) {
-                    if (doca.data().iden === targetId && doca.data().writer === writer) {
+                    if (
+                        doca.data().iden === targetId &&
+                        doca.data().writer === writer
+                    ) {
                         docFound = doca;
                         break;
                     }
@@ -824,9 +851,12 @@ export async function sendMsg(message, writer, color, raw) {
             }
         } else if (message.trim() === "!inbox") {
             checkInbox = true;
-        } else if (message.trim() === "!imbox" || message.trim() === "!inboxx") {
+        } else if (
+            message.trim() === "!imbox" ||
+            message.trim() === "!inboxx"
+        ) {
             window.alert("I think you mispelled !inbox.");
-        }else if (message.trim() === "!clearInbox") {
+        } else if (message.trim() === "!clearInbox") {
             const snapshot = await getDocs(
                 query(collection(db, "tellMsgs"), orderBy("timestamp", "desc")),
             );
@@ -1073,12 +1103,15 @@ const actionsMap = {
     },
     "profile.open.self": async () => {
         if (
-            document.getElementById("CharacterProfile").style.visibility == "visible"
+            document.getElementById("CharacterProfile").style.visibility ==
+            "visible"
         ) {
-            document.getElementById("CharacterProfile").style.visibility = "hidden";
+            document.getElementById("CharacterProfile").style.visibility =
+                "hidden";
         } else {
             makeProfile(username);
-            document.getElementById("CharacterProfile").style.visibility = "visible";
+            document.getElementById("CharacterProfile").style.visibility =
+                "visible";
         }
         document.getElementById("closeProfile").focus();
     },
@@ -1092,7 +1125,8 @@ const actionsMap = {
                 document.getElementById("CharacterProfile").style.visibility ==
                 "visible"
             ) {
-                document.getElementById("CharacterProfile").style.visibility = "hidden";
+                document.getElementById("CharacterProfile").style.visibility =
+                    "hidden";
             } else {
                 makeProfile(username);
                 document.getElementById("CharacterProfile").style.visibility =
@@ -1337,7 +1371,10 @@ async function addRoomProcessor() {
     roomsList.append(newRoomLi);
     additionalRooms.push(newRoomLi.id);
     additionalRoomNames.push("& " + roomName.trim());
-    localStorage.setItem("additionalRooms", JSON.stringify(additionalRoomNames));
+    localStorage.setItem(
+        "additionalRooms",
+        JSON.stringify(additionalRoomNames),
+    );
     currentRoom = `&${roomName.trim()}`;
     switchRoom(currentRoom);
     document.documentElement.style.setProperty(
@@ -1373,7 +1410,9 @@ function processKeydown(e) {
             var command = document
                 .getElementById("message-input")
                 .value.split(" ")[0];
-            var split = document.getElementById("message-input").value.split(" ");
+            var split = document
+                .getElementById("message-input")
+                .value.split(" ");
 
             if (command == "!xkcd" && currentRoom == "&xkcd") {
                 sendXkcd(split[1]);
@@ -1392,18 +1431,18 @@ function processKeydown(e) {
                 if (!interpreter) {
                     interpreter = jsPython();
                 }
-                for (var pyarg = 2; pyarg < (split.length); pyarg++) {
+                for (var pyarg = 2; pyarg < split.length; pyarg++) {
                     interpreted += ` ${split[pyarg]}`;
                 }
                 interpreted = interpreted.slice(0, 1);
-                interpreter.evaluate(interpreted).then(res => {
+                interpreter.evaluate(interpreted).then((res) => {
                     console.log(res);
                     sendMsg(res, "PyBot", "#FFFF00");
                 });
             } else if (command == "!js") {
                 if (currentRoom == "&codeinject") {
                     var interpretedJs = "";
-                    for (var arg = 2; arg < (split.length); arg++) {
+                    for (var arg = 2; arg < split.length; arg++) {
                         interpretedJs += ` ${split[arg]}`;
                     }
                     let res = eval(interpretedJs);
@@ -1416,7 +1455,8 @@ function processKeydown(e) {
             }
             doDelay();
         } else {
-            document.getElementById("message-input").placeholder = "wait a sec...";
+            document.getElementById("message-input").placeholder =
+                "wait a sec...";
         }
         document.getElementById("message-input").value = "";
     }
@@ -1546,7 +1586,12 @@ async function manageMusic() {
             console.log("Player not ready yet, waiting...");
             return;
         }
-        if (data.position !== undefined && player && player.seekTo && !isSyncing) {
+        if (
+            data.position !== undefined &&
+            player &&
+            player.seekTo &&
+            !isSyncing
+        ) {
             const currentTime = getCurrentTime();
             const timeDiff = Math.abs(currentTime - data.position);
 
@@ -1710,7 +1755,7 @@ async function onPlayerStateChange(event) {
             },
             { merge: true },
         );
-    // eslint-disable-next-line no-undef
+        // eslint-disable-next-line no-undef
     } else if (state === YT.PlayerState.PAUSED) {
         console.log("Video is paused");
 
@@ -1726,7 +1771,7 @@ async function onPlayerStateChange(event) {
             },
             { merge: true },
         );
-    // eslint-disable-next-line no-undef
+        // eslint-disable-next-line no-undef
     } else if (state === YT.PlayerState.ENDED) {
         console.log("Video ended");
         sendMsg(`Video ended`, "MusicBot", "#9b59b6");
@@ -1814,7 +1859,8 @@ async function resetRoomIfAdmin(message, writer, room) {
         const targetRoom = room || parts[1] || currentRoom;
 
         if (
-            ("&" + writer === targetRoom || config.keyroom.admin.includes(writer)) &&
+            ("&" + writer === targetRoom ||
+                config.keyroom.admin.includes(writer)) &&
             cmd === "!reset"
         ) {
             console.log("Resetting room:", targetRoom);
@@ -2041,16 +2087,16 @@ async function onload() {
     document.getElementById("newroom").addEventListener("click", async () => {
         await addRoomProcessor();
         document.documentElement.style.setProperty(
-        "--n-rooms",
-        document.getElementById("roomsListDiv").clientHeight,
-    );
+            "--n-rooms",
+            document.getElementById("roomsListDiv").clientHeight,
+        );
     });
     document.getElementById("deleteRooms").addEventListener("click", () => {
         removeRoom();
         document.documentElement.style.setProperty(
-        "--n-rooms",
-        document.getElementById("roomsListDiv").clientHeight,
-    );
+            "--n-rooms",
+            document.getElementById("roomsListDiv").clientHeight,
+        );
     });
     document.getElementById("customCSS").addEventListener("click", () => {
         addCustomCSSHandler();
@@ -2078,7 +2124,8 @@ async function onload() {
     });
 
     document.getElementById("you").addEventListener("click", () => {
-        document.getElementById("CharacterProfile").style.visibility = "visible";
+        document.getElementById("CharacterProfile").style.visibility =
+            "visible";
         makeProfile(username);
     });
     document.getElementById("closeProfile").addEventListener("click", () => {
@@ -2107,7 +2154,7 @@ async function onload() {
     }
     document.documentElement.style.setProperty(
         "--n-rooms",
-        document.getElementById("roomsListDiv").style.clientHeight    
+        document.getElementById("roomsListDiv").style.clientHeight,
     );
     await addCustomCSSHandler(true);
     //#endregion

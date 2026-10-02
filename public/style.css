@@ -481,10 +481,16 @@ button:focus {
 
 .iden {
     display: none;
+    color: var(--txt);
+    opacity: 0.5;
 }
 
 #messages.showIden .iden {
     display: inline;
+}
+
+.inneriden {
+    cursor: copy;
 }
 
 #messages[data-show="true"] div p .iden {

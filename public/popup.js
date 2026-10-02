@@ -1,4 +1,4 @@
-export class Popup {
+export default class Popup {
     /** @type {Popup[]} */
     static popupList = [];
     /**
