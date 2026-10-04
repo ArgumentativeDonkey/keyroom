@@ -5,6 +5,7 @@ Feel free to modify it as you wish!
 
 //refrences
 import Popup from "./popup.js"; //import the popup module for displaying popups.
+import Minigame from "./minigame.js"; // import the minigame module for playing a game.
 import { initializeApp } from "firebase/app";
 import { config } from "./config.js"; //import config files. make sure your config file is named config.js and has the same structure as configexample.js!
 import {
@@ -645,7 +646,11 @@ export async function sendMsg(message, writer, color, raw) {
                 console.log(currentRoom);
                 message = await rndList();
             }
-            if (message.split(" ")[0].trim() == "!image") {
+            if (message.split(" ")[0].trim() == "!minigame") {
+                let minigame = new Minigame(username);
+                minigame.run();
+            }
+            else if (message.split(" ")[0].trim() == "!image") {
                 message = `<a href="${message.split(" ")[1]}"><img src="${message.split(" ")[1]}" alt="Image" style="max-width:1200px; max-height:200px;"></a>`;
             } else if (message.split(" ")[0].trim() === "!video") {
                 const input = message.split(" ").slice(1).join(" ");
